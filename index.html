@@ -7,7 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Orbitron:wght@500;700;900&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
     * { margin:0; padding:0; box-sizing:border-box; font-family: 'Montserrat', sans-serif; }
-    body { background: radial-gradient(circle at 50% 50%, #1a1500, #050505 80%); color: #fff; min-height: 100vh; overflow-x: hidden; position: relative; }
+    body { background: radial-gradient(circle at 50% 50%, #1a1500, #050505 80%); color: #fff; min-height: 100vh; overflow-x: hidden; position: relative; user-select: none; }
     canvas#particles { position: fixed; top:0; left:0; width:100%; height:100%; z-index:1; opacity:0.4; pointer-events:none; }
     :root { --gold-light: #FBF5B7; --gold-mid: #D4AF37; --gold-dark: #AA771C; --red-vip: #ff2a2a; --bg-glass: rgba(10, 8, 5, 0.9); }
     
@@ -43,11 +43,25 @@
     @keyframes popIn { 0% { opacity: 0; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1); } }
     #game-frame { width: 100%; height: 100%; border: none; }
     .close-game-btn { position: absolute; top: 40px; left: 15px; background: #110000; color: var(--red-vip); border: 2px solid var(--red-vip); padding: 10px 20px; border-radius: 12px; font-weight: 900; z-index: 2005; cursor:pointer; font-family: 'Orbitron'; box-shadow: 0 0 15px rgba(255,42,42,0.4);}
-    .drag-handle { width: 100%; text-align: center; color: var(--gold-dark); font-size: 20px; padding-bottom: 8px; cursor: grab; border-bottom: 1px solid rgba(212, 175, 55, 0.2); margin-bottom: 10px;}
     
-    #bridge-detect-panel { position: absolute; top: 40px; right: 15px; width: 170px; background: var(--bg-glass); border: 2px solid var(--gold-mid); border-radius: 16px; padding: 15px; z-index: 2001; box-shadow: 0 10px 40px rgba(0,0,0,0.9);}
-    .robo-img { width: 55px; height: 55px; border-radius: 50%; border: 2px solid var(--gold-mid); padding: 2px; background: #000; margin-bottom: 8px; box-shadow: 0 0 15px rgba(212,175,55,0.4);}
-    
+    /* GIAO DIỆN ROBOT NHÚN NHẢY KÉ BÊN TOOL */
+    #robotContainer {
+      position: fixed; top: 40px; right: 15px;
+      display: flex; align-items: center; z-index: 2001; cursor: grab;
+      background: var(--bg-glass); backdrop-filter: blur(12px); border: 2px solid var(--gold-mid);
+      border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.9); padding: 12px 20px 12px 14px;
+      width: max-content; max-width: 320px; transition: box-shadow 0.3s ease;
+    }
+    #robotContainer:active { cursor: grabbing; box-shadow: 0 12px 30px rgba(212,175,55,0.4); }
+    .robotIconWrapper { width: 65px; height: 65px; margin-right: 15px; position: relative; flex-shrink: 0;}
+    #robotIcon { width: 100%; height: 100%; animation: nhay 1.5s ease-in-out infinite; filter: drop-shadow(0 0 15px var(--gold-mid)); border-radius: 12px; object-fit: contain;}
+    #closeBtn { position: absolute; top: -8px; left: -8px; background: var(--red-vip); color: #fff; width: 22px; height: 22px; text-align: center; line-height: 22px; border-radius: 50%; font-weight: bold; cursor: pointer; font-size: 14px; box-shadow: 0 0 8px red; border: 1px solid #fff;}
+    @keyframes nhay { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    #robotText { display: flex; flex-direction: column; justify-content: center; }
+    #line1 { font-size: 18px; font-weight: 900; font-family: 'Orbitron'; text-shadow: 0 0 10px rgba(255,255,255,0.3); white-space: nowrap; margin-bottom: 5px; color: #fff;}
+    #line2 { font-size: 13px; color: var(--gold-mid); font-weight: 700; font-family: 'Montserrat'; white-space: nowrap;}
+
+    /* BẢNG VIP BIG CHÍNH GIỮA (CHO SUNWIN/HITCLUB) */
     #big-center-panel { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 420px; background: var(--bg-glass); border: 2px solid var(--gold-mid); border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.9); padding: 35px 25px; z-index: 2002; flex-direction: column; align-items: center;}
     .txbig { font-family: 'Playfair Display', serif; font-weight: 900; text-align: center; margin: 20px 0; text-transform: uppercase; }
     .txtai { color: var(--red-vip); text-shadow: 0 0 25px rgba(255, 42, 42, 0.6); }
@@ -77,14 +91,15 @@
   <button class="close-game-btn" onclick="closeGame()"><i class="fas fa-power-off"></i></button>
   <iframe id="game-frame" src=""></iframe>
   
-  <div id="bridge-detect-panel">
-    <div id="bridge-detect-panel-header" class="drag-handle"><i class="fas fa-grip-lines"></i></div>
-    <div style="text-align:center;"><img class="robo-img" src="https://i.postimg.cc/wMdhjZFJ/1773446152525.png"></div>
-    <div style="font-size:12px;color:var(--gold-mid);font-weight:bold;text-align:center;font-family:'Orbitron';" id="auto-advice">BOOTING...</div>
-    <div style="text-align:center; font-family:'Orbitron'; color:#aaa; font-size:10px; margin-top:8px;">PHIÊN: <span id="auto-phien" style="color:#fff;">...</span></div>
-    <div class="txbig" id="auto-big" style="font-size: 36px; font-family: 'Orbitron';">...</div>
-    <div class="progress-bar-bg" style="height:8px;"><div class="progress-fill" id="auto-bar"></div></div>
-    <div style="text-align:center; font-size:12px; color:var(--gold-light); font-weight:bold; font-family:'Orbitron';" id="auto-pct">0%</div>
+  <div id="robotContainer" style="display:none;">
+    <div class="robotIconWrapper">
+      <img id="robotIcon" src="https://i.imgur.com/MZr9Fr2.png" alt="Robot" draggable="false">
+      <div id="closeBtn" onclick="document.getElementById('robotContainer').style.display='none';">×</div>
+    </div>
+    <div id="robotText">
+      <div id="line1">BOOTING...</div>
+      <div id="line2">Kết nối hệ thống</div>
+    </div>
   </div>
   
   <div id="big-center-panel">
@@ -141,14 +156,26 @@
     </div>
 
     <div class="card glass-panel"><div style="color:#00e5ff; font-weight:900; margin-bottom:12px; font-size:1.1rem; letter-spacing:1px; font-family:'Orbitron';"><i class="fas fa-gem"></i> HỆ THỐNG BETVIP</div><div class="grid-2"><button class="btn-gold" onclick="startAutoAPI('betvip_tx', 'https://play.betvip.fit/')" style="font-size:0.9rem; background:#111; color:#00e5ff; border:1px solid #00e5ff; box-shadow:none;">TX THƯỜNG</button><button class="btn-gold" onclick="startAutoAPI('betvip_md5', 'https://play.betvip.fit/')" style="font-size:0.9rem; background:linear-gradient(135deg, #0088ff, #00e5ff); color:#000;">TÀI XỈU MD5</button></div></div>
-    
     <div class="card glass-panel"><div style="color:#fff; font-weight:900; margin-bottom:12px; font-size:1.1rem; letter-spacing:1px; font-family:'Orbitron';"><i class="fas fa-globe"></i> HỆ THỐNG LC79.BET</div><div class="grid-2"><button class="btn-gold" onclick="startAutoAPI('lc79_tx', 'https://lc79.bet')" style="font-size:0.9rem; background:#111; color:var(--gold-mid); border:1px solid var(--gold-mid); box-shadow:none;">TX THƯỜNG</button><button class="btn-gold" onclick="startAutoAPI('lc79_md5', 'https://lc79.bet')" style="font-size:0.9rem;">TÀI XỈU MD5</button></div><button class="btn-gold" style="background:linear-gradient(135deg, #8b0000, var(--red-vip)); color:#fff; margin-top:12px;" onclick="startAutoAPI('lc79_xd', 'https://lc79.bet')">XÓC ĐĨA LC79</button></div>
   </div>
-</div>
-<script>
+          <script>
 const canvas = document.getElementById('particles'); const ctx = canvas.getContext('2d'); canvas.width = window.innerWidth; canvas.height = window.innerHeight;
 let particles = []; class Particle { constructor() { this.reset(); } reset() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.size = Math.random() * 2 + 0.5; this.speed = Math.random() * 1.5 + 0.5; } update() { this.y -= this.speed; if (this.y < 0) this.reset(); } draw() { ctx.fillStyle = `rgba(212, 175, 55, 0.5)`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); } }
 for(let i=0;i<60;i++) particles.push(new Particle()); function animateParticles() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animateParticles); } window.addEventListener('resize', ()=>{ canvas.width = window.innerWidth; canvas.height = window.innerHeight; }); animateParticles();
+
+// KÉO THẢ ROBOT MƯỢT MÀ NHƯ BẢN GỐC
+const robot = document.getElementById("robotContainer");
+let drag = false, offsetX = 0, offsetY = 0;
+const startDrag = (clientX, clientY) => { drag = true; offsetX = clientX - robot.offsetLeft; offsetY = clientY - robot.offsetTop; robot.style.transition = 'none'; };
+const doDrag = (clientX, clientY) => { if(drag) { let l = clientX - offsetX, t = clientY - offsetY; l = Math.max(0, Math.min(l, window.innerWidth - robot.offsetWidth)); t = Math.max(0, Math.min(t, window.innerHeight - robot.offsetHeight)); robot.style.left = l + "px"; robot.style.top = t + "px"; } };
+const endDrag = () => { drag = false; robot.style.transition = 'box-shadow 0.3s ease'; };
+
+robot.addEventListener("mousedown", e => startDrag(e.clientX, e.clientY));
+document.addEventListener("mousemove", e => doDrag(e.clientX, e.clientY));
+document.addEventListener("mouseup", endDrag);
+robot.addEventListener("touchstart", e => startDrag(e.touches[0].clientX, e.touches[0].clientY));
+document.addEventListener("touchmove", e => doDrag(e.touches[0].clientX, e.touches[0].clientY));
+document.addEventListener("touchend", endDrag);
 
 let currentUserKey = "";
 async function submitLogin() {
@@ -206,13 +233,6 @@ document.getElementById('predict-btn').addEventListener('click', async () => {
 });
 
 let autoInterval, activeGame = "", phienCu = "", isAnalyzing = false;
-function clearUI() {
-    document.getElementById('auto-advice').innerText = "SYNCING..."; document.getElementById('big-advice').innerText = "SYNCING...";
-    document.getElementById('auto-phien').innerText = "..."; document.getElementById('big-phien').innerText = "...";
-    document.getElementById('auto-big').innerText = "..."; document.getElementById('big-result').innerText = "...";
-    document.getElementById('auto-bar').style.width = "0%"; document.getElementById('big-bar').style.width = "0%";
-    document.getElementById('auto-pct').innerText = "0%"; document.getElementById('big-pct-text').innerText = "0%";
-}
 
 async function loopAuto() {
     if (isAnalyzing) return; 
@@ -227,24 +247,33 @@ async function loopAuto() {
         if(res && res.phien !== phienCu) {
             isAnalyzing = true; phienCu = res.phien;
             let isTai = res.du_doan.includes("TÀI") || res.du_doan.includes("CHẴN"); 
-            let colorClass = isTai ? "txtai" : "txxiu"; let colorHex = isTai ? "#ff2a2a" : "#00e5ff";
+            let colorHex = isTai ? "#ff2a2a" : "#00e5ff"; let colorClass = isTai ? "txtai" : "txxiu";
             
-            document.getElementById('auto-phien').innerText = res.phien; document.getElementById('big-phien').innerText = res.phien;
+            document.getElementById('big-phien').innerText = res.phien;
             
-            let countdown = 15; // 15 GIÂY ĐẾM NGƯỢC RẤT HỒI HỘP
-            document.getElementById('auto-big').innerText = "WAIT"; document.getElementById('big-result').innerText = "RUNNING..."; document.getElementById('big-result').className = "txbig glow-text";
-            document.getElementById('auto-bar').style.width = "0%"; document.getElementById('big-bar').style.width = "0%";
-            document.getElementById('auto-pct').innerText = "0%"; document.getElementById('big-pct-text').innerText = "0%";
+            let countdown = 15; // 15 GIÂY ĐẾM NGƯỢC
+            
+            // Cập nhật Robot
+            document.getElementById('line1').innerText = "WAIT..."; document.getElementById('line1').style.color = "#fff";
+            document.getElementById('line2').innerText = `Phân tích: ${countdown}s`;
+            
+            // Cập nhật bảng to
+            document.getElementById('big-result').innerText = "RUNNING..."; document.getElementById('big-result').className = "txbig glow-text";
+            document.getElementById('big-bar').style.width = "0%"; document.getElementById('big-pct-text').innerText = "0%";
 
             let timerInterval = setInterval(() => {
-                document.getElementById('auto-advice').innerText = `CALCULATING: ${countdown}s`;
+                document.getElementById('line2').innerText = `Phân tích: ${countdown}s`;
                 document.getElementById('big-advice').innerText = `1000+ NEURAL LAYERS: ${countdown}s...`;
                 countdown--;
                 if (countdown < 0) {
                     clearInterval(timerInterval);
-                    document.getElementById('auto-advice').innerText = res.loi_khuyen;
-                    let b1 = document.getElementById('auto-big'); b1.innerText = res.du_doan; b1.className = "txbig " + colorClass;
-                    document.getElementById('auto-bar').style.width = res.ti_le + "%"; document.getElementById('auto-bar').style.background = colorHex; document.getElementById('auto-pct').innerText = res.ti_le + "%";
+                    
+                    // Nổ kết quả trên Robot
+                    document.getElementById('line1').innerText = `#${res.phien} · ${res.du_doan}`;
+                    document.getElementById('line1').style.color = colorHex;
+                    document.getElementById('line2').innerText = `Độ tin cậy: ${res.ti_le}%`;
+
+                    // Nổ kết quả trên bảng to
                     document.getElementById('big-advice').innerText = res.loi_khuyen;
                     let b2 = document.getElementById('big-result'); b2.innerText = res.du_doan; b2.className = "txbig " + colorClass;
                     document.getElementById('big-bar').style.width = res.ti_le + "%"; document.getElementById('big-bar').style.background = colorHex; document.getElementById('big-pct-text').innerText = res.ti_le + "%";
@@ -256,21 +285,22 @@ async function loopAuto() {
 }
 
 function startAutoAPI(tool, url) {
-    document.getElementById('game-overlay').style.display = "block"; clearInterval(autoInterval); phienCu = ""; activeGame = tool; clearUI(); isAnalyzing = false;
-    document.getElementById('game-frame').style.display = "block"; document.getElementById('game-frame').src = url;
-    document.getElementById('game-overlay').style.background = "#000";
-    document.getElementById('bridge-detect-panel').style.display = "block"; document.getElementById('big-center-panel').style.display = "none";
+    document.getElementById('game-overlay').style.display = "block"; clearInterval(autoInterval); phienCu = ""; activeGame = tool; isAnalyzing = false;
+    document.getElementById('line1').innerText = "BOOTING..."; document.getElementById('line2').innerText = "Đang tải dữ liệu"; document.getElementById('line1').style.color = "#fff";
+    
+    if(url === "") {
+        document.getElementById('game-frame').style.display = "none"; document.getElementById('game-frame').src = "";
+        document.getElementById('game-overlay').style.background = "radial-gradient(circle, #1a0505 0%, #000 100%)";
+        document.getElementById('robotContainer').style.display = "none"; document.getElementById('big-center-panel').style.display = "flex";
+    } else {
+        document.getElementById('game-frame').style.display = "block"; document.getElementById('game-frame').src = url;
+        document.getElementById('game-overlay').style.background = "#000";
+        document.getElementById('robotContainer').style.display = "flex"; document.getElementById('big-center-panel').style.display = "none";
+    }
     loopAuto(); autoInterval = setInterval(loopAuto, 2000); 
 }
 function closeGame() { clearInterval(autoInterval); isAnalyzing = false; document.getElementById('game-overlay').style.display = 'none'; document.getElementById('game-frame').src = ''; }
-function makeDraggable(elmnt) {
-    var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0; var header = document.getElementById(elmnt.id + "-header");
-    if (header) { header.onmousedown = dragStart; header.ontouchstart = dragStart; header.style.cursor = "grab"; } else { elmnt.onmousedown = dragStart; elmnt.ontouchstart = dragStart; }
-    function dragStart(e) { e = e || window.event; if(e.type === 'touchstart') { pos3 = e.touches[0].clientX; pos4 = e.touches[0].clientY; } else { pos3 = e.clientX; pos4 = e.clientY; } document.onmouseup = dragEnd; document.onmousemove = dragAction; document.ontouchend = dragEnd; document.ontouchmove = dragAction; }
-    function dragAction(e) { e = e || window.event; if(e.type === 'touchmove') { pos1 = pos3 - e.touches[0].clientX; pos2 = pos4 - e.touches[0].clientY; pos3 = e.touches[0].clientX; pos4 = e.touches[0].clientY; } else { pos1 = pos3 - e.clientX; pos2 = pos4 - e.clientY; pos3 = e.clientX; pos4 = e.clientY; } elmnt.style.top = (elmnt.offsetTop - pos2) + "px"; elmnt.style.left = (elmnt.offsetLeft - pos1) + "px"; }
-    function dragEnd() { document.onmouseup = null; document.onmousemove = null; document.ontouchend = null; document.ontouchmove = null; }
-}
-makeDraggable(document.getElementById("bridge-detect-panel"));
 </script>
 </body>
 </html>
+                                                                                                                                                                                                                                       
