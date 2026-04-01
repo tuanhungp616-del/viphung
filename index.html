@@ -2,47 +2,47 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>HƯNG DZKK - EMPEROR OMNIVERSE | CHỦ TỊCH TUẤN HƯNG</title>
+  <title>HƯNG DZKK - VIP MAX 1000+ | CHỦ TỊCH TUẤN HƯNG</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Orbitron:wght@500;700;900&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
     * { margin:0; padding:0; box-sizing:border-box; font-family: 'Montserrat', sans-serif; }
-    body { background: radial-gradient(circle at 50% 50%, #110d00, #050505 90%); color: #fff; min-height: 100vh; overflow-x: hidden; position: relative; }
-    canvas#particles { position: fixed; top:0; left:0; width:100%; height:100%; z-index:1; opacity:0.35; pointer-events:none; }
-    :root { --gold-light: #FBF5B7; --gold-mid: #D4AF37; --gold-dark: #AA771C; --red-emp: #dc2626; --bg-glass: rgba(10, 8, 5, 0.9); }
+    body { background: radial-gradient(circle at 50% 50%, #1a1500, #050505 80%); color: #fff; min-height: 100vh; overflow-x: hidden; position: relative; }
+    canvas#particles { position: fixed; top:0; left:0; width:100%; height:100%; z-index:1; opacity:0.4; pointer-events:none; }
+    :root { --gold-light: #FBF5B7; --gold-mid: #D4AF37; --gold-dark: #AA771C; --red-vip: #ff2a2a; --bg-glass: rgba(10, 8, 5, 0.9); }
     
     .glass-panel { background: var(--bg-glass); backdrop-filter: blur(15px); border: 1px solid rgba(212, 175, 55, 0.4); box-shadow: 0 10px 40px rgba(0,0,0,0.8), inset 0 0 20px rgba(212, 175, 55, 0.1); border-radius: 20px; }
     .container { max-width: 560px; margin: 0 auto; padding: 20px 16px; position: relative; z-index: 2; }
     
-    #login-screen { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.98); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
+    #login-screen { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.95); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
     .login-box { width: 100%; max-width: 380px; text-align: center; padding: 45px 25px; border-radius: 24px; border: 2px solid var(--gold-mid); box-shadow: 0 0 50px rgba(212, 175, 55, 0.3);}
-    .login-box h2 { font-family: 'Playfair Display', serif; color: var(--gold-mid); font-size: 2.4rem; margin-bottom: 10px; letter-spacing: 3px; text-shadow: 0 0 20px rgba(212, 175, 55, 0.6); }
+    .login-box h2 { font-family: 'Playfair Display', serif; color: var(--gold-mid); font-size: 2.5rem; margin-bottom: 10px; letter-spacing: 3px; text-shadow: 0 0 20px rgba(212, 175, 55, 0.6); }
     .input-box { width: 100%; background: #000; border: 1px solid var(--gold-dark); padding: 18px; border-radius: 12px; color: var(--gold-light); font-size: 1.1rem; text-align: center; outline: none; transition: 0.3s; margin-bottom: 20px; font-family: 'Orbitron'; letter-spacing: 2px; }
-    .input-box:focus { border-color: var(--red-emp); box-shadow: 0 0 20px rgba(220, 38, 38, 0.5); }
-    .btn-gold { width: 100%; padding: 16px; border: none; border-radius: 12px; background: linear-gradient(135deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C); color: #000; font-size: 1rem; font-weight: 900; cursor: pointer; box-shadow: 0 10px 25px rgba(212, 175, 55, 0.4); transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; font-family: 'Orbitron';}
+    .input-box:focus { border-color: var(--gold-light); box-shadow: 0 0 20px rgba(212, 175, 55, 0.5); }
+    .btn-gold { width: 100%; padding: 16px; border: none; border-radius: 12px; background: linear-gradient(135deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C); color: #000; font-size: 1.1rem; font-weight: 900; cursor: pointer; box-shadow: 0 10px 25px rgba(212, 175, 55, 0.4); transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; font-family: 'Orbitron';}
     .btn-gold:active { transform: scale(0.97); }
 
     .header { text-align: center; padding: 25px 15px; margin-bottom: 25px; }
     .header h1 { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 900; background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C); -webkit-background-clip: text; background-clip: text; color: transparent; letter-spacing: 2px; margin-bottom: 10px;}
-    .badge { display: inline-block; background: #110000; border: 1px solid var(--red-emp); padding: 6px 20px; border-radius: 50px; font-size: 0.75rem; font-weight: 800; color: var(--red-emp); letter-spacing: 2px; text-transform: uppercase; box-shadow: 0 0 15px rgba(220, 38, 38, 0.4);}
+    .badge { display: inline-block; background: #110000; border: 1px solid var(--gold-mid); padding: 6px 20px; border-radius: 50px; font-size: 0.8rem; font-weight: 800; color: var(--gold-light); letter-spacing: 2px; text-transform: uppercase; box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);}
     
     .vip-menu { display: flex; background: rgba(0,0,0,0.9); border-radius: 15px; padding: 8px; margin-bottom: 25px; border: 1px solid rgba(212, 175, 55, 0.5); }
-    .menu-item { flex: 1; text-align: center; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 0.85rem; transition: 0.3s; color: #777; font-family: 'Orbitron';}
-    .menu-item.active { background: linear-gradient(135deg, #8b0000, var(--red-emp)); color: #fff; box-shadow: 0 5px 20px rgba(220, 38, 38, 0.5); border: 1px solid #ff4d4d;}
+    .menu-item { flex: 1; text-align: center; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 0.9rem; transition: 0.3s; color: #777; font-family: 'Orbitron';}
+    .menu-item.active { background: linear-gradient(135deg, #BF953F, #B38728); color: #000; box-shadow: 0 5px 20px rgba(212, 175, 55, 0.5); border: 1px solid #fcf6ba;}
 
     .card { background: rgba(5, 5, 5, 0.95); border-radius: 20px; padding: 25px; margin-bottom: 20px; border: 1px solid rgba(212, 175, 55, 0.3); }
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
     .result-item { background: #000; border-radius: 15px; padding: 20px; margin-bottom: 16px; border-left: 4px solid var(--gold-mid); box-shadow: inset 0 0 10px rgba(212, 175, 55, 0.1);}
     .big-percent { font-family: 'Orbitron', sans-serif; font-size: 2.8rem; font-weight: 900; color: var(--gold-light); text-shadow: 0 0 20px rgba(212, 175, 55, 0.5); margin-top: 5px;}
-    .progress-bar-bg { height: 10px; background: #1a1a1a; border-radius: 10px; overflow: hidden; margin: 12px 0; border: 1px solid #333;}
+    .progress-bar-bg { height: 12px; background: #1a1a1a; border-radius: 10px; overflow: hidden; margin: 12px 0; border: 1px solid #333;}
     .progress-fill { height: 100%; background: linear-gradient(90deg, #AA771C, #FCF6BA); transition: width 1.2s cubic-bezier(0.2, 0.9, 0.3, 1.1); }
-    .final-vip { font-family: 'Orbitron', sans-serif; font-size: 1.5rem; font-weight: 900; text-align: center; padding: 20px; background: #110000; border-radius: 15px; border: 2px solid var(--red-emp); margin: 20px 0; color: var(--gold-light); text-shadow: 0 0 15px rgba(220, 38, 38, 0.6); }
+    .final-vip { font-family: 'Orbitron', sans-serif; font-size: 1.5rem; font-weight: 900; text-align: center; padding: 20px; background: #0a0a0a; border-radius: 15px; border: 2px solid var(--gold-mid); margin: 20px 0; color: var(--gold-light); text-shadow: 0 0 15px rgba(212, 175, 55, 0.6); }
     
     #game-overlay { display: none; position: fixed; inset: 0; z-index: 2000; background: #000; animation: popIn 0.3s; }
     @keyframes popIn { 0% { opacity: 0; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1); } }
     #game-frame { width: 100%; height: 100%; border: none; }
-    .close-game-btn { position: absolute; top: 40px; left: 15px; background: #110000; color: var(--red-emp); border: 2px solid var(--red-emp); padding: 10px 20px; border-radius: 12px; font-weight: 900; z-index: 2005; cursor:pointer; font-family: 'Orbitron'; box-shadow: 0 0 15px rgba(220,38,38,0.4);}
+    .close-game-btn { position: absolute; top: 40px; left: 15px; background: #110000; color: var(--red-vip); border: 2px solid var(--red-vip); padding: 10px 20px; border-radius: 12px; font-weight: 900; z-index: 2005; cursor:pointer; font-family: 'Orbitron'; box-shadow: 0 0 15px rgba(255,42,42,0.4);}
     .drag-handle { width: 100%; text-align: center; color: var(--gold-dark); font-size: 20px; padding-bottom: 8px; cursor: grab; border-bottom: 1px solid rgba(212, 175, 55, 0.2); margin-bottom: 10px;}
     
     #bridge-detect-panel { position: absolute; top: 40px; right: 15px; width: 170px; background: var(--bg-glass); border: 2px solid var(--gold-mid); border-radius: 16px; padding: 15px; z-index: 2001; box-shadow: 0 10px 40px rgba(0,0,0,0.9);}
@@ -50,7 +50,7 @@
     
     #big-center-panel { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 420px; background: var(--bg-glass); border: 2px solid var(--gold-mid); border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.9); padding: 35px 25px; z-index: 2002; flex-direction: column; align-items: center;}
     .txbig { font-family: 'Playfair Display', serif; font-weight: 900; text-align: center; margin: 20px 0; text-transform: uppercase; }
-    .txtai { color: var(--red-emp); text-shadow: 0 0 25px rgba(220, 38, 38, 0.6); }
+    .txtai { color: var(--red-vip); text-shadow: 0 0 25px rgba(255, 42, 42, 0.6); }
     .txxiu { color: #00e5ff; text-shadow: 0 0 25px rgba(0, 229, 255, 0.6); }
     .glow-text { animation: pulse 1.5s infinite alternate; }
     @keyframes pulse { 0% { opacity: 0.6; } 100% { opacity: 1; text-shadow: 0 0 25px rgba(212, 175, 55, 0.8); } }
@@ -65,15 +65,15 @@
 <div id="login-screen">
   <div class="login-box glass-panel">
     <h2>HƯNG DZKK</h2>
-    <p style="color: #888; margin-bottom: 25px; font-weight: 800; letter-spacing: 2px;">EMPEROR ROOT ACCESS</p>
+    <p style="color: #888; margin-bottom: 25px; font-weight: 800; letter-spacing: 2px;">VIP MAX ROOT ACCESS</p>
     <input type="password" id="login-key" class="input-box" placeholder="ENTER VIP KEY...">
     <button class="btn-gold" onclick="submitLogin()"><i class="fas fa-fingerprint"></i> UNLOCK SYSTEM</button>
-    <div id="login-msg" style="color: var(--red-emp); margin-top: 15px; font-size: 13px; font-weight: bold; text-transform:uppercase;"></div>
+    <div id="login-msg" style="color: var(--red-vip); margin-top: 15px; font-size: 13px; font-weight: bold; text-transform:uppercase;"></div>
   </div>
 </div>
 
 <div id="game-overlay">
-  <div style="width: 100%; background: #000; color: var(--gold-mid); font-family: 'Orbitron'; font-size: 11px; padding: 8px; border-bottom: 1px solid var(--gold-dark); display: flex; letter-spacing: 2px;"><marquee scrollamount="6">V99 EMPEROR EDITION | OMNIVERSE ALGORITHM ACTIVE | BYPASSING FIREWALL...</marquee></div>
+  <div style="width: 100%; background: #000; color: var(--gold-mid); font-family: 'Orbitron'; font-size: 11px; padding: 8px; border-bottom: 1px solid var(--gold-dark); display: flex; letter-spacing: 2px;"><marquee scrollamount="6">V99 VIP MAX 1000+ ALGORITHMS ACTIVE | BYPASSING FIREWALL | ANALYZING DATA...</marquee></div>
   <button class="close-game-btn" onclick="closeGame()"><i class="fas fa-power-off"></i></button>
   <iframe id="game-frame" src=""></iframe>
   
@@ -81,16 +81,16 @@
     <div id="bridge-detect-panel-header" class="drag-handle"><i class="fas fa-grip-lines"></i></div>
     <div style="text-align:center;"><img class="robo-img" src="https://i.postimg.cc/wMdhjZFJ/1773446152525.png"></div>
     <div style="font-size:12px;color:var(--gold-mid);font-weight:bold;text-align:center;font-family:'Orbitron';" id="auto-advice">BOOTING...</div>
-    <div style="text-align:center; font-family:'Orbitron'; color:#aaa; font-size:10px; margin-top:8px;">ID: <span id="auto-phien" style="color:#fff;">...</span></div>
+    <div style="text-align:center; font-family:'Orbitron'; color:#aaa; font-size:10px; margin-top:8px;">PHIÊN: <span id="auto-phien" style="color:#fff;">...</span></div>
     <div class="txbig" id="auto-big" style="font-size: 36px; font-family: 'Orbitron';">...</div>
     <div class="progress-bar-bg" style="height:8px;"><div class="progress-fill" id="auto-bar"></div></div>
     <div style="text-align:center; font-size:12px; color:var(--gold-light); font-weight:bold; font-family:'Orbitron';" id="auto-pct">0%</div>
   </div>
   
   <div id="big-center-panel">
-    <h2 style="color: var(--gold-mid); font-family: 'Orbitron'; font-size: 2rem; margin-bottom: 15px; letter-spacing: 3px; text-shadow: 0 0 20px rgba(212,175,55,0.6);"><i class="fas fa-crown"></i> EMPEROR VIP</h2>
-    <div style="color:#aaa; font-weight:700; font-size: 13px; text-align:center; margin-bottom: 20px; letter-spacing: 2px;" id="big-advice">CONNECTING CORE...</div>
-    <div style="text-align:center; font-family:'Orbitron'; color:var(--gold-light); font-size:14px; background: #000; padding: 10px 25px; border-radius: 12px; border: 1px solid var(--gold-dark);">MATCH: <span id="big-phien" style="color:#fff;">...</span></div>
+    <h2 style="color: var(--gold-mid); font-family: 'Orbitron'; font-size: 2rem; margin-bottom: 15px; letter-spacing: 3px; text-shadow: 0 0 20px rgba(212,175,55,0.6);"><i class="fas fa-crown"></i> VIP MAX 1000+</h2>
+    <div style="color:#aaa; font-weight:700; font-size: 13px; text-align:center; margin-bottom: 20px; letter-spacing: 2px;" id="big-advice">CONNECTING NEURAL NET...</div>
+    <div style="text-align:center; font-family:'Orbitron'; color:var(--gold-light); font-size:14px; background: #000; padding: 10px 25px; border-radius: 12px; border: 1px solid var(--gold-dark);">MÃ PHIÊN CHUẨN: <span id="big-phien" style="color:#fff;">...</span></div>
     <div class="txbig" id="big-result" style="font-size: 75px;">...</div>
     <div style="width: 100%; margin-top: 15px;">
       <div style="display: flex; justify-content: space-between; font-family: 'Orbitron'; font-size: 12px; color: #aaa; margin-bottom: 8px; font-weight:bold;"><span>PROBABILITY</span><span id="big-pct-text" style="color: var(--gold-mid);">0%</span></div>
@@ -102,19 +102,19 @@
 <div class="container" id="main-tool" style="display:none;">
   <div class="header glass-panel">
     <h1>HƯNG DZKK</h1>
-    <div style="color:var(--gold-mid); font-size:1rem; font-weight:800; letter-spacing: 4px; margin-bottom: 12px; font-family: 'Orbitron';">EMPEROR OMNIVERSE</div>
-    <div class="badge"><i class="fas fa-bolt"></i> ULTIMATE GOD MODE</div>
+    <div style="color:var(--gold-mid); font-size:1rem; font-weight:800; letter-spacing: 4px; margin-bottom: 12px; font-family: 'Orbitron';">VIP MAX 1000+</div>
+    <div class="badge"><i class="fas fa-bolt"></i> ULTIMATE EXCLUSIVE</div>
   </div>
 
   <div class="vip-menu glass-panel">
-    <div class="menu-item active" data-menu="manual"><i class="fas fa-microchip"></i> MANUAL</div>
-    <div class="menu-item" data-menu="auto"><i class="fas fa-satellite-dish"></i> AUTO SÀN</div>
+    <div class="menu-item active" data-menu="manual"><i class="fas fa-microchip"></i> MANUAL MD5</div>
+    <div class="menu-item" data-menu="auto"><i class="fas fa-satellite-dish"></i> AUTO 5 CỔNG</div>
   </div>
 
   <div id="menu-manual-panel" class="menu-content-panel active-panel">
     <div class="card glass-panel">
-      <input type="text" id="md5-input" class="input-box" placeholder="Insert 32-char MD5 Hash..." maxlength="32">
-      <button id="predict-btn" class="btn-gold"><i class="fas fa-gem"></i> OMNIVERSE ANALYZE</button>
+      <input type="text" id="md5-input" class="input-box" placeholder="Nhập MD5 32 ký tự hex..." maxlength="32">
+      <button id="predict-btn" class="btn-gold"><i class="fas fa-gem"></i> CHẠY 1000 THUẬT TOÁN</button>
     </div>
     <div id="results-section" style="display:none;">
       <div id="loading-card" class="card glass-panel" style="display:none; text-align:center; padding:40px;">
@@ -122,7 +122,7 @@
         <p style="color:#aaa; font-size:1rem; font-weight:800; letter-spacing: 2px; font-family: 'Orbitron';">QUANTUM CALCULATING...</p>
       </div>
       <div id="results-content" style="display:none;">
-        <div class="result-item"><div style="font-size:1.2rem;font-weight:900;color:var(--red-emp);letter-spacing:1px;font-family:'Orbitron';">📈 OVER (TÀI)</div><div class="big-percent" id="tai-value">50.0%</div><div class="progress-bar-bg"><div class="progress-fill" id="tai-bar" style="width:50%; background: linear-gradient(90deg, #8b0000, var(--red-emp));"></div></div></div>
+        <div class="result-item"><div style="font-size:1.2rem;font-weight:900;color:var(--red-vip);letter-spacing:1px;font-family:'Orbitron';">📈 OVER (TÀI)</div><div class="big-percent" id="tai-value">50.0%</div><div class="progress-bar-bg"><div class="progress-fill" id="tai-bar" style="width:50%; background: linear-gradient(90deg, #8b0000, var(--red-vip));"></div></div></div>
         <div class="result-item"><div style="font-size:1.2rem;font-weight:900;color:#00e5ff;letter-spacing:1px;font-family:'Orbitron';">📉 UNDER (XỈU)</div><div class="big-percent" id="xiu-value">50.0%</div><div class="progress-bar-bg"><div class="progress-fill" id="xiu-bar" style="width:50%; background: linear-gradient(90deg, #0088ff, #00e5ff);"></div></div></div>
         <div class="final-vip" id="final-result">🔮 PREDICTING</div>
       </div>
@@ -130,28 +130,24 @@
   </div>
 
   <div id="menu-auto-panel" class="menu-content-panel">
-    <div id="admin-panel" class="card glass-panel" style="display: none; border-color: var(--red-emp); box-shadow: 0 0 20px rgba(220,38,38,0.2);">
-      <div style="color: var(--red-emp); font-size:1.2rem; font-weight:900; margin-bottom: 15px; text-align:center; letter-spacing:2px; font-family:'Orbitron';"><i class="fas fa-terminal"></i> EMPEROR ROOT</div>
+    <div id="admin-panel" class="card glass-panel" style="display: none; border-color: var(--red-vip); box-shadow: 0 0 20px rgba(255,42,42,0.2);">
+      <div style="color: var(--red-vip); font-size:1.2rem; font-weight:900; margin-bottom: 15px; text-align:center; letter-spacing:2px; font-family:'Orbitron';"><i class="fas fa-terminal"></i> ADMIN ROOT</div>
       <input type="text" id="target-key" class="input-box" placeholder="Target Key..." style="padding:12px; margin-bottom:12px;">
       <div class="grid-2">
-        <button class="btn-gold" style="background:linear-gradient(135deg, #8b0000, #dc2626); color:#fff; font-size:1rem;" onclick="adminAction('lock')">EXECUTE (LOCK)</button>
-        <button class="btn-gold" style="background:#111; color:var(--gold-mid); border: 1px solid var(--gold-mid); font-size:1rem; box-shadow:none;" onclick="adminAction('unlock')">PARDON (UNLOCK)</button>
+        <button class="btn-gold" style="background:linear-gradient(135deg, #8b0000, var(--red-vip)); color:#fff; font-size:1rem;" onclick="adminAction('lock')">LOCK KEY</button>
+        <button class="btn-gold" style="background:#111; color:var(--gold-mid); border: 1px solid var(--gold-mid); font-size:1rem; box-shadow:none;" onclick="adminAction('unlock')">UNLOCK KEY</button>
       </div>
       <div id="admin-msg" style="color: #aaa; text-align: center; font-size: 12px; margin-top: 10px; font-family:'Orbitron';"></div>
     </div>
 
-    <div class="card glass-panel"><div style="color:var(--gold-mid); font-weight:900; margin-bottom:12px; font-size:1rem; letter-spacing:1px; font-family:'Orbitron';"><i class="fas fa-bomb"></i> B52 SYSTEM</div><div class="grid-2"><button class="btn-gold" onclick="startAutoAPI('b52_md5', '')" style="font-size:0.8rem; background:linear-gradient(135deg, #8b0000, #dc2626); color:#fff;">MD5 B52</button><button class="btn-gold" onclick="startAutoAPI('b52_sicbo', '')" style="font-size:0.8rem; background:#111; color:var(--gold-mid); border:1px solid var(--gold-mid); box-shadow:none;">SICBO B52</button></div></div>
-    <div class="card glass-panel"><div style="color:var(--gold-mid); font-weight:900; margin-bottom:12px; font-size:1rem; letter-spacing:1px; font-family:'Orbitron';"><i class="fas fa-meteor"></i> HIT.CLUB SYSTEM</div><div class="grid-2"><button class="btn-gold" onclick="startAutoAPI('hitclub_md5', '')" style="font-size:0.8rem; background:linear-gradient(135deg, #8b0000, #dc2626); color:#fff;">MD5 HITCLUB</button><button class="btn-gold" onclick="startAutoAPI('hitclub_tx', '')" style="font-size:0.8rem; background:#111; color:var(--gold-mid); border:1px solid var(--gold-mid); box-shadow:none;">TX HITCLUB</button></div></div>
-    <div class="card glass-panel"><div style="color:var(--red-emp); font-weight:900; margin-bottom:12px; font-size:1rem; letter-spacing:1px; font-family:'Orbitron';"><i class="fas fa-crown"></i> SUN.WIN SYSTEM</div><div class="grid-2"><button class="btn-gold" onclick="startAutoAPI('sunwin_tx', '')" style="font-size:0.8rem; background:linear-gradient(135deg, #8b0000, #dc2626); color:#fff;">TX SUNWIN</button><button class="btn-gold" onclick="startAutoAPI('sunwin_sicbo', '')" style="font-size:0.8rem; background:#111; color:var(--red-emp); border:1px solid var(--red-emp); box-shadow:none;">SICBO SUNWIN</button></div></div>
-    <div class="card glass-panel"><div style="color:#00e5ff; font-weight:900; margin-bottom:12px; font-size:1rem; letter-spacing:1px; font-family:'Orbitron';"><i class="fas fa-gem"></i> BETVIP SYSTEM</div><div class="grid-2"><button class="btn-gold" onclick="startAutoAPI('betvip_md5', 'https://play.betvip.fit/')" style="font-size:0.8rem; background:linear-gradient(135deg, #0088ff, #00e5ff); color:#000;">MD5 BETVIP</button><button class="btn-gold" onclick="startAutoAPI('betvip_tx', 'https://play.betvip.fit/')" style="font-size:0.8rem; background:#111; color:#00e5ff; border:1px solid #00e5ff; box-shadow:none;">TX BETVIP</button></div></div>
-    <div class="card glass-panel"><div style="color:#fff; font-weight:900; margin-bottom:12px; font-size:1rem; letter-spacing:1px; font-family:'Orbitron';"><i class="fas fa-globe"></i> LC79.BET SYSTEM</div><div class="grid-2"><button class="btn-gold" onclick="startAutoAPI('lc79_md5', 'https://lc79.bet')" style="font-size:0.8rem; background:#111; color:var(--gold-mid); border:1px solid var(--gold-mid); box-shadow:none;">MD5 LC79</button><button class="btn-gold" onclick="startAutoAPI('lc79_tx', 'https://lc79.bet')" style="font-size:0.8rem;">TX LC79</button></div><button class="btn-gold" style="background:linear-gradient(135deg, #8b0000, #dc2626); color:#fff; margin-top:10px;" onclick="startAutoAPI('lc79_xd', 'https://lc79.bet')">XÓC ĐĨA LC79</button></div>
-    <div class="card glass-panel"><div style="color:#ff00ff; font-weight:900; margin-bottom:12px; font-size:1rem; letter-spacing:1px; font-family:'Orbitron';"><i class="fas fa-star"></i> SAO789 SYSTEM</div><div class="grid-2"><button class="btn-gold" onclick="startAutoAPI('sao789_md5', '')" style="font-size:0.8rem; background:linear-gradient(135deg, #cc00cc, #ff00ff); color:#fff;">MD5 SAO789</button><button class="btn-gold" onclick="startAutoAPI('sao789_tx', '')" style="font-size:0.8rem; background:#111; color:#ff00ff; border:1px solid #ff00ff; box-shadow:none;">TX SAO789</button></div></div>
-    <div class="card glass-panel"><div style="color:#00ff00; font-weight:900; margin-bottom:12px; font-size:1rem; letter-spacing:1px; font-family:'Orbitron';"><i class="fas fa-bolt"></i> XD88 SYSTEM</div><div class="grid-2"><button class="btn-gold" onclick="startAutoAPI('xd88_md5', '')" style="font-size:0.8rem; background:linear-gradient(135deg, #009900, #00ff00); color:#000;">MD5 XD88</button><button class="btn-gold" onclick="startAutoAPI('xd88_tx', '')" style="font-size:0.8rem; background:#111; color:#00ff00; border:1px solid #00ff00; box-shadow:none;">TX XD88</button></div></div>
+    <div class="card glass-panel"><div style="color:#00e5ff; font-weight:900; margin-bottom:12px; font-size:1.1rem; letter-spacing:1px; font-family:'Orbitron';"><i class="fas fa-gem"></i> HỆ THỐNG BETVIP</div><div class="grid-2"><button class="btn-gold" onclick="startAutoAPI('betvip_tx', 'https://play.betvip.fit/')" style="font-size:0.9rem; background:#111; color:#00e5ff; border:1px solid #00e5ff; box-shadow:none;">TX THƯỜNG</button><button class="btn-gold" onclick="startAutoAPI('betvip_md5', 'https://play.betvip.fit/')" style="font-size:0.9rem; background:linear-gradient(135deg, #0088ff, #00e5ff); color:#000;">TÀI XỈU MD5</button></div></div>
+    
+    <div class="card glass-panel"><div style="color:#fff; font-weight:900; margin-bottom:12px; font-size:1.1rem; letter-spacing:1px; font-family:'Orbitron';"><i class="fas fa-globe"></i> HỆ THỐNG LC79.BET</div><div class="grid-2"><button class="btn-gold" onclick="startAutoAPI('lc79_tx', 'https://lc79.bet')" style="font-size:0.9rem; background:#111; color:var(--gold-mid); border:1px solid var(--gold-mid); box-shadow:none;">TX THƯỜNG</button><button class="btn-gold" onclick="startAutoAPI('lc79_md5', 'https://lc79.bet')" style="font-size:0.9rem;">TÀI XỈU MD5</button></div><button class="btn-gold" style="background:linear-gradient(135deg, #8b0000, var(--red-vip)); color:#fff; margin-top:12px;" onclick="startAutoAPI('lc79_xd', 'https://lc79.bet')">XÓC ĐĨA LC79</button></div>
   </div>
-      </div>
-  <script>
+</div>
+<script>
 const canvas = document.getElementById('particles'); const ctx = canvas.getContext('2d'); canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-let particles = []; class Particle { constructor() { this.reset(); } reset() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.size = Math.random() * 2 + 0.5; this.speed = Math.random() * 1.5 + 0.5; } update() { this.y -= this.speed; if (this.y < 0) this.reset(); } draw() { ctx.fillStyle = `rgba(212, 175, 55, 0.4)`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); } }
+let particles = []; class Particle { constructor() { this.reset(); } reset() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.size = Math.random() * 2 + 0.5; this.speed = Math.random() * 1.5 + 0.5; } update() { this.y -= this.speed; if (this.y < 0) this.reset(); } draw() { ctx.fillStyle = `rgba(212, 175, 55, 0.5)`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); } }
 for(let i=0;i<60;i++) particles.push(new Particle()); function animateParticles() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animateParticles); } window.addEventListener('resize', ()=>{ canvas.width = window.innerWidth; canvas.height = window.innerHeight; }); animateParticles();
 
 let currentUserKey = "";
@@ -203,8 +199,8 @@ document.getElementById('predict-btn').addEventListener('click', async () => {
               document.getElementById('tai-bar').style.width = data.tai + '%'; document.getElementById('xiu-bar').style.width = data.xiu + '%';
               let isTai = data.suggestion.includes("TÀI");
               let finalRes = document.getElementById('final-result'); finalRes.textContent = `[ ${data.suggestion} ]`; 
-              finalRes.style.color = isTai ? 'var(--red-emp)' : '#00e5ff'; finalRes.style.borderColor = isTai ? 'var(--red-emp)' : '#00e5ff';
-          }, 1800); 
+              finalRes.style.color = isTai ? 'var(--red-vip)' : '#00e5ff'; finalRes.style.borderColor = isTai ? 'var(--red-vip)' : '#00e5ff';
+          }, 1500); 
       }
   } catch(e) { alert("Server Error!"); }
 });
@@ -231,18 +227,18 @@ async function loopAuto() {
         if(res && res.phien !== phienCu) {
             isAnalyzing = true; phienCu = res.phien;
             let isTai = res.du_doan.includes("TÀI") || res.du_doan.includes("CHẴN"); 
-            let colorClass = isTai ? "txtai" : "txxiu"; let colorHex = isTai ? "#dc2626" : "#00e5ff";
+            let colorClass = isTai ? "txtai" : "txxiu"; let colorHex = isTai ? "#ff2a2a" : "#00e5ff";
             
             document.getElementById('auto-phien').innerText = res.phien; document.getElementById('big-phien').innerText = res.phien;
             
-            let countdown = 20;
-            document.getElementById('auto-big').innerText = "WAIT"; document.getElementById('big-result').innerText = "ANALYZING..."; document.getElementById('big-result').className = "txbig glow-text";
+            let countdown = 15; // 15 GIÂY ĐẾM NGƯỢC RẤT HỒI HỘP
+            document.getElementById('auto-big').innerText = "WAIT"; document.getElementById('big-result').innerText = "RUNNING..."; document.getElementById('big-result').className = "txbig glow-text";
             document.getElementById('auto-bar').style.width = "0%"; document.getElementById('big-bar').style.width = "0%";
             document.getElementById('auto-pct').innerText = "0%"; document.getElementById('big-pct-text').innerText = "0%";
 
             let timerInterval = setInterval(() => {
-                document.getElementById('auto-advice').innerText = `OMNIVERSE ENGINE: ${countdown}s`;
-                document.getElementById('big-advice').innerText = `MONTE CARLO SIMULATION: ${countdown}s...`;
+                document.getElementById('auto-advice').innerText = `CALCULATING: ${countdown}s`;
+                document.getElementById('big-advice').innerText = `1000+ NEURAL LAYERS: ${countdown}s...`;
                 countdown--;
                 if (countdown < 0) {
                     clearInterval(timerInterval);
@@ -261,15 +257,9 @@ async function loopAuto() {
 
 function startAutoAPI(tool, url) {
     document.getElementById('game-overlay').style.display = "block"; clearInterval(autoInterval); phienCu = ""; activeGame = tool; clearUI(); isAnalyzing = false;
-    if(url === "") {
-        document.getElementById('game-frame').style.display = "none"; document.getElementById('game-frame').src = "";
-        document.getElementById('game-overlay').style.background = "radial-gradient(circle, #1a0505 0%, #000 100%)";
-        document.getElementById('bridge-detect-panel').style.display = "none"; document.getElementById('big-center-panel').style.display = "flex";
-    } else {
-        document.getElementById('game-frame').style.display = "block"; document.getElementById('game-frame').src = url;
-        document.getElementById('game-overlay').style.background = "#000";
-        document.getElementById('bridge-detect-panel').style.display = "block"; document.getElementById('big-center-panel').style.display = "none";
-    }
+    document.getElementById('game-frame').style.display = "block"; document.getElementById('game-frame').src = url;
+    document.getElementById('game-overlay').style.background = "#000";
+    document.getElementById('bridge-detect-panel').style.display = "block"; document.getElementById('big-center-panel').style.display = "none";
     loopAuto(); autoInterval = setInterval(loopAuto, 2000); 
 }
 function closeGame() { clearInterval(autoInterval); isAnalyzing = false; document.getElementById('game-overlay').style.display = 'none'; document.getElementById('game-frame').src = ''; }
