@@ -68,3 +68,76 @@
 </head>
 <body>
 <canvas id="particles"></canvas>
+<div id="login-screen">
+  <div class="login-box glass-panel">
+    <h2>HƯNG DZKK</h2>
+    <p style="color: #aaa; margin-bottom: 25px; font-weight: 800; letter-spacing: 2px;">VIP MAX ROOT ACCESS</p>
+    <input type="password" id="login-key" class="input-box" placeholder="ENTER VIP KEY...">
+    <button class="btn-gold" onclick="submitLogin()"><i class="fas fa-fingerprint"></i> UNLOCK SYSTEM</button>
+    <div id="login-msg" style="color: var(--red-vip); margin-top: 15px; font-size: 13px; font-weight: bold; text-transform:uppercase;"></div>
+  </div>
+</div>
+
+<div id="game-overlay">
+  <div style="width: 100%; background: #000; color: var(--gold-mid); font-family: 'Orbitron'; font-size: 11px; padding: 8px; border-bottom: 1px solid var(--red-vip); display: flex; letter-spacing: 2px;"><marquee scrollamount="6">V99 VIP MAX HYBRID AI | 10.000 EPOCHS MARKOV CHAIN ACTIVE | BYPASSING...</marquee></div>
+  <button class="close-game-btn" onclick="closeGame()"><i class="fas fa-power-off"></i></button>
+  <iframe id="game-frame" src=""></iframe>
+  
+  <div id="robotContainer" style="display:none;">
+    <div class="robotIconWrapper">
+      <img id="robotIcon" src="https://i.imgur.com/MZr9Fr2.png" alt="Robot" draggable="false">
+      <div id="closeBtn" onclick="document.getElementById('robotContainer').style.display='none';">×</div>
+    </div>
+    <div id="robotText">
+      <div id="line1">BOOTING...</div>
+      <div id="line2">Kết nối hệ thống</div>
+    </div>
+  </div>
+</div>
+
+<div class="container" id="main-tool" style="display:none;">
+  <div class="header glass-panel">
+    <h1>HƯNG DZKK</h1>
+    <div style="color:var(--gold-mid); font-size:1rem; font-weight:800; letter-spacing: 4px; margin-bottom: 12px; font-family: 'Orbitron';">VIP MAX FULL MÚP</div>
+    <div class="badge"><i class="fas fa-bolt"></i> 10.000 NEURAL LAYERS</div>
+  </div>
+
+  <div class="vip-menu glass-panel">
+    <div class="menu-item active" data-menu="manual"><i class="fas fa-microchip"></i> MANUAL MD5</div>
+    <div class="menu-item" data-menu="auto"><i class="fas fa-satellite-dish"></i> AUTO BETVIP & LC79</div>
+  </div>
+
+  <div id="menu-manual-panel" class="menu-content-panel active-panel">
+    <div class="card glass-panel">
+      <input type="text" id="md5-input" class="input-box" placeholder="Nhập MD5 32 ký tự hex..." maxlength="32">
+      <button id="predict-btn" class="btn-gold"><i class="fas fa-gem"></i> KÍCH HOẠT LÕI AI</button>
+    </div>
+    <div id="results-section" style="display:none;">
+      <div id="loading-card" class="card glass-panel" style="display:none; text-align:center; padding:40px;">
+        <i class="fas fa-dharmachakra fa-spin" style="font-size: 50px; color: var(--gold-mid); margin-bottom: 15px; text-shadow: 0 0 20px var(--gold-mid);"></i>
+        <p style="color:#aaa; font-size:1rem; font-weight:800; letter-spacing: 2px; font-family: 'Orbitron';">QUANTUM CALCULATING...</p>
+      </div>
+      <div id="results-content" style="display:none;">
+        <div class="result-item"><div style="font-size:1.2rem;font-weight:900;color:var(--red-vip);letter-spacing:1px;font-family:'Orbitron';">📈 OVER (TÀI)</div><div class="big-percent" id="tai-value">50.0%</div><div class="progress-bar-bg"><div class="progress-fill" id="tai-bar" style="width:50%; background: linear-gradient(90deg, #aa0000, var(--red-vip));"></div></div></div>
+        <div class="result-item"><div style="font-size:1.2rem;font-weight:900;color:#00e5ff;letter-spacing:1px;font-family:'Orbitron';">📉 UNDER (XỈU)</div><div class="big-percent" id="xiu-value">50.0%</div><div class="progress-bar-bg"><div class="progress-fill" id="xiu-bar" style="width:50%; background: linear-gradient(90deg, #0088ff, #00e5ff);"></div></div></div>
+        <div class="final-vip" id="final-result">🔮 PREDICTING</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="menu-auto-panel" class="menu-content-panel">
+    <div id="admin-panel" class="card glass-panel" style="display: none; border-color: var(--red-vip); box-shadow: 0 0 20px rgba(255,0,0,0.3);">
+      <div style="color: var(--red-vip); font-size:1.2rem; font-weight:900; margin-bottom: 15px; text-align:center; letter-spacing:2px; font-family:'Orbitron';"><i class="fas fa-terminal"></i> ADMIN ROOT</div>
+      <input type="text" id="target-key" class="input-box" placeholder="Target Key..." style="padding:12px; margin-bottom:12px;">
+      <div class="grid-2">
+        <button class="btn-gold" style="background:linear-gradient(135deg, #aa0000, var(--red-vip)); color:#fff; font-size:1rem;" onclick="adminAction('lock')">LOCK KEY</button>
+        <button class="btn-gold" style="background:#111; color:var(--gold-mid); border: 1px solid var(--gold-mid); font-size:1rem; box-shadow:none;" onclick="adminAction('unlock')">UNLOCK KEY</button>
+      </div>
+      <div id="admin-msg" style="color: #aaa; text-align: center; font-size: 12px; margin-top: 10px; font-family:'Orbitron';"></div>
+    </div>
+
+    <div class="card glass-panel"><div style="color:#00e5ff; font-weight:900; margin-bottom:12px; font-size:1.1rem; letter-spacing:1px; font-family:'Orbitron';"><i class="fas fa-gem"></i> HỆ THỐNG BETVIP</div><div class="grid-2"><button class="btn-gold" onclick="startAutoAPI('betvip_tx', 'https://play.betvip.fit/')" style="font-size:0.9rem; background:#111; color:#00e5ff; border:1px solid #00e5ff; box-shadow:none;">TX THƯỜNG</button><button class="btn-gold" onclick="startAutoAPI('betvip_md5', 'https://play.betvip.fit/')" style="font-size:0.9rem; background:linear-gradient(135deg, #0088ff, #00e5ff); color:#000;">TÀI XỈU MD5</button></div></div>
+    
+    <div class="card glass-panel"><div style="color:#fff; font-weight:900; margin-bottom:12px; font-size:1.1rem; letter-spacing:1px; font-family:'Orbitron';"><i class="fas fa-globe"></i> HỆ THỐNG LC79.BET</div><div class="grid-2"><button class="btn-gold" onclick="startAutoAPI('lc79_tx', 'https://lc79.bet')" style="font-size:0.9rem; background:#111; color:var(--gold-mid); border:1px solid var(--gold-mid); box-shadow:none;">TX THƯỜNG</button><button class="btn-gold" onclick="startAutoAPI('lc79_md5', 'https://lc79.bet')" style="font-size:0.9rem;">TÀI XỈU MD5</button></div><button class="btn-gold" style="background:linear-gradient(135deg, #aa0000, var(--red-vip)); color:#fff; margin-top:12px;" onclick="startAutoAPI('lc79_xd', 'https://lc79.bet')">XÓC ĐĨA LC79</button></div>
+  </div>
+</div>
