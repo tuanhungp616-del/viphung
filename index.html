@@ -141,3 +141,125 @@
     <div class="card glass-panel"><div style="color:#fff; font-weight:900; margin-bottom:12px; font-size:1.1rem; letter-spacing:1px; font-family:'Orbitron';"><i class="fas fa-globe"></i> HỆ THỐNG LC79.BET</div><div class="grid-2"><button class="btn-gold" onclick="startAutoAPI('lc79_tx', 'https://lc79.bet')" style="font-size:0.9rem; background:#111; color:var(--gold-mid); border:1px solid var(--gold-mid); box-shadow:none;">TX THƯỜNG</button><button class="btn-gold" onclick="startAutoAPI('lc79_md5', 'https://lc79.bet')" style="font-size:0.9rem;">TÀI XỈU MD5</button></div><button class="btn-gold" style="background:linear-gradient(135deg, #aa0000, var(--red-vip)); color:#fff; margin-top:12px;" onclick="startAutoAPI('lc79_xd', 'https://lc79.bet')">XÓC ĐĨA LC79</button></div>
   </div>
 </div>
+<script>
+const canvas = document.getElementById('particles'); const ctx = canvas.getContext('2d'); canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+let particles = []; class Particle { constructor() { this.reset(); } reset() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.size = Math.random() * 2 + 0.5; this.speed = Math.random() * 1.5 + 0.5; } update() { this.y -= this.speed; if (this.y < 0) this.reset(); } draw() { ctx.fillStyle = `rgba(255, 0, 0, 0.4)`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); } }
+for(let i=0;i<60;i++) particles.push(new Particle()); function animateParticles() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animateParticles); } window.addEventListener('resize', ()=>{ canvas.width = window.innerWidth; canvas.height = window.innerHeight; }); animateParticles();
+
+// KÉO THẢ ROBOT
+const robot = document.getElementById("robotContainer");
+let drag = false, offsetX = 0, offsetY = 0;
+const startDrag = (clientX, clientY) => { drag = true; offsetX = clientX - robot.offsetLeft; offsetY = clientY - robot.offsetTop; robot.style.transition = 'none'; };
+const doDrag = (clientX, clientY) => { if(drag) { let l = clientX - offsetX, t = clientY - offsetY; l = Math.max(0, Math.min(l, window.innerWidth - robot.offsetWidth)); t = Math.max(0, Math.min(t, window.innerHeight - robot.offsetHeight)); robot.style.left = l + "px"; robot.style.top = t + "px"; } };
+const endDrag = () => { drag = false; robot.style.transition = 'box-shadow 0.3s ease'; };
+
+robot.addEventListener("mousedown", e => startDrag(e.clientX, e.clientY));
+document.addEventListener("mousemove", e => doDrag(e.clientX, e.clientY));
+document.addEventListener("mouseup", endDrag);
+robot.addEventListener("touchstart", e => startDrag(e.touches[0].clientX, e.touches[0].clientY));
+document.addEventListener("touchmove", e => doDrag(e.touches[0].clientX, e.touches[0].clientY));
+document.addEventListener("touchend", endDrag);
+
+let currentUserKey = "";
+async function submitLogin() {
+    let keyInput = document.getElementById('login-key').value.trim();
+    let msgEl = document.getElementById('login-msg');
+    msgEl.innerText = "AUTHENTICATING...";
+    try {
+        let res = await fetch('/api/login', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({key: keyInput}) });
+        let data = await res.json();
+        if(data.status === "success") {
+            currentUserKey = keyInput;
+            document.getElementById('login-screen').style.display = "none";
+            document.getElementById('main-tool').style.display = "block";
+            if(data.role === "admin") document.getElementById('admin-panel').style.display = "block";
+        } else { msgEl.innerText = data.msg; }
+    } catch(e) { msgEl.innerText = "SERVER CONNECTION FAILED!"; }
+}
+
+async function adminAction(actionType) {
+    let target = document.getElementById('target-key').value.trim();
+    let msgBox = document.getElementById('admin-msg');
+    if(!target) return msgBox.innerText = "TARGET KEY REQUIRED!";
+    try {
+        let res = await fetch('/api/admin', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({admin_key: currentUserKey, target_key: target, action: actionType}) });
+        let data = await res.json(); msgBox.innerText = data.msg;
+    } catch(e) { msgBox.innerText = "SERVER ERROR!"; }
+}
+
+document.querySelectorAll('.menu-item').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active')); item.classList.add('active');
+    document.querySelectorAll('.menu-content-panel').forEach(p => p.classList.remove('active-panel'));
+    document.getElementById(`menu-${item.dataset.menu}-panel`).classList.add('active-panel');
+  });
+});
+
+document.getElementById('predict-btn').addEventListener('click', async () => {
+  let val = document.getElementById('md5-input').value.trim();
+  if(!/^[0-9a-f]{32}$/i.test(val)) return alert("MD5 ERROR!");
+  document.getElementById('results-section').style.display = 'block'; document.getElementById('loading-card').style.display = 'block'; document.getElementById('results-content').style.display = 'none';
+  try {
+      let res = await fetch('/api/manual_md5', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({md5: val}) });
+      let data = await res.json();
+      if(data.status === "success") {
+          setTimeout(() => {
+              document.getElementById('loading-card').style.display = 'none'; document.getElementById('results-content').style.display = 'block';
+              document.getElementById('tai-value').textContent = data.tai + '%'; document.getElementById('xiu-value').textContent = data.xiu + '%';
+              document.getElementById('tai-bar').style.width = data.tai + '%'; document.getElementById('xiu-bar').style.width = data.xiu + '%';
+              let isTai = data.suggestion.includes("TÀI");
+              let finalRes = document.getElementById('final-result'); finalRes.textContent = `[ ${data.suggestion} ]`; 
+              finalRes.style.color = isTai ? 'var(--red-vip)' : '#00e5ff'; finalRes.style.borderColor = isTai ? 'var(--red-vip)' : '#00e5ff';
+          }, 1500); 
+      }
+  } catch(e) { alert("Server Error!"); }
+});
+
+let autoInterval, activeGame = "", phienCu = "", isAnalyzing = false;
+
+async function loopAuto() {
+    if (isAnalyzing) return; 
+    try {
+        let req = await fetch(`/api/scan?tool=${activeGame}&key=${currentUserKey}`);
+        let json = await req.json();
+        if(json.status === "auth_error") {
+            closeGame(); document.getElementById('main-tool').style.display = "none"; document.getElementById('login-screen').style.display = "flex";
+            document.getElementById('login-msg').innerText = json.msg; currentUserKey = ""; return;
+        }
+        let res = json.data;
+        if(res && res.phien !== phienCu) {
+            isAnalyzing = true; phienCu = res.phien;
+            let isTai = res.du_doan.includes("TÀI") || res.du_doan.includes("CHẴN"); 
+            let colorHex = isTai ? "#ff0000" : "#00e5ff"; 
+            
+            let countdown = 15; // 15 GIÂY ĐẾM NGƯỢC
+            document.getElementById('line1').innerText = "WAIT..."; document.getElementById('line1').style.color = "#fff";
+            document.getElementById('line2').innerText = `Phân tích: ${countdown}s`;
+
+            let timerInterval = setInterval(() => {
+                document.getElementById('line2').innerText = `Phân tích: ${countdown}s`;
+                countdown--;
+                if (countdown < 0) {
+                    clearInterval(timerInterval);
+                    document.getElementById('line1').innerText = `#${res.phien} · ${res.du_doan}`;
+                    document.getElementById('line1').style.color = colorHex;
+                    document.getElementById('line2').innerText = `Độ tin cậy: ${res.ti_le}%`;
+                    isAnalyzing = false;
+                }
+            }, 1000);
+        }
+    } catch(e) {}
+}
+
+function startAutoAPI(tool, url) {
+    document.getElementById('game-overlay').style.display = "block"; clearInterval(autoInterval); phienCu = ""; activeGame = tool; isAnalyzing = false;
+    document.getElementById('line1').innerText = "BOOTING..."; document.getElementById('line2').innerText = "Đang tải dữ liệu"; document.getElementById('line1').style.color = "#fff";
+    document.getElementById('game-frame').style.display = "block"; document.getElementById('game-frame').src = url;
+    document.getElementById('game-overlay').style.background = "#000";
+    document.getElementById('robotContainer').style.display = "flex"; 
+    loopAuto(); autoInterval = setInterval(loopAuto, 2000); 
+}
+function closeGame() { clearInterval(autoInterval); isAnalyzing = false; document.getElementById('game-overlay').style.display = 'none'; document.getElementById('game-frame').src = ''; document.getElementById('robotContainer').style.display = "none"; }
+</script>
+</body>
+</html>
