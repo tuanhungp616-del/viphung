@@ -18,6 +18,12 @@ KEYS_DB = {"hungadmin67": "admin", "viphung": "user", "chanbomayde": "user"}
 LOCKED_KEYS = set()
 HISTORY = deque(maxlen=200)
 
+# ==========================================
+# 🧠 CHẾ ĐỘ ĐẢO CẦU TỰ ĐỘNG (NÂNG CẤP MỚI)
+# ==========================================
+DAO_CAU_MODE = False
+LAST_PRED_NORM = None  # "T" = TÀI/CHẴN, "X" = XỈU/LẺ
+
 def get_id(item):
     if isinstance(item, dict):
         for k in ['id', 'phien', 'sessionId', 'sid', 'referenceId', 'matchId', 'phien_hien_tai', 'gameNum']:
@@ -29,7 +35,7 @@ def get_id(item):
     return int(matches[0]) if matches else 0
 
 # ==================================================
-# 🧠 LÕI 1: MD5 DEEP NEURAL 10.000 LAYERS (GỐC + TỐI ƯU)
+# 🧠 LÕI 1: MD5 DEEP NEURAL 10.000 LAYERS
 # ==================================================
 def md5_10000_layers_predict(md5_str: str):
     if not re.match(r"^[0-9a-f]{32}$", md5_str.lower()): 
@@ -66,7 +72,7 @@ def md5_10000_layers_predict(md5_str: str):
     else: return "XỈU", "MD5 10.000 NEURAL LAYERS", final_xiu
 
 # ==================================================
-# 🧠 LÕI 2: MONTE CARLO 50.000 LẦN + MARKOV CHAIN
+# 🧠 LÕI 2 & 3 giữ nguyên (Monte Carlo + Hybrid)
 # ==================================================
 def monte_carlo_markov_predict(is_chanle, history):
     if len(history) < 10:
@@ -91,9 +97,6 @@ def monte_carlo_markov_predict(is_chanle, history):
     dd = ("CHẴN" if pred == "T" else "LẺ") if is_chanle else ("TÀI" if pred == "T" else "XỈU")
     return dd, round(prob, 1), "MONTE CARLO 50K + MARKOV"
 
-# ==================================================
-# 🧠 LÕI 3: VIP HYBRID AI (FULL MÚP) + NÂNG CẤP
-# ==================================================
 def vip_hybrid_predict(is_chanle, history, md5_str=None):
     if md5_str and re.match(r"^[0-9a-f]{32}$", md5_str.lower()):
         dd_md5, lk_md5, tl_md5 = md5_10000_layers_predict(md5_str)
@@ -116,7 +119,7 @@ def vip_hybrid_predict(is_chanle, history, md5_str=None):
     return dd, round(final_prob, 1), lk
 
 # ==================================================
-# 🧠 THUẬT TOÁN B52 (ĐÃ SỬA LỖI + TÍCH HỢP)
+# 🧠 THUẬT TOÁN B52 (giữ nguyên)
 # ==================================================
 class ThuatToanB52:
     def getTaiXiu(self, d1, d2, d3):
@@ -127,12 +130,11 @@ class ThuatToanB52:
         if not history or len(history) < 3:
             return "Chưa có dữ liệu"
         recent = history[-last_n:]
-        full_seq = recent  # đã là "Tài"/"Xỉu"
+        full_seq = recent
         
         tai_count = full_seq.count("Tài")
         xiu_count = full_seq.count("Xỉu")
         
-        # Pattern 3 phiên
         sequence_prediction = None
         if len(full_seq) >= 3:
             last_three = "-".join(full_seq[-3:])
@@ -142,7 +144,6 @@ class ThuatToanB52:
                 if pos + 3 < len(full_seq):
                     sequence_prediction = full_seq[pos + 3]
         
-        # Markov bậc 2
         markov_prediction = None
         if len(full_seq) >= 3:
             transition_matrix = {}
@@ -180,6 +181,8 @@ class ThuatToanB52:
 # ==========================================
 @app.route("/api/scan", methods=["GET"])
 def scan_game():
+    global DAO_CAU_MODE, LAST_PRED_NORM
+    
     tool = request.args.get("tool", "")
     key = request.args.get("key", "")
     if key not in KEYS_DB or key in LOCKED_KEYS:
@@ -188,7 +191,6 @@ def scan_game():
     is_chanle = "chanle" in tool.lower() or "xd" in tool.lower()
     is_sicbo = "sicbo_sunwin" in tool.lower() or "sunwin" in tool.lower()
     
-    # ====================== SICBO SUN.WIN ======================
     if is_sicbo:
         api_url = "https://api.wsktnus8.net/v2/history/getLastResult?gameId=ktrng_3979&size=100&tableId=39791215743193&curPage=1"
     else:
@@ -217,7 +219,6 @@ def scan_game():
         
         lst = sorted(lst, key=lambda x: get_id(x))
         
-        # Xây dựng lịch sử T/X
         arr = []
         for s in lst:
             if is_sicbo and isinstance(s, dict):
@@ -230,20 +231,33 @@ def scan_game():
         
         phien_hien_tai = str(get_id(lst[-1]) + 1) if lst else "#000000"
         
-        # Trích MD5 (nếu có)
         md5_str = None
         if lst and isinstance(lst[-1], dict):
             md5_candidate = lst[-1].get("md5")
             if isinstance(md5_candidate, str) and re.match(r"^[0-9a-f]{32}$", md5_candidate.lower()):
                 md5_str = md5_candidate.lower()
         
-        # Dự đoán
+        # === TỰ ĐỘNG NHẬN DỰ ĐOÁN SAI & BẬT ĐẢO CẦU ===
+        current_actual = HISTORY[-1] if HISTORY else None
+        if LAST_PRED_NORM and current_actual and LAST_PRED_NORM != current_actual:
+            DAO_CAU_MODE = True
+        
+        # Dự đoán bình thường
         if "md5" in tool.lower() and md5_str:
             dd, lk, tl = md5_10000_layers_predict(md5_str)
         else:
             dd, tl, lk = vip_hybrid_predict(is_chanle, list(HISTORY), md5_str)
         
-        # NÂNG CẤP B52 cho Sicbo
+        # === ÁP DỤNG ĐẢO CẦU (CHỈ 1 LẦN RỒI RESET) ===
+        if DAO_CAU_MODE:
+            if is_chanle:
+                dd = "LẺ" if dd == "CHẴN" else "CHẴN"
+            else:
+                dd = "XỈU" if dd == "TÀI" else "TÀI"
+            lk += " | 🔥 ĐẢO CẦU TỰ ĐỘNG (dự đoán sai lần trước)"
+            DAO_CAU_MODE = False
+        
+        # NÂNG CẤP B52 cho Sicbo (sau khi đã đảo nếu cần)
         if is_sicbo:
             b52 = ThuatToanB52()
             mapped_hist = ["Tài" if x == "T" else "Xỉu" for x in list(HISTORY)[-50:]]
@@ -254,10 +268,18 @@ def scan_game():
                 dd = "TÀI" if b52_dd == "Tài" else "XỈU"
                 tl = max(tl, float(b52_conf))
         
+        # === GHI NHẬN DỰ ĐOÁN HIỆN TẠI ĐỂ SO SÁNH LẦN SAU ===
+        if is_chanle:
+            LAST_PRED_NORM = "T" if "CHẴN" in str(dd) else "X"
+        else:
+            LAST_PRED_NORM = "T" if "TÀI" in str(dd) or str(dd).startswith("T") else "X"
+        
         return jsonify({"status": "success", "data": {"du_doan": dd, "ti_le": tl, "loi_khuyen": lk, "phien": phien_hien_tai}})
     
     except Exception:
         phien_fake = "#" + str(random.randint(100000, 999999))
+        # Reset khi lỗi để tránh lặp đảo
+        LAST_PRED_NORM = None
         return jsonify({"status": "success", "data": {"du_doan": "TÀI", "ti_le": 68.8, "loi_khuyen": "VƯỢT TƯỜNG LỬA - FULL MÚP MODE", "phien": phien_fake}})
 
 # Các route khác giữ nguyên (login, admin, manual_md5, home)
