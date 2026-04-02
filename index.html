@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>HƯNG DZKK - VIP MAX 1000+ | CHỦ TỊCH TUẤN HƯNG</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Orbitron:wght@500;700;900&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
@@ -44,7 +45,7 @@
     #game-frame { width: 100%; height: 100%; border: none; }
     .close-game-btn { position: absolute; top: 40px; left: 15px; background: #220000; color: var(--red-vip); border: 2px solid var(--red-vip); padding: 10px 20px; border-radius: 12px; font-weight: 900; z-index: 2005; cursor:pointer; font-family: 'Orbitron'; box-shadow: 0 0 15px rgba(255,0,0,0.5);}
     
-    /* ROBOT NHÚN NHẢY ĐẾ VƯƠNG */
+    /* DORAEMON ROBOT NHÚN NHẢY */
     #robotContainer {
       position: fixed; top: 40px; right: 15px;
       display: flex; align-items: center; z-index: 2001; cursor: grab;
@@ -68,6 +69,7 @@
 </head>
 <body>
 <canvas id="particles"></canvas>
+
 <div id="login-screen">
   <div class="login-box glass-panel">
     <h2>HƯNG DZKK</h2>
@@ -79,18 +81,20 @@
 </div>
 
 <div id="game-overlay">
-  <div style="width: 100%; background: #000; color: var(--gold-mid); font-family: 'Orbitron'; font-size: 11px; padding: 8px; border-bottom: 1px solid var(--red-vip); display: flex; letter-spacing: 2px;"><marquee scrollamount="6">V99 VIP MAX HYBRID AI | 10.000 EPOCHS MARKOV CHAIN ACTIVE | BYPASSING...</marquee></div>
+  <div style="width: 100%; background: #000; color: var(--gold-mid); font-family: 'Orbitron'; font-size: 11px; padding: 8px; border-bottom: 1px solid var(--red-vip); display: flex; letter-spacing: 2px;">
+    <marquee scrollamount="6">V99 VIP MAX HYBRID AI | 10.000 EPOCHS MARKOV CHAIN ACTIVE | DORAEMON ROBOT DỰ ĐOÁN | SICBO SUN.WIN LIVE</marquee>
+  </div>
   <button class="close-game-btn" onclick="closeGame()"><i class="fas fa-power-off"></i></button>
   <iframe id="game-frame" src=""></iframe>
   
   <div id="robotContainer" style="display:none;">
     <div class="robotIconWrapper">
-      <img id="robotIcon" src="https://i.imgur.com/MZr9Fr2.png" alt="Robot" draggable="false">
+      <img id="robotIcon" src="https://upload.wikimedia.org/wikipedia/en/b/b8/Doraemon.png" alt="Doraemon Robot" draggable="false">
       <div id="closeBtn" onclick="document.getElementById('robotContainer').style.display='none';">×</div>
     </div>
     <div id="robotText">
-      <div id="line1">BOOTING...</div>
-      <div id="line2">Kết nối hệ thống</div>
+      <div id="line1">BOOTING DORAEMON...</div>
+      <div id="line2">Kết nối hệ thống AI</div>
     </div>
   </div>
 </div>
@@ -98,13 +102,13 @@
 <div class="container" id="main-tool" style="display:none;">
   <div class="header glass-panel">
     <h1>HƯNG DZKK</h1>
-    <div style="color:var(--gold-mid); font-size:1rem; font-weight:800; letter-spacing: 4px; margin-bottom: 12px; font-family: 'Orbitron';">VIP MAX FULL MÚP</div>
-    <div class="badge"><i class="fas fa-bolt"></i> 10.000 NEURAL LAYERS</div>
+    <div style="color:var(--gold-mid); font-size:1rem; font-weight:800; letter-spacing: 4px; margin-bottom: 12px; font-family: 'Orbitron';">VIP MAX FULL MÚP + DORAEMON AI</div>
+    <div class="badge"><i class="fas fa-bolt"></i> 10.000 NEURAL LAYERS + SICBO SUN.WIN</div>
   </div>
 
   <div class="vip-menu glass-panel">
     <div class="menu-item active" data-menu="manual"><i class="fas fa-microchip"></i> MANUAL MD5</div>
-    <div class="menu-item" data-menu="auto"><i class="fas fa-satellite-dish"></i> AUTO BETVIP & LC79</div>
+    <div class="menu-item" data-menu="auto"><i class="fas fa-satellite-dish"></i> AUTO BETVIP & LC79 & SUN.WIN</div>
   </div>
 
   <div id="menu-manual-panel" class="menu-content-panel active-panel">
@@ -136,23 +140,51 @@
       <div id="admin-msg" style="color: #aaa; text-align: center; font-size: 12px; margin-top: 10px; font-family:'Orbitron';"></div>
     </div>
 
-    <div class="card glass-panel"><div style="color:#00e5ff; font-weight:900; margin-bottom:12px; font-size:1.1rem; letter-spacing:1px; font-family:'Orbitron';"><i class="fas fa-gem"></i> HỆ THỐNG BETVIP</div><div class="grid-2"><button class="btn-gold" onclick="startAutoAPI('betvip_tx', 'https://play.betvip.fit/')" style="font-size:0.9rem; background:#111; color:#00e5ff; border:1px solid #00e5ff; box-shadow:none;">TX THƯỜNG</button><button class="btn-gold" onclick="startAutoAPI('betvip_md5', 'https://play.betvip.fit/')" style="font-size:0.9rem; background:linear-gradient(135deg, #0088ff, #00e5ff); color:#000;">TÀI XỈU MD5</button></div></div>
+    <div class="card glass-panel">
+      <div style="color:#00e5ff; font-weight:900; margin-bottom:12px; font-size:1.1rem; letter-spacing:1px; font-family:'Orbitron';"><i class="fas fa-gem"></i> HỆ THỐNG BETVIP</div>
+      <div class="grid-2">
+        <button class="btn-gold" onclick="startAutoAPI('betvip_tx', 'https://play.betvip.fit/')" style="font-size:0.9rem; background:#111; color:#00e5ff; border:1px solid #00e5ff; box-shadow:none;">TX THƯỜNG</button>
+        <button class="btn-gold" onclick="startAutoAPI('betvip_md5', 'https://play.betvip.fit/')" style="font-size:0.9rem; background:linear-gradient(135deg, #0088ff, #00e5ff); color:#000;">TÀI XỈU MD5</button>
+      </div>
+    </div>
     
-    <div class="card glass-panel"><div style="color:#fff; font-weight:900; margin-bottom:12px; font-size:1.1rem; letter-spacing:1px; font-family:'Orbitron';"><i class="fas fa-globe"></i> HỆ THỐNG LC79.BET</div><div class="grid-2"><button class="btn-gold" onclick="startAutoAPI('lc79_tx', 'https://lc79.bet')" style="font-size:0.9rem; background:#111; color:var(--gold-mid); border:1px solid var(--gold-mid); box-shadow:none;">TX THƯỜNG</button><button class="btn-gold" onclick="startAutoAPI('lc79_md5', 'https://lc79.bet')" style="font-size:0.9rem;">TÀI XỈU MD5</button></div><button class="btn-gold" style="background:linear-gradient(135deg, #aa0000, var(--red-vip)); color:#fff; margin-top:12px;" onclick="startAutoAPI('lc79_xd', 'https://lc79.bet')">XÓC ĐĨA LC79</button></div>
-  </div>
-</div>
-<script>
-const canvas = document.getElementById('particles'); const ctx = canvas.getContext('2d'); canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-let particles = []; class Particle { constructor() { this.reset(); } reset() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.size = Math.random() * 2 + 0.5; this.speed = Math.random() * 1.5 + 0.5; } update() { this.y -= this.speed; if (this.y < 0) this.reset(); } draw() { ctx.fillStyle = `rgba(255, 0, 0, 0.4)`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); } }
-for(let i=0;i<60;i++) particles.push(new Particle()); function animateParticles() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animateParticles); } window.addEventListener('resize', ()=>{ canvas.width = window.innerWidth; canvas.height = window.innerHeight; }); animateParticles();
+    <div class="card glass-panel">
+      <div style="color:#fff; font-weight:900; margin-bottom:12px; font-size:1.1rem; letter-spacing:1px; font-family:'Orbitron';"><i class="fas fa-globe"></i> HỆ THỐNG LC79.BET</div>
+      <div class="grid-2">
+        <button class="btn-gold" onclick="startAutoAPI('lc79_tx', 'https://lc79.bet')" style="font-size:0.9rem; background:#111; color:var(--gold-mid); border:1px solid var(--gold-mid); box-shadow:none;">TX THƯỜNG</button>
+        <button class="btn-gold" onclick="startAutoAPI('lc79_md5', 'https://lc79.bet')" style="font-size:0.9rem;">TÀI XỈU MD5</button>
+      </div>
+      <button class="btn-gold" style="background:linear-gradient(135deg, #aa0000, var(--red-vip)); color:#fff; margin-top:12px; width:100%;" onclick="startAutoAPI('lc79_xd', 'https://lc79.bet')">XÓC ĐĨA LC79</button>
+    </div>
 
-// KÉO THẢ ROBOT
+    <div class="card glass-panel">
+      <div style="color:#ff8800; font-weight:900; margin-bottom:12px; font-size:1.1rem; letter-spacing:1px; font-family:'Orbitron';"><i class="fas fa-dice"></i> SICBO SUN.WIN</div>
+      <button class="btn-gold" onclick="startAutoAPI('sicbo_sunwin', 'https://sun.win/')" 
+              style="font-size:1rem; width:100%; background:linear-gradient(135deg, #ff8800, #ff00ff, #00ffff); color:#000; box-shadow: 0 0 20px rgba(255,136,0,0.6);">
+        <i class="fas fa-robot"></i> MỞ SICBO SUN.WIN + DORAEMON AI DỰ ĐOÁN
+      </button>
+      <p style="text-align:center; color:#aaa; font-size:0.85rem; margin-top:8px; font-family:'Orbitron';">API: https://api.wsktnus8.net • Real-time 100 phiên</p>
+    </div>
+  </div>
+  </div>
+  <script>
+const canvas = document.getElementById('particles'); 
+const ctx = canvas.getContext('2d'); 
+canvas.width = window.innerWidth; 
+canvas.height = window.innerHeight;
+let particles = []; 
+class Particle { constructor() { this.reset(); } reset() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.size = Math.random() * 2 + 0.5; this.speed = Math.random() * 1.5 + 0.5; } update() { this.y -= this.speed; if (this.y < 0) this.reset(); } draw() { ctx.fillStyle = `rgba(255, 0, 0, 0.4)`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); } }
+for(let i=0;i<60;i++) particles.push(new Particle()); 
+function animateParticles() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animateParticles); } 
+window.addEventListener('resize', ()=>{ canvas.width = window.innerWidth; canvas.height = window.innerHeight; }); 
+animateParticles();
+
+// KÉO THẢ DORAEMON ROBOT
 const robot = document.getElementById("robotContainer");
 let drag = false, offsetX = 0, offsetY = 0;
 const startDrag = (clientX, clientY) => { drag = true; offsetX = clientX - robot.offsetLeft; offsetY = clientY - robot.offsetTop; robot.style.transition = 'none'; };
 const doDrag = (clientX, clientY) => { if(drag) { let l = clientX - offsetX, t = clientY - offsetY; l = Math.max(0, Math.min(l, window.innerWidth - robot.offsetWidth)); t = Math.max(0, Math.min(t, window.innerHeight - robot.offsetHeight)); robot.style.left = l + "px"; robot.style.top = t + "px"; } };
 const endDrag = () => { drag = false; robot.style.transition = 'box-shadow 0.3s ease'; };
-
 robot.addEventListener("mousedown", e => startDrag(e.clientX, e.clientY));
 document.addEventListener("mousemove", e => doDrag(e.clientX, e.clientY));
 document.addEventListener("mouseup", endDrag);
@@ -161,6 +193,7 @@ document.addEventListener("touchmove", e => doDrag(e.touches[0].clientX, e.touch
 document.addEventListener("touchend", endDrag);
 
 let currentUserKey = "";
+
 async function submitLogin() {
     let keyInput = document.getElementById('login-key').value.trim();
     let msgEl = document.getElementById('login-msg');
@@ -189,7 +222,8 @@ async function adminAction(actionType) {
 
 document.querySelectorAll('.menu-item').forEach(item => {
   item.addEventListener('click', () => {
-    document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active')); item.classList.add('active');
+    document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active')); 
+    item.classList.add('active');
     document.querySelectorAll('.menu-content-panel').forEach(p => p.classList.remove('active-panel'));
     document.getElementById(`menu-${item.dataset.menu}-panel`).classList.add('active-panel');
   });
@@ -198,18 +232,25 @@ document.querySelectorAll('.menu-item').forEach(item => {
 document.getElementById('predict-btn').addEventListener('click', async () => {
   let val = document.getElementById('md5-input').value.trim();
   if(!/^[0-9a-f]{32}$/i.test(val)) return alert("MD5 ERROR!");
-  document.getElementById('results-section').style.display = 'block'; document.getElementById('loading-card').style.display = 'block'; document.getElementById('results-content').style.display = 'none';
+  document.getElementById('results-section').style.display = 'block'; 
+  document.getElementById('loading-card').style.display = 'block'; 
+  document.getElementById('results-content').style.display = 'none';
   try {
       let res = await fetch('/api/manual_md5', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({md5: val}) });
       let data = await res.json();
       if(data.status === "success") {
           setTimeout(() => {
-              document.getElementById('loading-card').style.display = 'none'; document.getElementById('results-content').style.display = 'block';
-              document.getElementById('tai-value').textContent = data.tai + '%'; document.getElementById('xiu-value').textContent = data.xiu + '%';
-              document.getElementById('tai-bar').style.width = data.tai + '%'; document.getElementById('xiu-bar').style.width = data.xiu + '%';
+              document.getElementById('loading-card').style.display = 'none'; 
+              document.getElementById('results-content').style.display = 'block';
+              document.getElementById('tai-value').textContent = data.tai + '%'; 
+              document.getElementById('xiu-value').textContent = data.xiu + '%';
+              document.getElementById('tai-bar').style.width = data.tai + '%'; 
+              document.getElementById('xiu-bar').style.width = data.xiu + '%';
               let isTai = data.suggestion.includes("TÀI");
-              let finalRes = document.getElementById('final-result'); finalRes.textContent = `[ ${data.suggestion} ]`; 
-              finalRes.style.color = isTai ? 'var(--red-vip)' : '#00e5ff'; finalRes.style.borderColor = isTai ? 'var(--red-vip)' : '#00e5ff';
+              let finalRes = document.getElementById('final-result'); 
+              finalRes.textContent = `[ ${data.suggestion} ]`; 
+              finalRes.style.color = isTai ? 'var(--red-vip)' : '#00e5ff'; 
+              finalRes.style.borderColor = isTai ? 'var(--red-vip)' : '#00e5ff';
           }, 1500); 
       }
   } catch(e) { alert("Server Error!"); }
@@ -223,17 +264,23 @@ async function loopAuto() {
         let req = await fetch(`/api/scan?tool=${activeGame}&key=${currentUserKey}`);
         let json = await req.json();
         if(json.status === "auth_error") {
-            closeGame(); document.getElementById('main-tool').style.display = "none"; document.getElementById('login-screen').style.display = "flex";
-            document.getElementById('login-msg').innerText = json.msg; currentUserKey = ""; return;
+            closeGame(); 
+            document.getElementById('main-tool').style.display = "none"; 
+            document.getElementById('login-screen').style.display = "flex";
+            document.getElementById('login-msg').innerText = json.msg; 
+            currentUserKey = ""; 
+            return;
         }
         let res = json.data;
         if(res && res.phien !== phienCu) {
-            isAnalyzing = true; phienCu = res.phien;
+            isAnalyzing = true; 
+            phienCu = res.phien;
             let isTai = res.du_doan.includes("TÀI") || res.du_doan.includes("CHẴN"); 
             let colorHex = isTai ? "#ff0000" : "#00e5ff"; 
             
-            let countdown = 15; // 15 GIÂY ĐẾM NGƯỢC
-            document.getElementById('line1').innerText = "WAIT..."; document.getElementById('line1').style.color = "#fff";
+            let countdown = 15;
+            document.getElementById('line1').innerText = "DORAEMON ĐANG TÍNH..."; 
+            document.getElementById('line1').style.color = "#fff";
             document.getElementById('line2').innerText = `Phân tích: ${countdown}s`;
 
             let timerInterval = setInterval(() => {
@@ -252,14 +299,29 @@ async function loopAuto() {
 }
 
 function startAutoAPI(tool, url) {
-    document.getElementById('game-overlay').style.display = "block"; clearInterval(autoInterval); phienCu = ""; activeGame = tool; isAnalyzing = false;
-    document.getElementById('line1').innerText = "BOOTING..."; document.getElementById('line2').innerText = "Đang tải dữ liệu"; document.getElementById('line1').style.color = "#fff";
-    document.getElementById('game-frame').style.display = "block"; document.getElementById('game-frame').src = url;
+    document.getElementById('game-overlay').style.display = "block"; 
+    clearInterval(autoInterval); 
+    phienCu = ""; 
+    activeGame = tool; 
+    isAnalyzing = false;
+    document.getElementById('line1').innerText = "DORAEMON BOOTING..."; 
+    document.getElementById('line2').innerText = "Đang tải dữ liệu từ SUN.WIN"; 
+    document.getElementById('line1').style.color = "#fff";
+    document.getElementById('game-frame').style.display = "block"; 
+    document.getElementById('game-frame').src = url;
     document.getElementById('game-overlay').style.background = "#000";
     document.getElementById('robotContainer').style.display = "flex"; 
-    loopAuto(); autoInterval = setInterval(loopAuto, 2000); 
+    loopAuto(); 
+    autoInterval = setInterval(loopAuto, 2000); 
 }
-function closeGame() { clearInterval(autoInterval); isAnalyzing = false; document.getElementById('game-overlay').style.display = 'none'; document.getElementById('game-frame').src = ''; document.getElementById('robotContainer').style.display = "none"; }
+
+function closeGame() { 
+    clearInterval(autoInterval); 
+    isAnalyzing = false; 
+    document.getElementById('game-overlay').style.display = 'none'; 
+    document.getElementById('game-frame').src = ''; 
+    document.getElementById('robotContainer').style.display = "none"; 
+}
 </script>
 </body>
 </html>
