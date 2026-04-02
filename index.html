@@ -45,7 +45,7 @@
     #game-frame { width: 100%; height: 100%; border: none; }
     .close-game-btn { position: absolute; top: 40px; left: 15px; background: #220000; color: var(--red-vip); border: 2px solid var(--red-vip); padding: 10px 20px; border-radius: 12px; font-weight: 900; z-index: 2005; cursor:pointer; font-family: 'Orbitron'; box-shadow: 0 0 15px rgba(255,0,0,0.5);}
     
-    /* DORAEMON ROBOT NHÚN NHẢY */
+    /* DORAEMON ROBOT NGẦU (ảnh mới) */
     #robotContainer {
       position: fixed; top: 40px; right: 15px;
       display: flex; align-items: center; z-index: 2001; cursor: grab;
@@ -82,18 +82,18 @@
 
 <div id="game-overlay">
   <div style="width: 100%; background: #000; color: var(--gold-mid); font-family: 'Orbitron'; font-size: 11px; padding: 8px; border-bottom: 1px solid var(--red-vip); display: flex; letter-spacing: 2px;">
-    <marquee scrollamount="6">V99 VIP MAX HYBRID AI | 10.000 EPOCHS MARKOV CHAIN ACTIVE | DORAEMON ROBOT DỰ ĐOÁN | SICBO SUN.WIN LIVE</marquee>
+    <marquee scrollamount="6">V99 VIP MAX HYBRID AI | 10.000 EPOCHS MARKOV CHAIN ACTIVE | DORAEMON NGẦU DỰ ĐOÁN | SICBO SUN.WIN LIVE</marquee>
   </div>
   <button class="close-game-btn" onclick="closeGame()"><i class="fas fa-power-off"></i></button>
   <iframe id="game-frame" src=""></iframe>
   
   <div id="robotContainer" style="display:none;">
     <div class="robotIconWrapper">
-      <img id="robotIcon" src="https://upload.wikimedia.org/wikipedia/en/b/b8/Doraemon.png" alt="Doraemon Robot" draggable="false">
+      <img id="robotIcon" src="https://i.ibb.co/PG9WgPqY/anh-doremon-anime-tuyet-ngau-084707549.jpg" alt="Doraemon Ngầu" draggable="false">
       <div id="closeBtn" onclick="document.getElementById('robotContainer').style.display='none';">×</div>
     </div>
     <div id="robotText">
-      <div id="line1">BOOTING DORAEMON...</div>
+      <div id="line1">DORAEMON NGẦU ĐANG TÍNH...</div>
       <div id="line2">Kết nối hệ thống AI</div>
     </div>
   </div>
@@ -102,7 +102,7 @@
 <div class="container" id="main-tool" style="display:none;">
   <div class="header glass-panel">
     <h1>HƯNG DZKK</h1>
-    <div style="color:var(--gold-mid); font-size:1rem; font-weight:800; letter-spacing: 4px; margin-bottom: 12px; font-family: 'Orbitron';">VIP MAX FULL MÚP + DORAEMON AI</div>
+    <div style="color:var(--gold-mid); font-size:1rem; font-weight:800; letter-spacing: 4px; margin-bottom: 12px; font-family: 'Orbitron';">VIP MAX FULL MÚP + DORAEMON NGẦU AI</div>
     <div class="badge"><i class="fas fa-bolt"></i> 10.000 NEURAL LAYERS + SICBO SUN.WIN</div>
   </div>
 
@@ -161,13 +161,13 @@
       <div style="color:#ff8800; font-weight:900; margin-bottom:12px; font-size:1.1rem; letter-spacing:1px; font-family:'Orbitron';"><i class="fas fa-dice"></i> SICBO SUN.WIN</div>
       <button class="btn-gold" onclick="startAutoAPI('sicbo_sunwin', 'https://sun.win/')" 
               style="font-size:1rem; width:100%; background:linear-gradient(135deg, #ff8800, #ff00ff, #00ffff); color:#000; box-shadow: 0 0 20px rgba(255,136,0,0.6);">
-        <i class="fas fa-robot"></i> MỞ SICBO SUN.WIN + DORAEMON AI DỰ ĐOÁN
+        <i class="fas fa-robot"></i> MỞ SICBO SUN.WIN + DORAEMON NGẦU AI DỰ ĐOÁN
       </button>
       <p style="text-align:center; color:#aaa; font-size:0.85rem; margin-top:8px; font-family:'Orbitron';">API: https://api.wsktnus8.net • Real-time 100 phiên</p>
     </div>
   </div>
-  </div>
-  <script>
+</div>
+<script>
 const canvas = document.getElementById('particles'); 
 const ctx = canvas.getContext('2d'); 
 canvas.width = window.innerWidth; 
@@ -179,7 +179,7 @@ function animateParticles() { ctx.clearRect(0,0,canvas.width,canvas.height); par
 window.addEventListener('resize', ()=>{ canvas.width = window.innerWidth; canvas.height = window.innerHeight; }); 
 animateParticles();
 
-// KÉO THẢ DORAEMON ROBOT
+// KÉO THẢ DORAEMON NGẦU
 const robot = document.getElementById("robotContainer");
 let drag = false, offsetX = 0, offsetY = 0;
 const startDrag = (clientX, clientY) => { drag = true; offsetX = clientX - robot.offsetLeft; offsetY = clientY - robot.offsetTop; robot.style.transition = 'none'; };
@@ -279,7 +279,7 @@ async function loopAuto() {
             let colorHex = isTai ? "#ff0000" : "#00e5ff"; 
             
             let countdown = 15;
-            document.getElementById('line1').innerText = "DORAEMON ĐANG TÍNH..."; 
+            document.getElementById('line1').innerText = "DORAEMON NGẦU ĐANG TÍNH..."; 
             document.getElementById('line1').style.color = "#fff";
             document.getElementById('line2').innerText = `Phân tích: ${countdown}s`;
 
@@ -304,7 +304,7 @@ function startAutoAPI(tool, url) {
     phienCu = ""; 
     activeGame = tool; 
     isAnalyzing = false;
-    document.getElementById('line1').innerText = "DORAEMON BOOTING..."; 
+    document.getElementById('line1').innerText = "DORAEMON NGẦU BOOTING..."; 
     document.getElementById('line2').innerText = "Đang tải dữ liệu từ SUN.WIN"; 
     document.getElementById('line1').style.color = "#fff";
     document.getElementById('game-frame').style.display = "block"; 
