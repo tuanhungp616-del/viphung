@@ -4,7 +4,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import requests, uvicorn, sqlite3, os, random, string, json
 from datetime import datetime, timedelta
-import numpy as np
 
 app = FastAPI()
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
@@ -87,7 +86,6 @@ def phan_tich_ai_v20(kq_list, is_chanle):
     if du_doan_hien_tai == "": 
         du_doan_hien_tai = "TÀI" if kq_list[-1] == "Xỉu" else "XỈU"
 
-    # Lịch sử 15 phiên gần nhất
     history = []
     so_van = min(15, len(kq_list) - 5)
     for i in range(len(kq_list)-so_van, len(kq_list)):
@@ -116,7 +114,7 @@ def get_id(item):
     return 0
 
 # ==================================================
-# 📡 API SCAN - ĐÃ GẮN SICBO SUN.WIN + V20
+# 📡 API SCAN - ĐÃ GẮN SICBO SUN.WIN + V20 QUANTUM
 # ==================================================
 @app.get("/api/scan")
 async def scan_game(tool: str, key: str):
@@ -177,7 +175,6 @@ async def scan_game(tool: str, key: str):
 
         data = phan_tich_ai_v20(kq, is_chanle)
 
-        # Phiên hiện tại
         if lst:
             phien_hien_tai = get_id(lst[-1])
             data["phien"] = str(phien_hien_tai + 1) if phien_hien_tai > 0 else "ĐANG TẢI..."
@@ -187,12 +184,12 @@ async def scan_game(tool: str, key: str):
     except Exception as e:
         return {"status": "error", "msg": f"Mạng lag! {str(e)}"}
 
-# ================= CÁC API KHÁC (giữ nguyên V20) =================
-class AuthReq(BaseModel):
-    key: str = ""
+# ================= LOGIN (dùng key như HTML cũ) =================
+class KeyReq(BaseModel):
+    key: str
 
 @app.post("/api/login")
-async def login(req: AuthReq):
+async def login(req: KeyReq):
     key = req.key.strip()
     with get_db() as conn:
         c = conn.cursor()
@@ -206,7 +203,7 @@ async def login(req: AuthReq):
         return {"status": "error", "msg": "Key đã hết hạn!"}
     return {"status": "success", "role": "user", "msg": "Đăng nhập VIP thành công!"}
 
-# Các API admin, register, buy_key... giữ nguyên như code bạn đưa (bạn có thể copy thêm nếu cần)
+# Các API admin, register, buy_key... (bạn có thể copy thêm từ code cũ nếu cần, hiện tại đủ để chạy tool)
 
 @app.get("/")
 async def home():
@@ -214,5 +211,5 @@ async def home():
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
-    print("🚀 SERVER PRO MAX V20 QUANTUM CORE ĐÃ KHỞI ĐỘNG")
+    print("🚀 PRO MAX V20 QUANTUM CORE - SERVER ĐÃ KHỞI ĐỘNG")
     uvicorn.run("main:app", host="0.0.0.0", port=port, log_level="info")
