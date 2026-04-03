@@ -45,14 +45,7 @@
     #game-frame { width: 100%; height: 100%; border: none; }
     .close-game-btn { position: absolute; top: 40px; left: 15px; background: #220000; color: var(--red-vip); border: 2px solid var(--red-vip); padding: 10px 20px; border-radius: 12px; font-weight: 900; z-index: 2005; cursor:pointer; font-family: 'Orbitron'; box-shadow: 0 0 15px rgba(255,0,0,0.5);}
     
-    /* DORAEMON NGẦU */
-    #robotContainer {
-      position: fixed; top: 40px; right: 15px;
-      display: flex; align-items: center; z-index: 2001; cursor: grab;
-      background: rgba(15, 0, 0, 0.85); backdrop-filter: blur(12px); border: 2px solid var(--red-vip);
-      border-radius: 16px; box-shadow: 0 10px 40px rgba(255,0,0,0.3); padding: 12px 20px 12px 14px;
-      width: max-content; max-width: 320px; transition: box-shadow 0.3s ease;
-    }
+    #robotContainer { position: fixed; top: 40px; right: 15px; display: flex; align-items: center; z-index: 2001; cursor: grab; background: rgba(15,0,0,0.85); backdrop-filter: blur(12px); border: 2px solid var(--red-vip); border-radius: 16px; box-shadow: 0 10px 40px rgba(255,0,0,0.3); padding: 12px 20px 12px 14px; width: max-content; max-width: 320px; transition: box-shadow 0.3s ease; }
     #robotContainer:active { cursor: grabbing; box-shadow: 0 12px 30px rgba(255,0,0,0.6); }
     .robotIconWrapper { width: 65px; height: 65px; margin-right: 15px; position: relative; flex-shrink: 0;}
     #robotIcon { width: 100%; height: 100%; animation: nhay 1.5s ease-in-out infinite; filter: drop-shadow(0 0 15px var(--red-vip)); border-radius: 12px; object-fit: contain;}
@@ -62,16 +55,7 @@
     #line1 { font-size: 18px; font-weight: 900; font-family: 'Orbitron'; text-shadow: 0 0 10px rgba(255,255,255,0.3); white-space: nowrap; margin-bottom: 5px; color: #fff;}
     #line2 { font-size: 13px; color: var(--gold-mid); font-weight: 700; font-family: 'Montserrat'; white-space: nowrap;}
     
-    /* NÚT BẬT/TẮT ĐẢO CẦU NHỎ BÊN PHẢI */
-    #invertToggle {
-      position: fixed; top: 125px; right: 15px; z-index: 2002;
-      background: rgba(15,0,0,0.9); backdrop-filter: blur(12px);
-      border: 2px solid var(--red-vip); border-radius: 30px;
-      padding: 8px 14px; display: flex; align-items: center;
-      box-shadow: 0 0 20px rgba(255,0,0,0.6); cursor: pointer;
-      font-family: 'Orbitron'; font-size: 13px; font-weight: 900;
-      transition: all 0.3s;
-    }
+    #invertToggle { position: fixed; top: 125px; right: 15px; z-index: 2002; background: rgba(15,0,0,0.9); backdrop-filter: blur(12px); border: 2px solid var(--red-vip); border-radius: 30px; padding: 8px 14px; display: flex; align-items: center; box-shadow: 0 0 20px rgba(255,0,0,0.6); cursor: pointer; font-family: 'Orbitron'; font-size: 13px; font-weight: 900; transition: all 0.3s; }
     #invertToggle:hover { box-shadow: 0 0 25px rgba(255,0,0,0.8); transform: scale(1.05); }
     #invertLabel { margin-right: 10px; color: #fff; }
     #toggleContainer { width: 48px; height: 24px; background: #333; border-radius: 30px; position: relative; transition: 0.3s; }
@@ -113,17 +97,13 @@
     </div>
   </div>
 
-  <!-- NÚT BẬT/TẮT ĐẢO CẦU NHỎ BÊN PHẢI -->
   <div id="invertToggle">
     <span id="invertLabel">ĐẢO CẦU</span>
-    <div id="toggleContainer">
-      <div id="toggleKnob"></div>
-    </div>
+    <div id="toggleContainer"><div id="toggleKnob"></div></div>
   </div>
 </div>
 
 <div class="container" id="main-tool" style="display:none;">
-  <!-- Phần còn lại giữ nguyên như code cũ -->
   <div class="header glass-panel">
     <h1>HƯNG DZKK</h1>
     <div style="color:var(--gold-mid); font-size:1rem; font-weight:800; letter-spacing: 4px; margin-bottom: 12px; font-family: 'Orbitron';">VIP MAX FULL MÚP + DORAEMON NGẦU AI</div>
@@ -135,8 +115,45 @@
     <div class="menu-item" data-menu="auto"><i class="fas fa-satellite-dish"></i> AUTO BETVIP & LC79 & SUN.WIN</div>
   </div>
 
-  <!-- Các panel manual và auto giữ nguyên (copy từ code trước nếu cần) -->
-  <!-- ... (giữ nguyên toàn bộ phần menu-manual-panel và menu-auto-panel như trước) ... -->
+  <div id="menu-manual-panel" class="menu-content-panel active-panel">
+    <div class="card glass-panel">
+      <input type="text" id="md5-input" class="input-box" placeholder="Nhập MD5 32 ký tự hex..." maxlength="32">
+      <button id="predict-btn" class="btn-gold"><i class="fas fa-gem"></i> KÍCH HOẠT LÕI AI</button>
+    </div>
+    <div id="results-section" style="display:none;">
+      <div id="loading-card" class="card glass-panel" style="display:none; text-align:center; padding:40px;">
+        <i class="fas fa-dharmachakra fa-spin" style="font-size: 50px; color: var(--gold-mid); margin-bottom: 15px; text-shadow: 0 0 20px var(--gold-mid);"></i>
+        <p style="color:#aaa; font-size:1rem; font-weight:800; letter-spacing: 2px; font-family: 'Orbitron';">QUANTUM CALCULATING...</p>
+      </div>
+      <div id="results-content" style="display:none;">
+        <div class="result-item"><div style="font-size:1.2rem;font-weight:900;color:var(--red-vip);letter-spacing:1px;font-family:'Orbitron';">📈 OVER (TÀI)</div><div class="big-percent" id="tai-value">50.0%</div><div class="progress-bar-bg"><div class="progress-fill" id="tai-bar" style="width:50%; background: linear-gradient(90deg, #aa0000, var(--red-vip));"></div></div></div>
+        <div class="result-item"><div style="font-size:1.2rem;font-weight:900;color:#00e5ff;letter-spacing:1px;font-family:'Orbitron';">📉 UNDER (XỈU)</div><div class="big-percent" id="xiu-value">50.0%</div><div class="progress-bar-bg"><div class="progress-fill" id="xiu-bar" style="width:50%; background: linear-gradient(90deg, #0088ff, #00e5ff);"></div></div></div>
+        <div class="final-vip" id="final-result">🔮 PREDICTING</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="menu-auto-panel" class="menu-content-panel">
+    <div id="admin-panel" class="card glass-panel" style="display: none; border-color: var(--red-vip); box-shadow: 0 0 20px rgba(255,0,0,0.3);">
+      <div style="color: var(--red-vip); font-size:1.2rem; font-weight:900; margin-bottom: 15px; text-align:center; letter-spacing:2px; font-family:'Orbitron';"><i class="fas fa-terminal"></i> ADMIN ROOT</div>
+      <input type="text" id="target-key" class="input-box" placeholder="Target Key..." style="padding:12px; margin-bottom:12px;">
+      <div class="grid-2">
+        <button class="btn-gold" style="background:linear-gradient(135deg, #aa0000, var(--red-vip)); color:#fff; font-size:1rem;" onclick="adminAction('lock')">LOCK KEY</button>
+        <button class="btn-gold" style="background:#111; color:var(--gold-mid); border: 1px solid var(--gold-mid); font-size:1rem; box-shadow:none;" onclick="adminAction('unlock')">UNLOCK KEY</button>
+      </div>
+      <div id="admin-msg" style="color: #aaa; text-align: center; font-size: 12px; margin-top: 10px; font-family:'Orbitron';"></div>
+    </div>
+
+    <div class="card glass-panel"><div style="color:#00e5ff; font-weight:900; margin-bottom:12px; font-size:1.1rem; letter-spacing:1px; font-family:'Orbitron';"><i class="fas fa-gem"></i> HỆ THỐNG BETVIP</div><div class="grid-2"><button class="btn-gold" onclick="startAutoAPI('betvip_tx', 'https://play.betvip.fit/')" style="font-size:0.9rem; background:#111; color:#00e5ff; border:1px solid #00e5ff; box-shadow:none;">TX THƯỜNG</button><button class="btn-gold" onclick="startAutoAPI('betvip_md5', 'https://play.betvip.fit/')" style="font-size:0.9rem; background:linear-gradient(135deg, #0088ff, #00e5ff); color:#000;">TÀI XỈU MD5</button></div></div>
+    
+    <div class="card glass-panel"><div style="color:#fff; font-weight:900; margin-bottom:12px; font-size:1.1rem; letter-spacing:1px; font-family:'Orbitron';"><i class="fas fa-globe"></i> HỆ THỐNG LC79.BET</div><div class="grid-2"><button class="btn-gold" onclick="startAutoAPI('lc79_tx', 'https://lc79.bet')" style="font-size:0.9rem; background:#111; color:var(--gold-mid); border:1px solid var(--gold-mid); box-shadow:none;">TX THƯỜNG</button><button class="btn-gold" onclick="startAutoAPI('lc79_md5', 'https://lc79.bet')" style="font-size:0.9rem;">TÀI XỈU MD5</button></div><button class="btn-gold" style="background:linear-gradient(135deg, #aa0000, var(--red-vip)); color:#fff; margin-top:12px; width:100%;" onclick="startAutoAPI('lc79_xd', 'https://lc79.bet')">XÓC ĐĨA LC79</button></div>
+
+    <div class="card glass-panel">
+      <div style="color:#ff8800; font-weight:900; margin-bottom:12px; font-size:1.1rem; letter-spacing:1px; font-family:'Orbitron';"><i class="fas fa-dice"></i> SICBO SUN.WIN</div>
+      <button class="btn-gold" onclick="startAutoAPI('sicbo_sunwin', 'https://sun.win/')" style="font-size:1rem; width:100%; background:linear-gradient(135deg, #ff8800, #ff00ff, #00ffff); color:#000; box-shadow: 0 0 20px rgba(255,136,0,0.6);"><i class="fas fa-robot"></i> MỞ SICBO SUN.WIN + DORAEMON NGẦU AI DỰ ĐOÁN</button>
+      <p style="text-align:center; color:#aaa; font-size:0.85rem; margin-top:8px; font-family:'Orbitron';">API: https://api.wsktnus8.net • Real-time 100 phiên</p>
+    </div>
+  </div>
 </div>
 <script>
 const canvas = document.getElementById('particles'); 
@@ -163,12 +180,11 @@ robot.addEventListener("touchstart", e => startDrag(e.touches[0].clientX, e.touc
 document.addEventListener("touchmove", e => doDrag(e.touches[0].clientX, e.touches[0].clientY));
 document.addEventListener("touchend", endDrag);
 
-// === NÚT ĐẢO CẦU BẬT/TẮT ===
+// NÚT ĐẢO CẦU
 let invertMode = false;
 const invertToggle = document.getElementById('invertToggle');
 const toggleKnob = document.getElementById('toggleKnob');
 const invertLabel = document.getElementById('invertLabel');
-
 invertToggle.addEventListener('click', () => {
   invertMode = !invertMode;
   if (invertMode) {
@@ -185,9 +201,69 @@ invertToggle.addEventListener('click', () => {
 });
 
 let currentUserKey = "";
-// Các hàm submitLogin, adminAction, menu click, predict-btn giữ nguyên (copy từ code cũ)
 
-// === LOOP AUTO + XỬ LÝ ĐẢO CẦU ===
+async function submitLogin() {
+    let keyInput = document.getElementById('login-key').value.trim();
+    let msgEl = document.getElementById('login-msg');
+    msgEl.innerText = "AUTHENTICATING...";
+    try {
+        let res = await fetch('/api/login', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({key: keyInput}) });
+        let data = await res.json();
+        if(data.status === "success") {
+            currentUserKey = keyInput;
+            document.getElementById('login-screen').style.display = "none";
+            document.getElementById('main-tool').style.display = "block";
+            if(data.role === "admin") document.getElementById('admin-panel').style.display = "block";
+        } else { msgEl.innerText = data.msg || "Key sai!"; }
+    } catch(e) { msgEl.innerText = "SERVER CONNECTION FAILED!"; }
+}
+
+async function adminAction(actionType) {
+    let target = document.getElementById('target-key').value.trim();
+    let msgBox = document.getElementById('admin-msg');
+    if(!target) return msgBox.innerText = "TARGET KEY REQUIRED!";
+    try {
+        let res = await fetch('/api/admin', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({admin_key: currentUserKey, target_key: target, action: actionType}) });
+        let data = await res.json(); msgBox.innerText = data.msg;
+    } catch(e) { msgBox.innerText = "SERVER ERROR!"; }
+}
+
+document.querySelectorAll('.menu-item').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active')); 
+    item.classList.add('active');
+    document.querySelectorAll('.menu-content-panel').forEach(p => p.classList.remove('active-panel'));
+    document.getElementById(`menu-${item.dataset.menu}-panel`).classList.add('active-panel');
+  });
+});
+
+document.getElementById('predict-btn').addEventListener('click', async () => {
+  let val = document.getElementById('md5-input').value.trim();
+  if(!/^[0-9a-f]{32}$/i.test(val)) return alert("MD5 ERROR!");
+  document.getElementById('results-section').style.display = 'block'; 
+  document.getElementById('loading-card').style.display = 'block'; 
+  document.getElementById('results-content').style.display = 'none';
+  try {
+      let res = await fetch('/api/manual_md5', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({md5: val}) });
+      let data = await res.json();
+      if(data.status === "success") {
+          setTimeout(() => {
+              document.getElementById('loading-card').style.display = 'none'; 
+              document.getElementById('results-content').style.display = 'block';
+              document.getElementById('tai-value').textContent = data.tai + '%'; 
+              document.getElementById('xiu-value').textContent = data.xiu + '%';
+              document.getElementById('tai-bar').style.width = data.tai + '%'; 
+              document.getElementById('xiu-bar').style.width = data.xiu + '%';
+              let isTai = data.suggestion.includes("TÀI");
+              let finalRes = document.getElementById('final-result'); 
+              finalRes.textContent = `[ ${data.suggestion} ]`; 
+              finalRes.style.color = isTai ? 'var(--red-vip)' : '#00e5ff'; 
+              finalRes.style.borderColor = isTai ? 'var(--red-vip)' : '#00e5ff';
+          }, 1500); 
+      }
+  } catch(e) { alert("Server Error!"); }
+});
+
 let autoInterval, activeGame = "", phienCu = "", isAnalyzing = false;
 
 async function loopAuto() {
@@ -195,14 +271,13 @@ async function loopAuto() {
     try {
         let req = await fetch(`/api/scan?tool=${activeGame}&key=${currentUserKey}`);
         let json = await req.json();
-        if(json.status === "auth_error") { /* ... giữ nguyên */ return; }
-        
+        if(json.status === "auth_error") {
+            closeGame(); document.getElementById('main-tool').style.display = "none"; document.getElementById('login-screen').style.display = "flex";
+            document.getElementById('login-msg').innerText = json.msg; currentUserKey = ""; return;
+        }
         let res = json.data;
         if(res && res.phien !== phienCu) {
-            isAnalyzing = true; 
-            phienCu = res.phien;
-
-            // === ÁP DỤNG ĐẢO CẦU NẾU BẬT ===
+            isAnalyzing = true; phienCu = res.phien;
             let display_dd = res.du_doan;
             let isTai = res.du_doan.includes("TÀI") || res.du_doan.includes("CHẴN");
             let colorHex = isTai ? "#ff0000" : "#00e5ff";
@@ -212,7 +287,6 @@ async function loopAuto() {
                 else if (display_dd.includes("XỈU") || display_dd === "X") display_dd = "TÀI";
                 else if (display_dd.includes("CHẴN")) display_dd = "LẺ";
                 else if (display_dd.includes("LẺ")) display_dd = "CHẴN";
-                
                 colorHex = (display_dd.includes("TÀI") || display_dd.includes("CHẴN")) ? "#ff0000" : "#00e5ff";
             }
 
@@ -238,23 +312,18 @@ async function loopAuto() {
 
 function startAutoAPI(tool, url) {
     document.getElementById('game-overlay').style.display = "block"; 
-    clearInterval(autoInterval); 
-    phienCu = ""; 
-    activeGame = tool; 
-    isAnalyzing = false;
+    clearInterval(autoInterval); phienCu = ""; activeGame = tool; isAnalyzing = false;
     document.getElementById('line1').innerText = "DORAEMON NGẦU BOOTING..."; 
     document.getElementById('line2').innerText = "Đang tải dữ liệu từ SUN.WIN"; 
     document.getElementById('line1').style.color = "#fff";
     document.getElementById('game-frame').style.display = "block"; 
     document.getElementById('game-frame').src = url;
     document.getElementById('robotContainer').style.display = "flex"; 
-    loopAuto(); 
-    autoInterval = setInterval(loopAuto, 2000); 
+    loopAuto(); autoInterval = setInterval(loopAuto, 2000); 
 }
 
 function closeGame() { 
-    clearInterval(autoInterval); 
-    isAnalyzing = false; 
+    clearInterval(autoInterval); isAnalyzing = false; 
     document.getElementById('game-overlay').style.display = 'none'; 
     document.getElementById('game-frame').src = ''; 
     document.getElementById('robotContainer').style.display = "none"; 
