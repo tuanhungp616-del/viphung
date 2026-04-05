@@ -107,8 +107,12 @@ async function scanTool(tool) {
         <span style="color:#ffff00;">#${d.phien || 'LIVE'} • ${d.du_doan}</span><br>
         <small style="font-size:1.1rem;">Độ tin cậy: ${d.ti_le}% | ${d.loi_khuyen}</small>
       `;
+    } else {
+      document.getElementById('result-display').innerHTML = `<span style="color:#ff0000;">${json.msg || 'Lỗi kết nối'}</span>`;
     }
-  } catch(e) {}
+  } catch(e) {
+    document.getElementById('result-display').innerHTML = `<span style="color:#ff0000;">Lỗi kết nối server</span>`;
+  }
 }
 
 // Tự động refresh mỗi 3 giây
