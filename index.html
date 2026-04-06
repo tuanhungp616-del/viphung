@@ -2,120 +2,543 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DORAEMON V67 TOOL</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>HƯNG DZKK • INFINITY GOD MODE V3 | CHỦ TỊCH TUẤN HƯNG</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&display=swap');
-    body {
-      background: linear-gradient(#00aaff, #00ffcc);
-      background-image: url('https://i.ibb.co/PG9WgPqY/anh-doremon-anime-tuyet-ngau-084707549.jpg');
-      background-size: cover;
-      background-attachment: fixed;
-      color: #fff;
-      font-family: 'Comic Neue', cursive;
-      margin: 0;
-      padding: 0;
+    :root {
+      --neon-pink: #ff00ff;
+      --neon-cyan: #00ffff;
+      --neon-gold: #ffd700;
+      --deep-pur: #4b0082;
+      --bg-glass: rgba(15, 5, 35, 0.92);
+      --glow-pink: 0 0 35px rgba(255, 0, 255, 0.6);
+      --glow-cyan: 0 0 35px rgba(0, 255, 255, 0.6);
+      --glow-gold: 0 0 40px rgba(255, 215, 0, 0.7);
     }
-    .header { background: rgba(0,0,0,0.75); padding: 15px; text-align: center; }
-    .header h1 { font-size: 3.6rem; text-shadow: 0 0 30px #ffff00; }
-    .nav { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; padding: 15px; background: rgba(0,0,0,0.85); }
-    .btn { padding: 13px 26px; background: #ffff00; color: #000; border: none; border-radius: 50px; font-weight: 900; font-size: 1.2rem; cursor: pointer; box-shadow: 0 0 20px #ffff00; }
-    .btn:hover { transform: scale(1.08); }
-    .content { padding: 20px; max-width: 1350px; margin: auto; }
-    .tool-box { background: rgba(255,255,255,0.15); backdrop-filter: blur(15px); border: 5px solid #fff; border-radius: 30px; padding: 20px; }
-    #game-frame { width: 100%; height: 82vh; border: none; border-radius: 20px; margin-top: 15px; box-shadow: 0 0 40px rgba(0,255,255,0.7); }
-    .result { font-size: 2.3rem; font-weight: 900; text-align: center; margin: 15px 0; text-shadow: 0 0 20px #ffff00; }
-    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; align-items: center; justify-content: center; }
+    
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { 
+      background: radial-gradient(circle at 50% 20%, #1a0033, #000000 70%); 
+      color: #fff; 
+      min-height: 100vh; 
+      overflow-x: hidden; 
+      font-family: 'Rajdhani', sans-serif;
+      position: relative;
+    }
+    
+    canvas#particles { position: fixed; top:0; left:0; width:100%; height:100%; z-index:1; opacity:0.75; pointer-events:none; }
+    
+    .glass-panel { 
+      background: var(--bg-glass); 
+      backdrop-filter: blur(20px); 
+      border: 1px solid rgba(255, 0, 255, 0.4); 
+      box-shadow: var(--glow-pink), inset 0 0 25px rgba(0, 255, 255, 0.15); 
+      border-radius: 24px; 
+    }
+    
+    .container { max-width: 580px; margin: 0 auto; padding: 20px 16px; position: relative; z-index: 2; }
+    
+    #login-screen { 
+      position: fixed; inset: 0; background: rgba(0,0,0,0.96); z-index: 9999; 
+      display: flex; flex-direction: column; justify-content: center; align-items: center; 
+    }
+    .login-box { 
+      width: 100%; max-width: 400px; text-align: center; padding: 50px 30px; 
+      border-radius: 28px; box-shadow: 0 0 60px var(--neon-cyan);
+    }
+    .login-box h1 { 
+      font-family: 'Orbitron', sans-serif; font-size: 2.8rem; 
+      background: linear-gradient(90deg, #ff00ff, #00ffff, #ffd700); 
+      -webkit-background-clip: text; background-clip: text; color: transparent; 
+      text-shadow: 0 0 30px var(--neon-gold);
+    }
+    .input-box { 
+      width: 100%; background: #0a001f; border: 2px solid var(--neon-pink); 
+      padding: 20px; border-radius: 16px; color: var(--neon-cyan); 
+      font-size: 1.25rem; text-align: center; outline: none; 
+      transition: all 0.3s; margin-bottom: 25px; font-family: 'Orbitron'; letter-spacing: 3px;
+    }
+    .input-box:focus { 
+      box-shadow: var(--glow-pink); transform: scale(1.03); 
+    }
+    .btn-cosmic { 
+      width: 100%; padding: 18px; border: none; border-radius: 16px; 
+      background: linear-gradient(90deg, #ff00ff, #00ffff, #ffd700); 
+      color: #000; font-size: 1.35rem; font-weight: 900; cursor: pointer; 
+      box-shadow: 0 0 40px rgba(255, 215, 0, 0.6); transition: all 0.3s; 
+      font-family: 'Orbitron'; text-transform: uppercase; letter-spacing: 2px;
+    }
+    .btn-cosmic:hover { transform: scale(1.05); box-shadow: 0 0 50px var(--neon-gold); }
+    .btn-cosmic:active { transform: scale(0.95); }
+
+    .header { text-align: center; padding: 30px 20px; margin-bottom: 20px; }
+    .header h1 { 
+      font-family: 'Orbitron', sans-serif; font-size: 2.6rem; font-weight: 900; 
+      background: linear-gradient(to right, #ff00ff, #00ffff, #ffd700); 
+      -webkit-background-clip: text; background-clip: text; color: transparent; 
+      letter-spacing: 3px; text-shadow: 0 0 30px var(--neon-gold);
+    }
+    .badge { 
+      display: inline-block; background: #000; border: 2px solid var(--neon-gold); 
+      padding: 8px 28px; border-radius: 50px; font-size: 0.85rem; font-weight: 900; 
+      color: var(--neon-gold); letter-spacing: 3px; text-transform: uppercase; 
+      box-shadow: 0 0 20px var(--neon-gold);
+    }
+    
+    .vip-menu { 
+      display: flex; background: rgba(10, 0, 30, 0.9); border-radius: 20px; 
+      padding: 8px; margin-bottom: 25px; border: 2px solid rgba(255, 215, 0, 0.4); 
+    }
+    .menu-item { 
+      flex: 1; text-align: center; padding: 16px; border-radius: 14px; cursor: pointer; 
+      font-weight: 800; font-size: 1.05rem; transition: all 0.3s; color: #ddd; 
+      font-family: 'Orbitron';
+    }
+    .menu-item.active { 
+      background: linear-gradient(90deg, #4b0082, #ff00ff); color: #fff; 
+      box-shadow: 0 0 25px var(--neon-pink); transform: scale(1.05);
+    }
+
+    .card { 
+      background: rgba(15, 5, 35, 0.95); border-radius: 24px; padding: 28px; 
+      margin-bottom: 22px; border: 1px solid rgba(255, 215, 0, 0.3); 
+      box-shadow: 0 0 25px rgba(255, 215, 0, 0.2);
+    }
+    
+    .result-item { 
+      background: #0a001f; border-radius: 18px; padding: 22px; margin-bottom: 18px; 
+      border-left: 6px solid var(--neon-cyan); box-shadow: inset 0 0 15px rgba(0,255,255,0.1);
+    }
+    .big-percent { 
+      font-family: 'Orbitron', sans-serif; font-size: 3.4rem; font-weight: 900; 
+      color: var(--neon-cyan); text-shadow: 0 0 25px var(--neon-cyan); margin: 8px 0;
+    }
+    .progress-bar-bg { 
+      height: 12px; background: #111; border-radius: 9999px; overflow: hidden; margin: 14px 0; 
+      box-shadow: inset 0 0 8px rgba(0,0,0,0.6);
+    }
+    .progress-fill { 
+      height: 100%; background: linear-gradient(90deg, #ff00ff, #00ffff); 
+      transition: width 1.4s cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: 0 0 15px var(--neon-pink);
+    }
+    .final-vip { 
+      font-family: 'Orbitron', sans-serif; font-size: 1.85rem; font-weight: 900; 
+      text-align: center; padding: 24px; background: #000; border-radius: 18px; 
+      border: 2px solid var(--neon-gold); margin: 25px 0; color: #ffd700; 
+      text-shadow: 0 0 20px var(--neon-gold); letter-spacing: 2px;
+    }
+    
+    #game-overlay { 
+      display: none; position: fixed; inset: 0; z-index: 2000; background: #000; 
+      animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes popIn { 0% { opacity: 0; transform: scale(0.85); } 100% { opacity: 1; transform: scale(1); } }
+    
+    .close-game-btn { 
+      position: absolute; top: 30px; left: 20px; background: #000; color: var(--neon-pink); 
+      border: 2px solid var(--neon-pink); padding: 12px 26px; border-radius: 50px; 
+      font-weight: 900; z-index: 2005; cursor:pointer; font-family: 'Orbitron'; 
+      box-shadow: 0 0 20px var(--neon-pink); font-size: 1.1rem;
+    }
+    
+    #bridge-detect-panel { 
+      position: absolute; top: 30px; right: 20px; width: 210px; background: var(--bg-glass); 
+      border: 2px solid var(--neon-gold); border-radius: 22px; padding: 18px; z-index: 2001; 
+      box-shadow: 0 0 40px rgba(255, 215, 0, 0.5);
+    }
+    .robo-img { 
+      width: 72px; height: 72px; border-radius: 50%; border: 3px solid var(--neon-pink); 
+      padding: 4px; background: #000; margin: 0 auto 12px; display: block; 
+      box-shadow: 0 0 25px var(--neon-pink);
+    }
+    .txbig { 
+      font-family: 'Orbitron', sans-serif; font-weight: 900; text-align: center; 
+      margin: 18px 0; text-transform: uppercase; font-size: 2.2rem; 
+    }
+    .txtai { color: var(--neon-pink); text-shadow: 0 0 30px var(--neon-pink); }
+    .txxiu { color: var(--neon-cyan); text-shadow: 0 0 30px var(--neon-cyan); }
+    .dao-mode { color: #ffd700 !important; animation: pulse-gold 1.2s infinite alternate; }
+    
+    .menu-content-panel { display: none; }
+    .menu-content-panel.active-panel { display: block; animation: fadeIn 0.5s ease; }
+    @keyframes fadeIn { from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
+    @keyframes pulse-gold { from { text-shadow: 0 0 15px #ffd700; } to { text-shadow: 0 0 35px #ffd700; } }
   </style>
 </head>
 <body>
+<canvas id="particles"></canvas>
 
-<div class="header">
-  <h1>🛎️ DORAEMON V67 TOOL</h1>
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-box glass-panel">
+    <h1>HƯNG DZKK</h1>
+    <p style="color: #ffd700; margin: 12px 0 30px; font-size: 1.1rem; font-weight: 700; letter-spacing: 4px;">INFINITY GOD MODE V3</p>
+    <input type="password" id="login-key" class="input-box" placeholder="ENTER YOUR KEY...">
+    <button class="btn-cosmic" onclick="submitLogin()"><i class="fas fa-fingerprint"></i> INITIALIZE CORE</button>
+    <div id="login-msg" style="color: #ff00ff; margin-top: 20px; font-size: 15px; font-weight: bold; min-height: 24px;"></div>
+  </div>
 </div>
-
-<div class="nav">
-  <button class="btn" onclick="openTool('sicbo_sunwin')"><i class="fas fa-dice"></i> SICBO SUN.WIN</button>
-  <button class="btn" onclick="openTool('betvip_tx')"><i class="fas fa-gem"></i> BETVIP TX THƯỜNG</button>
-  <button class="btn" onclick="openTool('betvip_md5')"><i class="fas fa-gem"></i> BETVIP TX MD5</button>
-  <button class="btn" onclick="openTool('lc79_tx')"><i class="fas fa-globe"></i> LC79 TX THƯỜNG</button>
-  <button class="btn" onclick="openTool('lc79_md5')"><i class="fas fa-globe"></i> LC79 TX MD5</button>
-</div>
-
-<div class="content">
-  <div class="tool-box">
-    <div id="result-display" class="result">Chọn game để bắt đầu dự đoán...</div>
-    <iframe id="game-frame" src=""></iframe>
+<!-- GAME OVERLAY -->
+<div id="game-overlay">
+  <div style="width:100%; background:linear-gradient(90deg,#1a0033,#000); color:#ffd700; font-family:'Orbitron'; font-size:13px; padding:10px; border-bottom:2px solid #ffd700; display:flex; align-items:center; gap:10px;">
+    <i class="fas fa-infinity"></i>
+    <marquee scrollamount="8">∞ VÔ HẠN INFINITY MODE V3 ACTIVE • SELF-CORRECTING AI • ĐẢO CẦU AUTO • LC79 • BETVIP • SUNWIN SICBO ∞</marquee>
+  </div>
+  
+  <button class="close-game-btn" onclick="closeGame()"><i class="fas fa-times"></i> THOÁT</button>
+  <iframe id="game-frame" src="" style="width:100%; height:100%; border:none;"></iframe>
+  
+  <!-- BRIDGE DETECT PANEL -->
+  <div id="bridge-detect-panel" class="glass-panel">
+    <div style="text-align:center; margin-bottom:12px; color:var(--neon-gold); font-family:'Orbitron'; font-size:13px; letter-spacing:2px;">
+      <i class="fas fa-robot"></i> AI CORE
+    </div>
+    <div style="text-align:center;"><img class="robo-img" src="https://i.postimg.cc/wMdhjZFJ/1773446152525.png"></div>
+    <div id="auto-advice" style="font-size:13px;color:#ffd700;font-weight:800;text-align:center;font-family:'Orbitron';margin:8px 0 4px;">BOOTING GOD MODE...</div>
+    <div style="text-align:center; font-size:11px; color:#aaa; margin-bottom:8px;">PHIÊN: <span id="auto-phien" style="color:#ffd700;font-weight:900;">...</span></div>
+    <div class="txbig" id="auto-big" style="font-size:42px;">...</div>
+    <div class="progress-bar-bg"><div class="progress-fill" id="auto-bar" style="width:0%"></div></div>
+    <div style="text-align:center; font-size:14px; color:var(--neon-cyan); font-weight:900;" id="auto-pct">0%</div>
+  </div>
+  
+  <!-- BIG CENTER RESULT -->
+  <div id="big-center-panel" style="display:none; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:92%; max-width:440px; background:var(--bg-glass); border:3px solid var(--neon-gold); border-radius:28px; box-shadow:0 0 80px rgba(255,215,0,0.6); padding:40px 30px; z-index:2002; flex-direction:column; align-items:center;">
+    <h2 style="color:#ffd700; font-family:'Orbitron'; font-size:2.4rem; margin-bottom:12px; letter-spacing:4px;">∞ GOD MODE V3</h2>
+    <div id="big-advice" style="color:#fff; font-weight:800; font-size:15px; text-align:center; margin-bottom:22px; letter-spacing:2px;">ĐANG PHÂN TÍCH CẦU...</div>
+    <div style="padding:8px 24px; background:#000; border-radius:9999px; border:1px solid #ffd700; color:#ffd700; font-size:14px; font-family:'Orbitron';">PHIÊN <span id="big-phien" style="color:#fff; font-weight:900;"></span></div>
+    <div class="txbig" id="big-result" style="font-size:88px; margin:18px 0;">...</div>
+    <div style="width:100%;">
+      <div style="display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:13px; color:#ffd700; margin-bottom:8px; font-weight:800;">
+        <span>PROBABILITY</span><span id="big-pct-text" style="color:#00ffff;">0%</span>
+      </div>
+      <div class="progress-bar-bg"><div class="progress-fill" id="big-bar" style="width:0%"></div></div>
+    </div>
   </div>
 </div>
 
-<!-- Modal Nhập Key -->
-<div id="keyModal" class="modal">
-  <div class="glass" style="width:90%; max-width:420px; text-align:center; background:rgba(255,255,255,0.2);">
-    <h2 style="color:#ffff00;">🔑 NHẬP KEY ĐỂ VÀO TOOL</h2>
-    <input id="inputKey" placeholder="Nhập key..." style="width:100%; padding:15px; margin:15px 0; font-size:1.3rem; border-radius:15px; border:none;">
-    <button onclick="checkKey()" style="width:100%; padding:15px; background:#ffff00; color:#000; border:none; border-radius:50px; font-weight:900;">XÁC NHẬN</button>
-    <small style="display:block; margin-top:10px; color:#ffff00;">Admin: memaylc79 | User: em</small>
+<!-- MAIN TOOL -->
+<div class="container" id="main-tool" style="display:none;">
+  <div class="header glass-panel">
+    <h1>HƯNG DZKK</h1>
+    <div style="color:var(--neon-gold); font-size:1.3rem; font-weight:900; letter-spacing:5px; margin-bottom:10px;">INFINITY GOD MODE V3</div>
+    <div class="badge">SELF-CORRECTING • ĐẢO CẦU AUTO</div>
+  </div>
+
+  <div class="vip-menu glass-panel">
+    <div class="menu-item active" data-menu="manual"><i class="fas fa-microchip"></i> MANUAL MD5</div>
+    <div class="menu-item" data-menu="auto"><i class="fas fa-satellite-dish"></i> AUTO SCAN</div>
+  </div>
+
+  <!-- MANUAL PANEL -->
+  <div id="menu-manual-panel" class="menu-content-panel active-panel">
+    <div class="card glass-panel">
+      <input type="text" id="md5-input" class="input-box" placeholder="DÁN MD5 32 KÝ TỰ HEX..." maxlength="32" style="font-size:1.3rem;">
+      <button id="predict-btn" class="btn-cosmic"><i class="fas fa-atom fa-spin" style="margin-right:8px;"></i> PHÂN TÍCH VÔ HẠN LC79</button>
+    </div>
+    <div id="results-section" style="display:none;">
+      <div id="loading-card" class="card glass-panel" style="display:none; text-align:center; padding:50px 20px;">
+        <i class="fas fa-atom fa-spin" style="font-size:62px; color:var(--neon-gold); margin-bottom:20px;"></i>
+        <p style="color:#ffd700; font-size:1.2rem; font-weight:800; letter-spacing:3px;">QUANTUM CORE ĐANG TÍNH TOÁN...</p>
+      </div>
+      <div id="results-content" style="display:none;">
+        <div class="result-item">
+          <div style="font-size:1.35rem;font-weight:900;color:var(--neon-pink);letter-spacing:2px;">📈 TÀI (OVER)</div>
+          <div class="big-percent" id="tai-value">50.0%</div>
+          <div class="progress-bar-bg"><div class="progress-fill" id="tai-bar" style="width:50%;background:linear-gradient(90deg,#ff00ff,#ffd700);"></div></div>
+        </div>
+        <div class="result-item">
+          <div style="font-size:1.35rem;font-weight:900;color:var(--neon-cyan);letter-spacing:2px;">📉 XỈU (UNDER)</div>
+          <div class="big-percent" id="xiu-value">50.0%</div>
+          <div class="progress-bar-bg"><div class="progress-fill" id="xiu-bar" style="width:50%;background:linear-gradient(90deg,#00ffff,#ffd700);"></div></div>
+        </div>
+        <div class="final-vip" id="final-result">🔥 KẾT QUẢ GOD MODE</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUTO PANEL -->
+  <div id="menu-auto-panel" class="menu-content-panel">
+    <div id="admin-panel" class="card glass-panel" style="display:none; border-color:var(--neon-gold);">
+      <div style="color:var(--neon-gold); font-size:1.3rem; font-weight:900; margin-bottom:18px; text-align:center; letter-spacing:3px;"><i class="fas fa-terminal"></i> ADMIN ROOT ACCESS</div>
+      <input type="text" id="target-key" class="input-box" placeholder="Nhập key cần lock/unlock" style="padding:16px;">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+        <button class="btn-cosmic" style="background:#ff00ff;color:#000;" onclick="adminAction('lock')">LOCK KEY</button>
+        <button class="btn-cosmic" style="background:#111;color:#ffd700;border:2px solid #ffd700;" onclick="adminAction('unlock')">UNLOCK KEY</button>
+      </div>
+      <div id="admin-msg" style="margin-top:16px; text-align:center; font-size:14px; color:#ffd700; font-family:'Orbitron';"></div>
+    </div>
+
+    <!-- LC79 -->
+    <div class="card glass-panel">
+      <div style="color:var(--neon-cyan); font-weight:900; margin-bottom:16px; font-size:1.15rem; letter-spacing:2px;"><i class="fas fa-gem"></i> LC79.BET ULTIMATE</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <button class="btn-cosmic" onclick="startAutoAPI('lc79_tx', 'https://lc79.bet')" style="font-size:0.95rem;">TX LC79</button>
+        <button class="btn-cosmic" onclick="startAutoAPI('lc79_md5', 'https://lc79.bet')" style="font-size:0.95rem;background:#111;color:#ffd700;border:2px solid #ffd700;">MD5 LC79</button>
+      </div>
+      <button class="btn-cosmic" style="margin-top:12px; background:var(--neon-pink); color:#fff; width:100%;" onclick="startAutoAPI('lc79_xd', 'https://lc79.bet')">XÓC ĐĨA LC79</button>
+    </div>
+
+    <!-- BETVIP -->
+    <div class="card glass-panel">
+      <div style="color:var(--neon-cyan); font-weight:900; margin-bottom:16px; font-size:1.15rem; letter-spacing:2px;"><i class="fas fa-crown"></i> BETVIP SYSTEM</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <button class="btn-cosmic" onclick="startAutoAPI('betvip_tx', 'https://play.betvip.fit/')" style="font-size:0.95rem;">TX BETVIP</button>
+        <button class="btn-cosmic" onclick="startAutoAPI('betvip_md5', 'https://play.betvip.fit/')" style="font-size:0.95rem;background:#111;color:#00ffff;border:2px solid #00ffff;">MD5 BETVIP</button>
+      </div>
+    </div>
+
+    <!-- SUNWIN SICBO -->
+    <div class="card glass-panel">
+      <div style="color:var(--neon-pink); font-weight:900; margin-bottom:16px; font-size:1.15rem; letter-spacing:2px;"><i class="fas fa-dice"></i> SUNWIN SICBO</div>
+      <button class="btn-cosmic" onclick="startAutoAPI('sunwin_sicbo', '')" style="width:100%;">SICBO SUNWIN • FULL AUTO</button>
+    </div>
   </div>
 </div>
 
 <script>
-const VALID_KEYS = {
-  "memaylc79": "admin",
-  "em": "user"
-};
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-let currentTool = "";
-let currentKey = "";
-
-function openTool(tool) {
-  currentTool = tool;
-  document.getElementById('keyModal').style.display = 'flex';
-  document.getElementById('inputKey').focus();
+class Particle {
+  constructor() { this.reset(); }
+  reset() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.size = Math.random() * 3 + 0.8;
+    this.speed = Math.random() * 2 + 0.8;
+    this.hue = Math.random() * 360;
+  }
+  update() { this.y -= this.speed; if (this.y < 0) this.reset(); }
+  draw() {
+    ctx.fillStyle = `hsla(${this.hue}, 100%, 85%, 0.85)`;
+    ctx.fillRect(this.x, this.y, this.size, this.size * 2.5);
+  }
 }
 
-async function checkKey() {
-  const keyInput = document.getElementById('inputKey').value.trim();
+let particles = [];
+for(let i = 0; i < 80; i++) particles.push(new Particle());
+
+function animateParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => { p.update(); p.draw(); });
+  requestAnimationFrame(animateParticles);
+}
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+animateParticles();
+
+let currentUserKey = "";
+let autoInterval, activeGame = "", phienCu = "", isAnalyzing = false;
+
+async function submitLogin() {
+  const keyInput = document.getElementById('login-key').value.trim();
+  const msgEl = document.getElementById('login-msg');
+  msgEl.innerHTML = `<i class="fas fa-spinner fa-spin"></i> CONNECTING TO INFINITY CORE...`;
   
-  if (!VALID_KEYS[keyInput]) {
-    alert("❌ Key sai! Vui lòng nhập đúng key.");
-    return;
-  }
-
-  currentKey = keyInput;
-  document.getElementById('keyModal').style.display = 'none';
-
-  if (currentTool === 'sicbo_sunwin') {
-    document.getElementById('game-frame').src = 'https://sunwin.ca';
-  } else {
-    document.getElementById('game-frame').src = '';
-  }
-
-  scanTool(currentTool);
-}
-
-async function scanTool(tool) {
   try {
-    const res = await fetch(`/api/scan?tool=${tool}&key=${currentKey}`);
-    const json = await res.json();
-    if (json.status === "success") {
-      const d = json.data;
-      document.getElementById('result-display').innerHTML = `
-        <span style="color:#ffff00;">#${d.phien || 'LIVE'} • ${d.du_doan}</span><br>
-        <small style="font-size:1.1rem;">Độ tin cậy: ${d.ti_le}% | ${d.loi_khuyen}</small>
-      `;
+    const res = await fetch('/api/login', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({key: keyInput}) });
+    const data = await res.json();
+    if (data.status === "success") {
+      currentUserKey = keyInput;
+      document.getElementById('login-screen').style.display = "none";
+      document.getElementById('main-tool').style.display = "block";
+      if (data.role === "admin") document.getElementById('admin-panel').style.display = "block";
     } else {
-      document.getElementById('result-display').innerHTML = `<span style="color:#ff0000;">${json.msg || 'Lỗi'}</span>`;
+      msgEl.innerText = data.msg || "KEY KHÔNG HỢP LỆ!";
     }
-  } catch(e) {
-    document.getElementById('result-display').innerHTML = `<span style="color:#ff0000;">Lỗi kết nối server</span>`;
-  }
+  } catch(e) { msgEl.innerText = "SERVER DISCONNECTED - THỬ LẠI SAU"; }
 }
 
-setInterval(() => {
-  if (currentTool && currentKey) scanTool(currentTool);
-}, 3000);
+async function adminAction(actionType) {
+  const target = document.getElementById('target-key').value.trim();
+  const msgBox = document.getElementById('admin-msg');
+  if (!target) return msgBox.innerText = "VUI LÒNG NHẬP KEY!";
+  try {
+    const res = await fetch('/api/admin', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({admin_key: currentUserKey, target_key: target, action: actionType}) });
+    const data = await res.json();
+    msgBox.innerText = data.msg || "ĐÃ XỬ LÝ";
+  } catch(e) { msgBox.innerText = "LỖI SERVER!"; }
+}
+
+document.querySelectorAll('.menu-item').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+    item.classList.add('active');
+    document.querySelectorAll('.menu-content-panel').forEach(p => p.classList.remove('active-panel'));
+    document.getElementById(`menu-${item.dataset.menu}-panel`).classList.add('active-panel');
+  });
+});
+
+document.getElementById('predict-btn').addEventListener('click', async () => {
+  const val = document.getElementById('md5-input').value.trim().toLowerCase();
+  if (!/^[0-9a-f]{32}$/.test(val)) return alert("MD5 PHẢI ĐÚNG 32 KÝ TỰ HEX!");
+  
+  const section = document.getElementById('results-section');
+  const loading = document.getElementById('loading-card');
+  const content = document.getElementById('results-content');
+  
+  section.style.display = 'block';
+  loading.style.display = 'block';
+  content.style.display = 'none';
+  
+  try {
+    const res = await fetch('/api/manual_md5', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({md5: val}) });
+    const data = await res.json();
+    if (data.status === "success") {
+      setTimeout(() => {
+        loading.style.display = 'none';
+        content.style.display = 'block';
+        document.getElementById('tai-value').textContent = data.tai + '%';
+        document.getElementById('xiu-value').textContent = data.xiu + '%';
+        document.getElementById('tai-bar').style.width = data.tai + '%';
+        document.getElementById('xiu-bar').style.width = data.xiu + '%';
+        const finalRes = document.getElementById('final-result');
+        finalRes.textContent = `🔥 ${data.suggestion}`;
+        finalRes.style.color = data.suggestion.includes("TÀI") ? '#ff00ff' : '#00ffff';
+        finalRes.style.borderColor = data.suggestion.includes("TÀI") ? '#ff00ff' : '#00ffff';
+      }, 1800);
+    }
+  } catch(e) { alert("SERVER ERROR - THỬ LẠI!"); section.style.display = 'none'; }
+});
+
+function clearUI() {
+  document.getElementById('auto-advice').innerHTML = `<i class="fas fa-sync fa-spin"></i> SYNCING INFINITY CORE...`;
+  document.getElementById('big-advice').innerText = "ĐANG KẾT NỐI...";
+  document.getElementById('auto-phien').innerText = "...";
+  document.getElementById('big-phien').innerText = "...";
+  document.getElementById('auto-big').innerText = "...";
+  document.getElementById('big-result').innerText = "...";
+  document.getElementById('auto-bar').style.width = "0%";
+  document.getElementById('big-bar').style.width = "0%";
+  document.getElementById('auto-pct').innerText = "0%";
+  document.getElementById('big-pct-text').innerText = "0%";
+}
+
+async function loopAuto() {
+  if (isAnalyzing) return;
+  try {
+    const req = await fetch(`/api/scan?tool=${activeGame}&key=${currentUserKey}`);
+    const json = await req.json();
+    if (json.status === "auth_error") {
+      closeGame();
+      document.getElementById('main-tool').style.display = "none";
+      document.getElementById('login-screen').style.display = "flex";
+      document.getElementById('login-msg').innerText = json.msg;
+      currentUserKey = "";
+      return;
+    }
+    const res = json.data;
+    if (res && res.phien !== phienCu) {
+      isAnalyzing = true;
+      phienCu = res.phien;
+      const isTai = res.du_doan.includes("TÀI") || res.du_doan.includes("CHẴN");
+      const colorClass = isTai ? "txtai" : "txxiu";
+      const isDao = res.loi_khuyen.includes("ĐẢO CẦU");
+      document.getElementById('auto-phien').innerText = res.phien;
+      document.getElementById('big-phien').innerText = res.phien;
+      let countdown = 18;
+      document.getElementById('auto-big').innerText = "WAIT";
+      document.getElementById('big-result').innerText = isDao ? "🔄 ĐẢO CẦU" : "ANALYZING...";
+      document.getElementById('big-result').className = `txbig ${isDao ? 'dao-mode' : colorClass}`;
+      document.getElementById('auto-bar').style.width = "0%";
+      document.getElementById('big-bar').style.width = "0%";
+      document.getElementById('auto-pct').innerText = "0%";
+      document.getElementById('big-pct-text').innerText = "0%";
+      
+      const timerInterval = setInterval(() => {
+        document.getElementById('auto-advice').innerHTML = `QUANTUM ENGINE: <b>${countdown}s</b>`;
+        document.getElementById('big-advice').innerHTML = isDao ? `🔥 ĐẢO CẦU MODE • ${countdown}s...` : `INFINITY SIMULATION • ${countdown}s...`;
+        countdown--;
+        if (countdown < 0) {
+          clearInterval(timerInterval);
+          document.getElementById('auto-advice').innerHTML = `<span style="color:#ffd700">${res.loi_khuyen}</span>`;
+          document.getElementById('big-advice').innerHTML = `<span style="color:#ffd700">${res.loi_khuyen}</span>`;
+          const b1 = document.getElementById('auto-big');
+          b1.innerText = res.du_doan;
+          b1.className = `txbig ${colorClass} ${isDao ? 'dao-mode' : ''}`;
+          document.getElementById('auto-bar').style.width = res.ti_le + "%";
+          document.getElementById('auto-bar').style.background = isTai ? "linear-gradient(90deg,#ff00ff,#ffd700)" : "linear-gradient(90deg,#00ffff,#ffd700)";
+          document.getElementById('auto-pct').innerText = res.ti_le + "%";
+          const b2 = document.getElementById('big-result');
+          b2.innerText = res.du_doan;
+          b2.className = `txbig ${colorClass} ${isDao ? 'dao-mode' : ''}`;
+          document.getElementById('big-bar').style.width = res.ti_le + "%";
+          document.getElementById('big-bar').style.background = isTai ? "linear-gradient(90deg,#ff00ff,#ffd700)" : "linear-gradient(90deg,#00ffff,#ffd700)";
+          document.getElementById('big-pct-text').innerText = res.ti_le + "%";
+          isAnalyzing = false;
+        }
+      }, 1000);
+    }
+  } catch(e) {}
+}
+
+function startAutoAPI(tool, url) {
+  document.getElementById('game-overlay').style.display = "block";
+  clearInterval(autoInterval);
+  phienCu = "";
+  activeGame = tool;
+  clearUI();
+  isAnalyzing = false;
+  if (tool.includes('sunwin_sicbo')) {
+    document.getElementById('game-frame').style.display = "none";
+    document.getElementById('game-frame').src = "";
+    document.getElementById('bridge-detect-panel').style.display = "none";
+    document.getElementById('big-center-panel').style.display = "flex";
+  } else {
+    document.getElementById('game-frame').style.display = "block";
+    document.getElementById('game-frame').src = url;
+    document.getElementById('bridge-detect-panel').style.display = "block";
+    document.getElementById('big-center-panel').style.display = "none";
+  }
+  loopAuto();
+  autoInterval = setInterval(loopAuto, 1800);
+}
+
+function closeGame() {
+  clearInterval(autoInterval);
+  isAnalyzing = false;
+  document.getElementById('game-overlay').style.display = 'none';
+  document.getElementById('game-frame').src = '';
+}
+
+function makeDraggable(elmnt) {
+  let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  const header = elmnt;
+  header.onmousedown = dragMouseDown;
+  header.ontouchstart = dragMouseDown;
+  function dragMouseDown(e) {
+    e = e || window.event;
+    if (e.type === 'touchstart') { pos3 = e.touches[0].clientX; pos4 = e.touches[0].clientY; }
+    else { pos3 = e.clientX; pos4 = e.clientY; }
+    document.onmouseup = closeDragElement;
+    document.onmousemove = elementDrag;
+    document.ontouchend = closeDragElement;
+    document.ontouchmove = elementDrag;
+  }
+  function elementDrag(e) {
+    e = e || window.event;
+    if (e.type === 'touchmove') {
+      pos1 = pos3 - e.touches[0].clientX; pos2 = pos4 - e.touches[0].clientY;
+      pos3 = e.touches[0].clientX; pos4 = e.touches[0].clientY;
+    } else {
+      pos1 = pos3 - e.clientX; pos2 = pos4 - e.clientY;
+      pos3 = e.clientX; pos4 = e.clientY;
+    }
+    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+  }
+  function closeDragElement() {
+    document.onmouseup = null; document.onmousemove = null;
+    document.ontouchend = null; document.ontouchmove = null;
+  }
+}
+makeDraggable(document.getElementById("bridge-detect-panel"));
 </script>
 </body>
-</html>
+  </html>
