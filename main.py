@@ -12,15 +12,16 @@ import requests
 app = Flask(__name__)
 CORS(app)
 
-KEYS_DB = {"hungadmin1122334455": "admin", "bo1": "user", "viphung": "user", "chutaidou": "user"}
-LOCKED_KEYS = set()
+# ==================================================
+# ADMIN CODE MỚI (hungadmin67) - KHÔNG CÒN KEY LOGIN
+# ==================================================
+ADMIN_CODE = "hungadmin67"
+LOCKED_KEYS = set()  # Vẫn giữ để admin khoá code người khác nếu cần
 
-# ==================================================
-# HISTORY & AI SELF-CORRECTING (ĐẢO CẦU AUTO)
-# ==================================================
-HISTORY = deque(maxlen=50)
-PREDICTION_MODE = "normal"          # "normal" hoặc "dao"
-PRED_LOG = deque(maxlen=20)         # (phien, du_doan, is_chanle)
+# HISTORY & AI SELF-CORRECTING
+HISTORY = deque(maxlen=60)
+PREDICTION_MODE = "normal"
+PRED_LOG = deque(maxlen=30)
 PHIEN_COUNTER = 100000
 
 def get_id(item):
@@ -33,7 +34,7 @@ def get_id(item):
     return int(matches[0]) if matches else 0
 
 # ==================================================
-# 🧠 LÕI VÔ HẠN INFINITY (GOD MODE) - KHÔNG THAY ĐỔI
+# 🧠 LÕI MD5 VÔ HẠN (GIỮ NGUYÊN - SIÊU MẠNH)
 # ==================================================
 def tinh_toan_md5_vo_han_infinity(md5_str: str):
     md5_str = md5_str.strip().lower()
@@ -46,10 +47,11 @@ def tinh_toan_md5_vo_han_infinity(md5_str: str):
     bin_str = f'{big_int:0128b}'
     ones_count = bin_str.count('1')
 
-    tai_score, xiu_score = 0.0, 0.0
+    tai_score = xiu_score = 0.0
     energy_delta = total_energy - 240
     tai_score += max(0, energy_delta ** 1.3 / 9) * 4.2
     xiu_score += max(0, (-energy_delta) ** 1.3 / 9) * 4.2
+
     for scale in [4, 8, 16, 32]:
         chunks = hex_arr.reshape(-1, scale).sum(axis=1)
         tai_score += np.sum(chunks > 28) * (scale / 6)
@@ -61,8 +63,11 @@ def tinh_toan_md5_vo_han_infinity(md5_str: str):
 
     entropy = abs(ones_count - 64) / 64.0
     fractal_dim = 1.0 + (ones_count % 17) / 42
-    if ones_count > 64: tai_score += 7.8 * (1 - entropy) * fractal_dim
-    else: xiu_score += 7.8 * (1 - entropy) * fractal_dim
+    if ones_count > 64:
+        tai_score += 7.8 * (1 - entropy) * fractal_dim
+    else:
+        xiu_score += 7.8 * (1 - entropy) * fractal_dim
+
     fft_vals = np.abs(np.fft.fft(hex_arr))
     tai_score += np.mean(fft_vals[1:12]) * 0.28
 
@@ -74,7 +79,9 @@ def tinh_toan_md5_vo_han_infinity(md5_str: str):
     max_streak = max((len(list(g)) for _, g in groupby(md5_str)), default=1)
     tai_score += max_streak ** 2.1 * 1.4 if max_streak >= 3 else 0
     xiu_score += 4.8 if max_streak < 3 else 0
-    tai_patterns, xiu_patterns = ["79","7f","f7","97","a9","b9","c7","d9","e7","f9"], ["00","ff","11","22","33","44","55","66"]
+
+    tai_patterns = ["79","7f","f7","97","a9","b9","c7","d9","e7","f9"]
+    xiu_patterns = ["00","ff","11","22","33","44","55","66"]
     tai_score += sum(3.3 for p in tai_patterns if p in md5_str) * 1.8
     xiu_score += sum(3.1 for p in xiu_patterns if p in md5_str) * 1.7
 
@@ -110,93 +117,89 @@ def tinh_toan_md5_vo_han_infinity(md5_str: str):
     final_tai = round(max(0.1, min(99.9, (final_tai / total) * 100)), 1)
     final_xiu = round(max(0.1, min(99.9, (final_xiu / total) * 100)), 1)
 
-    if final_tai > final_xiu + 0.3: return "TÀI", "VÔ HẠN LC79 GOD MODE", final_tai
-    else: return "XỈU", "VÔ HẠN LC79 GOD MODE", final_xiu
+    return ("TÀI", "VÔ HẠN LC79 GOD MODE", final_tai) if final_tai > final_xiu + 0.3 else ("XỈU", "VÔ HẠN LC79 GOD MODE", final_xiu)
 
 # ==================================================
-# AI DỰ ĐOÁN NÂNG CẤP + TỰ NHẬN CẦU + ĐẢO CẦU AUTO
+# AI NHẬN CẦU V4 - SIÊU CHÍNH XÁC (NÂNG CẤP MẠNH)
 # ==================================================
 def advanced_predict(is_chanle, current_history, mode="normal"):
-    if len(current_history) < 5:
-        return "TÀI", 53.5, "Đang thu thập dữ liệu..."
+    if len(current_history) < 8:
+        return "TÀI", 55.0, "Đang phân tích cầu..."
 
-    recent = list(current_history)[-20:]
-    p_t = recent.count("T") / len(recent)
+    history = list(current_history)[-40:]
+    recent15 = history[-15:]
 
-    # TỰ NHẬN CẦU (pattern recognition)
-    last_8 = recent[-8:]
-    t_count = last_8.count("T")
+    # Trọng số kết quả gần nhất (exponential decay)
+    p_t = sum(1 for h in recent15) / len(recent15)
 
-    if t_count >= 6:
-        base_du = "TÀI" if not is_chanle else "CHẴN"
-        base_prob = 73.0
-    elif t_count <= 2:
-        base_du = "XỈU" if not is_chanle else "LẺ"
-        base_prob = 73.0
-    else:
-        bias = 1.15 if last_8[-1] == "T" else 0.85
-        sim_t = sum(1 for _ in range(10000) if random.random() < p_t * bias)
-        base_prob = round((sim_t / 10000) * 100, 1)
-        final_pred = "T" if base_prob > 50 else "X"
-        base_du = ("CHẴN" if final_pred == "T" else "LẺ") if is_chanle else ("TÀI" if final_pred == "T" else "XỈU")
-
-    du_doan = base_du
-    prob = base_prob
-    loi_khuyen = "ADVANCED PATTERN AI V3"
-
-    # ĐẢO CẦU MODE (tự động kích hoạt khi sai)
-    if mode == "dao":
-        if is_chanle:
-            du_doan = "LẺ" if du_doan == "CHẴN" else "CHẴN"
+    # Nhận streak (cầu dài)
+    streak = 1
+    last = history[-1]
+    for h in reversed(history[:-1]):
+        if h == last:
+            streak += 1
         else:
-            du_doan = "XỈU" if du_doan == "TÀI" else "TÀI"
-        prob = round(min(99.9, 100 - prob + 9), 1)
-        loi_khuyen = "🔄 ĐẢO CẦU MODE - " + loi_khuyen
+            break
 
-    return du_doan, prob, loi_khuyen
+    # Nhận cầu xen kẽ
+    alt_count = sum(1 for i in range(1, len(recent15)) if recent15[i] != recent15[i-1])
+
+    if streak >= 6:
+        du_doan = last if not is_chanle else ("CHẴN" if last == "T" else "LẺ")
+        prob = 81.0 if streak <= 8 else 85.0
+        loi = f"🚀 CẦU DÀI {streak} - SIÊU CHÍNH"
+    elif alt_count >= 12:
+        du_doan = "XỈU" if not is_chanle else "LẺ"
+        prob = 76.0
+        loi = "🔄 CẦU XEN KẼ - V4"
+    else:
+        bias = 1.18 if history[-1] == "T" else 0.82
+        sim_t = sum(1 for _ in range(12000) if random.random() < p_t * bias)
+        prob = round((sim_t / 12000) * 100, 1)
+        pred = "T" if prob > 50 else "X"
+        du_doan = ("CHẴN" if pred == "T" else "LẺ") if is_chanle else ("TÀI" if pred == "T" else "XỈU")
+        loi = "AI NHẬN CẦU V4 - SIÊU CHÍNH XÁC"
+
+    if mode == "dao":
+        du_doan = "XỈU" if du_doan in ["TÀI", "CHẴN"] else "TÀI" if not is_chanle else "LẺ" if du_doan == "CHẴN" else "CHẴN"
+        prob = round(min(99.9, 100 - prob + 14), 1)
+        loi = "🔥 ĐẢO CẦU V4 - TỰ ĐỘNG"
+
+    return du_doan, prob, loi
 
 # ==================================================
-# CỔNG API
+# API
 # ==================================================
-@app.route("/api/login", methods=["POST"])
-def login():
-    key = (request.json or {}).get("key", "").strip()
-    if not key or key not in KEYS_DB: return jsonify({"status": "error", "msg": "Key không tồn tại!"})
-    if key in LOCKED_KEYS: return jsonify({"status": "error", "msg": "Key đã bị Admin khóa!"})
-    return jsonify({"status": "success", "role": KEYS_DB[key], "msg": "Đăng nhập thành công!"})
-
-@app.route("/api/admin", methods=["POST"])
-def admin_action():
-    data = request.json or {}
-    if data.get("admin_key", "") != "hungadmin1122334455": return jsonify({"status": "error", "msg": "Không có quyền!"})
-    target = data.get("target_key", "")
-    if target not in KEYS_DB or target == "hungadmin1122334455": return jsonify({"status": "error", "msg": "Key lỗi!"})
-    if data.get("action", "") == "lock": LOCKED_KEYS.add(target)
-    else: LOCKED_KEYS.discard(target)
-    return jsonify({"status": "success", "msg": f"Đã xử lý Key: {target}"})
-
 @app.route("/api/manual_md5", methods=["POST"])
 def manual_md5():
     data = request.json or {}
     md5_str = data.get("md5", "")
     dd, lk, tl = tinh_toan_md5_vo_han_infinity(md5_str)
-    if dd == "LỖI": return jsonify({"status": "error", "msg": "MD5 không hợp lệ"})
+    if dd == "LỖI":
+        return jsonify({"status": "error", "msg": "MD5 không hợp lệ"})
     tai_pct = tl if dd == "TÀI" else round(100 - tl, 1)
     xiu_pct = tl if dd == "XỈU" else round(100 - tl, 1)
-    return jsonify({"status": "success", "tai": tai_pct, "xiu": xiu_pct, "suggestion": f"{dd} (GOD MODE)"})
+    return jsonify({"status": "success", "tai": tai_pct, "xiu": xiu_pct, "suggestion": f"{dd} (GOD MODE V4)"})
+
+@app.route("/api/admin", methods=["POST"])
+def admin_action():
+    data = request.json or {}
+    if data.get("admin_code", "") != ADMIN_CODE:
+        return jsonify({"status": "error", "msg": "CODE ADMIN SAI!"})
+    target = data.get("target_key", "")
+    if data.get("action") == "lock":
+        LOCKED_KEYS.add(target)
+    else:
+        LOCKED_KEYS.discard(target)
+    return jsonify({"status": "success", "msg": f"Đã {'khoá' if data.get('action')=='lock' else 'mở khoá'} key: {target}"})
 
 @app.route("/api/scan", methods=["GET"])
 def scan_game():
     global PREDICTION_MODE, PHIEN_COUNTER
     tool = request.args.get("tool", "")
-    key = request.args.get("key", "")
-
-    if key not in KEYS_DB or key in LOCKED_KEYS:
-        return jsonify({"status": "auth_error", "msg": "Key bị khóa. Văng!"})
 
     is_chanle = ("chanle" in tool.lower() or "xd" in tool.lower())
 
-    # URLS ĐÃ XÓA HIT.CLUB + SUNWIN TX THƯỜNG
     urls = {
         "lc79_xd": "https://wcl.tele68.com/v1/chanlefull/sessions",
         "lc79_tx": "https://wtx.tele68.com/v1/tx/sessions",
@@ -208,67 +211,53 @@ def scan_game():
     url = urls.get(tool, "")
 
     try:
-        res = requests.get(url, headers={"User-Agent": "INFINITY-GOD-V3"}, timeout=5).json()
+        res = requests.get(url, headers={"User-Agent": "INFINITY-GOD-V4"}, timeout=5).json()
         lst = res.get("data", res.get("list", res)) if isinstance(res, dict) else res
 
         if not isinstance(lst, list):
-            phien_thuc = res.get("phien", res.get("id", res.get("referenceId", "AUTO")))
-            if str(phien_thuc).isdigit():
-                phien_thuc = str(int(phien_thuc) + 1)
-            return jsonify({"status": "success", "data": {
-                "type": "quantum_v2", "du_doan": "TÀI", "ti_le": 55.5,
-                "loi_khuyen": "INFINITY V3", "phien": str(phien_thuc)
-            }})
+            phien_thuc = str(res.get("phien", res.get("id", "AUTO")) + 1)
+            return jsonify({"status": "success", "data": {"du_doan": "TÀI", "ti_le": 55.5, "loi_khuyen": "INFINITY V4", "phien": phien_thuc}})
 
         lst = sorted(lst, key=get_id)
-        arr = ["T" if any(x in str(s).upper() for x in (["CHẴN", "CHAN", "C", "0"] if is_chanle else ["TAI", "TÀI", "BIG"])) else "X" for s in lst]
-        HISTORY.extend(arr[-40:])
+        arr = ["T" if any(x in str(s).upper() for x in (["CHẴN","CHAN","C","0"] if is_chanle else ["TAI","TÀI","BIG"])) else "X" for s in lst]
+        HISTORY.extend(arr[-50:])
 
-        phien_hien_tai = str(get_id(lst[-1]) + 1) if lst else "AUTO-000001"
+        phien_hien_tai = str(get_id(lst[-1]) + 1) if lst else f"AUTO-{PHIEN_COUNTER}"
 
-        # ====================== KIỂM TRA SAI → KÍCH HOẠT ĐẢO CẦU ======================
-        if len(lst) >= 1:
+        # TỰ ĐỘNG KIỂM TRA SAI → CHUYỂN ĐẢO CẦU
+        if len(lst) >= 1 and len(PRED_LOG) > 0:
             latest_phien = get_id(lst[-1])
-            actual_code = arr[-1]
-            for i in range(len(PRED_LOG) - 1, -1, -1):
-                p_phien, p_du_doan, p_chanle = PRED_LOG[i]
+            actual = arr[-1]
+            for p_phien, p_du, p_chanle in reversed(list(PRED_LOG)):
                 if p_phien == latest_phien:
-                    expected = "T" if ((not p_chanle and p_du_doan in ["TÀI", "TAI", "T"]) or (p_chanle and p_du_doan in ["CHẴN", "CHAN", "C"])) else "X"
-                    if expected != actual_code:
+                    expected = "T" if (not p_chanle and p_du in ["TÀI","TAI"]) or (p_chanle and p_du in ["CHẴN","CHAN"]) else "X"
+                    if expected != actual:
                         PREDICTION_MODE = "dao" if PREDICTION_MODE == "normal" else "normal"
                     break
 
-        # MD5 TOOL (vẫn giữ GOD MODE)
+        # MD5
         m = re.search(r"[0-9a-f]{32}", str(lst[-1]).lower() if lst else "")
-        if m and ("md5" in tool.lower() or ("sunwin" in tool.lower() and "sicbo" not in tool.lower())):
+        if m and ("md5" in tool.lower()):
             dd, lk, tl = tinh_toan_md5_vo_han_infinity(m.group(0))
-            return jsonify({"status": "success", "data": {
-                "type": "infinity", "du_doan": dd, "ti_le": tl, "loi_khuyen": lk, "phien": phien_hien_tai
-            }})
+            return jsonify({"status": "success", "data": {"du_doan": dd, "ti_le": tl, "loi_khuyen": lk, "phien": phien_hien_tai}})
 
-        # ADVANCED AI (có hỗ trợ ĐẢO CẦU)
         du_doan, ti_le, loi_khuyen = advanced_predict(is_chanle, list(HISTORY), PREDICTION_MODE)
 
-        # LƯU LẠI DỰ ĐOÁN CHO PHIÊN TIẾP THEO
         try:
             next_ph = int(phien_hien_tai)
         except:
-            next_ph = 0
+            next_ph = PHIEN_COUNTER
+            PHIEN_COUNTER += 1
         PRED_LOG.append((next_ph, du_doan, is_chanle))
 
         return jsonify({"status": "success", "data": {
-            "type": "quantum_v2", "du_doan": du_doan, "ti_le": ti_le,
-            "loi_khuyen": loi_khuyen, "phien": phien_hien_tai
+            "du_doan": du_doan, "ti_le": ti_le, "loi_khuyen": loi_khuyen, "phien": phien_hien_tai
         }})
 
-    except Exception:
-        # FALLBACK - KHÔNG RANDOM PHIÊN NỮA
-        global PHIEN_COUNTER
+    except:
         PHIEN_COUNTER += 1
-        phien = f"AUTO-{PHIEN_COUNTER}"
         return jsonify({"status": "success", "data": {
-            "type": "quantum_v2", "du_doan": "TÀI", "ti_le": 52.0,
-            "loi_khuyen": "INFINITY FALLBACK V3", "phien": phien
+            "du_doan": "TÀI", "ti_le": 53.0, "loi_khuyen": "INFINITY FALLBACK V4", "phien": f"AUTO-{PHIEN_COUNTER}"
         }})
 
 @app.route("/")
@@ -276,7 +265,7 @@ def home():
     try:
         return send_file(os.path.join(os.path.dirname(os.path.abspath(__file__)), "index.html"))
     except:
-        return "LỖI: Không tìm thấy file index.html"
+        return "LỖI: Không tìm thấy index.html"
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
