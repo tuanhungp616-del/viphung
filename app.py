@@ -18,11 +18,11 @@ PRED_LOG = deque(maxlen=30)
 
 def get_id(item):
     if isinstance(item, dict):
-        for k in ['id', 'phien', 'sessionId', 'sid', 'referenceId', 'matchId']:
+        for k in ['id', 'phien', 'sessionId', 'sid', 'referenceId', 'matchId', 'gameNum']:
             if k in item and str(item[k]).replace('-', '').isdigit():
                 return int(item[k])
     raw_str = str(item)
-    matches = re.findall(r"'?(?:id|phien|referenceId|sessionId|matchId)'?\s*:\s*'?(\d+)'?", raw_str, re.IGNORECASE)
+    matches = re.findall(r"'?(?:id|phien|referenceId|sessionId|matchId|gameNum)'?\s*:\s*'?(\d+)'?", raw_str, re.IGNORECASE)
     return int(matches[0]) if matches else 0
 
 # LÕI MD5 VÔ HẠN (GIỮ NGUYÊN)
@@ -30,7 +30,6 @@ def tinh_toan_md5_vo_han_infinity(md5_str: str):
     md5_str = md5_str.strip().lower()
     if not re.match(r"^[0-9a-f]{32}$", md5_str):
         return "LỖI", "MD5 KHÔNG HỢP LỆ", 0.0
-    # (giữ nguyên toàn bộ code MD5 cũ)
     hex_arr = np.array([int(ch, 16) for ch in md5_str], dtype=np.float64)
     total_energy = hex_arr.sum()
     big_int = int(md5_str, 16)
@@ -93,7 +92,7 @@ def tinh_toan_md5_vo_han_infinity(md5_str: str):
     final_xiu = round(max(0.1, min(99.9, (final_xiu / total) * 100)), 1)
     return ("TÀI", "VÔ HẠN LC79 GOD MODE", final_tai) if final_tai > final_xiu + 0.3 else ("XỈU", "VÔ HẠN LC79 GOD MODE", final_xiu)
 
-# AI NHẬN CẦU V6 (NÂNG CẤP XỊN HƠN)
+# AI NHẬN CẦU V6
 def advanced_predict(is_chanle, current_history, mode="normal"):
     if len(current_history) < 8:
         return "TÀI", 55.0, "Đang thu thập dữ liệu..."
@@ -128,40 +127,60 @@ def advanced_predict(is_chanle, current_history, mode="normal"):
         loi = "🔥 ĐẢO CẦU V6 - TỰ ĐỘNG"
     return du_doan, prob, loi
 
-# API
 @app.route("/api/scan", methods=["GET"])
 def scan_game():
     global PREDICTION_MODE
     tool = request.args.get("tool", "")
     is_chanle = ("chanle" in tool.lower() or "xd" in tool.lower())
+    
     urls = {
         "lc79_xd": "https://wcl.tele68.com/v1/chanlefull/sessions",
         "lc79_tx": "https://wtx.tele68.com/v1/tx/sessions",
         "lc79_md5": "https://wtx.tele68.com/v1/txmd5/sessions",
         "betvip_tx": "https://wtx.macminim6.online/v1/tx/sessions",
-        "betvip_md5": "https://wtxmd52.macminim6.online/v1/txmd5/sessions"
+        "betvip_md5": "https://wtxmd52.macminim6.online/v1/txmd5/sessions",
+        "sunwin_sicbo": "https://api.wsktnus8.net/v2/history/getLastResult?gameId=ktrng_3979&size=100&tableId=39791215743193&curPage=1"
     }
     url = urls.get(tool, "")
+
     try:
         res = requests.get(url, headers={"User-Agent": "INFINITY-GOD-V6"}, timeout=5).json()
-        lst = res.get("data", res.get("list", res)) if isinstance(res, dict) else res
-        if not isinstance(lst, list):
-            phien = str(int(res.get("phien", res.get("id", 0))) + 1)
+        
+        # XỬ LÝ ĐẶC BIỆT CHO SICBO SUN.WIN
+        if tool == "sunwin_sicbo":
+            lst = res.get("data", {}).get("resultList", []) if isinstance(res, dict) else []
+        else:
+            lst = res.get("data", res.get("list", res)) if isinstance(res, dict) else res
+
+        if not isinstance(lst, list) or len(lst) == 0:
+            phien = "AUTO"
             return jsonify({"status": "success", "data": {"du_doan": "TÀI", "ti_le": 56.0, "loi_khuyen": "V6", "phien": phien}})
+
         lst = sorted(lst, key=get_id)
-        arr = ["T" if any(x in str(s).upper() for x in (["CHẴN","CHAN","C","0"] if is_chanle else ["TAI","TÀI","BIG"])) else "X" for s in lst]
+        
+        # Xử lý kết quả cho Sicbo (dùng tổng điểm dice)
+        if tool == "sunwin_sicbo":
+            arr = ["T" if item.get("score", 0) >= 11 else "X" for item in lst]
+        else:
+            arr = ["T" if any(x in str(s).upper() for x in (["CHẴN","CHAN","C","0"] if is_chanle else ["TAI","TÀI","BIG"])) else "X" for s in lst]
+
         HISTORY.extend(arr[-50:])
         phien_hien_tai = str(get_id(lst[-1]) + 1) if lst else "AUTO"
+
+        # MD5 (nếu có)
         m = re.search(r"[0-9a-f]{32}", str(lst[-1]).lower() if lst else "")
         if m and "md5" in tool.lower():
             dd, lk, tl = tinh_toan_md5_vo_han_infinity(m.group(0))
             return jsonify({"status": "success", "data": {"du_doan": dd, "ti_le": tl, "loi_khuyen": lk, "phien": phien_hien_tai}})
+
         du_doan, ti_le, loi_khuyen = advanced_predict(is_chanle, list(HISTORY), PREDICTION_MODE)
         PRED_LOG.append((int(phien_hien_tai) if phien_hien_tai.isdigit() else 0, du_doan, is_chanle))
+
         return jsonify({"status": "success", "data": {
             "du_doan": du_doan, "ti_le": ti_le, "loi_khuyen": loi_khuyen, "phien": phien_hien_tai
         }})
-    except:
+
+    except Exception:
         return jsonify({"status": "success", "data": {
             "du_doan": "TÀI", "ti_le": 53.0, "loi_khuyen": "INFINITY V6 FALLBACK", "phien": "AUTO"
         }})
