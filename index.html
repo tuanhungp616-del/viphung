@@ -123,7 +123,7 @@
   
   <iframe id="game-frame" src="" style="width:100%; height:100%; border:none;"></iframe>
 
-  <!-- BRIDGE PANEL (kéo thả) -->
+  <!-- BRIDGE PANEL (kéo thả được) -->
   <div id="bridge-detect-panel" class="glass-panel" style="position:absolute; top:40px; right:30px; width:245px; padding:22px; z-index:2001; cursor:grab;">
     <div style="text-align:center; color:#ffd700; font-family:'Orbitron'; font-size:16px;"><i class="fas fa-robot"></i> AI LUXURY CORE</div>
     <img src="https://i.postimg.cc/wMdhjZFJ/1773446152525.png" style="width:85px; height:85px; border:5px solid #ff00ff; border-radius:50%; margin:18px auto; display:block;">
@@ -175,18 +175,111 @@ async function submitLogin() {
   }
 }
 
-/* Các hàm còn lại (startAutoAPI, countdown 15s, draggable, v.v.) giữ nguyên như phiên bản trước */
-function startAutoAPI(tool, url) { /* ... copy từ phiên bản trước */ }
-function toggleMenu() { /* ... */ }
-function switchToMD5() { /* ... */ }
-function switchToTX() { /* ... */ }
-function clearUI() { /* ... */ }
-async function loopAuto() { /* ... */ }
-function closeGame() { /* ... */ }
+/* Các hàm tool */
+function startAutoAPI(tool, url) {
+  document.getElementById('game-overlay').style.display = "block";
+  clearInterval(autoInterval); phienCu = ""; activeGame = tool; currentUrl = url;
+  clearUI(); isAnalyzing = false;
 
-/* Draggable */
-function makeDraggable(elmnt) { /* copy logic draggable từ phiên bản trước */ }
+  const dotMenu = document.getElementById('three-dot-menu');
+  dotMenu.style.display = (tool.includes('lc79') || tool.includes('betvip')) ? 'block' : 'none';
+
+  if (tool.includes('sunwin_sicbo')) {
+    document.getElementById('game-frame').style.display = "none";
+    document.getElementById('big-center-panel').style.display = "flex";
+    document.getElementById('bridge-detect-panel').style.display = "none";
+  } else {
+    document.getElementById('game-frame').style.display = "block";
+    document.getElementById('game-frame').src = url;
+    document.getElementById('bridge-detect-panel').style.display = "block";
+    document.getElementById('big-center-panel').style.display = "none";
+  }
+  loopAuto();
+  autoInterval = setInterval(loopAuto, 1700);
+}
+
+function toggleMenu() {
+  const menu = document.getElementById('menu-dropdown');
+  menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+}
+function switchToMD5() { toggleMenu(); if (activeGame.includes('lc79')) startAutoAPI('lc79_md5', currentUrl); else if (activeGame.includes('betvip')) startAutoAPI('betvip_md5', currentUrl); }
+function switchToTX() { toggleMenu(); if (activeGame.includes('lc79')) startAutoAPI('lc79_tx', currentUrl); else if (activeGame.includes('betvip')) startAutoAPI('betvip_tx', currentUrl); }
+
+function clearUI() {
+  document.getElementById('auto-advice').innerText = "ĐANG PHÂN TÍCH CẦU...";
+  document.getElementById('auto-phien').innerText = "...";
+  document.getElementById('auto-big').innerText = "...";
+  document.getElementById('auto-bar').style.width = "0%";
+  document.getElementById('auto-pct').innerText = "0%";
+  document.getElementById('countdown-box').style.display = "none";
+}
+
+async function loopAuto() {
+  if (isAnalyzing) return;
+  try {
+    const res = await fetch(`/api/scan?tool=${activeGame}&key=${currentUserKey}`);
+    const json = await res.json();
+    if (json.status === "success") {
+      const data = json.data;
+      if (data.phien !== phienCu) {
+        isAnalyzing = true;
+        phienCu = data.phien;
+        const isTai = data.du_doan.includes("TÀI") || data.du_doan.includes("CHẴN");
+        const colorClass = isTai ? "txtai" : "txxiu";
+        const isDao = data.loi_khuyen.includes("ĐẢO");
+        document.getElementById('auto-phien').innerText = data.phien;
+        document.getElementById('countdown-box').style.display = "block";
+        let countdown = 15;
+        const timer = setInterval(() => {
+          document.getElementById('countdown').innerText = countdown;
+          document.getElementById('auto-advice').innerHTML = `ĐỢI <b>${countdown}</b> GIÂY`;
+          countdown--;
+          if (countdown < 0) {
+            clearInterval(timer);
+            document.getElementById('countdown-box').style.display = "none";
+            document.getElementById('auto-advice').innerHTML = `<span style="color:#ffd700">${data.loi_khuyen}</span>`;
+            const big = document.getElementById('auto-big');
+            big.innerText = data.du_doan;
+            big.className = `txbig ${colorClass} ${isDao ? 'dao-mode' : ''}`;
+            document.getElementById('auto-bar').style.width = data.ti_le + "%";
+            document.getElementById('auto-pct').innerText = data.ti_le + "%";
+            isAnalyzing = false;
+          }
+        }, 1000);
+      }
+    }
+  } catch(e) {}
+}
+
+function closeGame() {
+  clearInterval(autoInterval);
+  isAnalyzing = false;
+  document.getElementById('game-overlay').style.display = 'none';
+  document.getElementById('game-frame').src = '';
+  document.getElementById('menu-dropdown').style.display = 'none';
+}
+
+/* Draggable Bridge Panel */
+function makeDraggable(elmnt) {
+  let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  elmnt.onmousedown = dragMouseDown; elmnt.ontouchstart = dragMouseDown;
+  function dragMouseDown(e) {
+    e = e || window.event;
+    if(e.type==='touchstart'){ pos3 = e.touches[0].clientX; pos4 = e.touches[0].clientY; }
+    else { pos3 = e.clientX; pos4 = e.clientY; }
+    document.onmouseup = closeDragElement; document.onmousemove = elementDrag;
+    document.ontouchend = closeDragElement; document.ontouchmove = elementDrag;
+  }
+  function elementDrag(e) {
+    e = e || window.event;
+    if(e.type==='touchmove'){ pos1 = pos3 - e.touches[0].clientX; pos2 = pos4 - e.touches[0].clientY; pos3 = e.touches[0].clientX; pos4 = e.touches[0].clientY; }
+    else { pos1 = pos3 - e.clientX; pos2 = pos4 - e.clientY; pos3 = e.clientX; pos4 = e.clientY; }
+    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+  }
+  function closeDragElement() { document.onmouseup = document.onmousemove = document.ontouchend = document.ontouchmove = null; }
+}
 makeDraggable(document.getElementById("bridge-detect-panel"));
 </script>
 </body>
-      </html>
+</html>
