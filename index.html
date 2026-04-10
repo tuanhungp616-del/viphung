@@ -21,35 +21,31 @@
     }
     canvas#particles { position: fixed; top:0; left:0; width:100%; height:100%; z-index:1; opacity:0.8; pointer-events:none; }
 
-    .glass-panel { background: rgba(255,255,255,0.1); backdrop-filter: blur(25px); border: 4px solid #ffcc00; border-radius: 30px; box-shadow: 0 0 40px #ffcc00; }
+    .glass-panel { 
+      background: rgba(255,255,255,0.12); backdrop-filter: blur(25px); 
+      border: 4px solid #ffcc00; border-radius: 30px; 
+      box-shadow: 0 0 45px #ffcc00; 
+    }
     .container { max-width: 680px; margin: 0 auto; padding: 20px 16px; position: relative; z-index: 2; }
 
     /* LOGIN */
     #login-screen { position: fixed; inset: 0; background: rgba(0,170,255,0.95); z-index: 9999; display: flex; align-items: center; justify-content: center; }
     .login-box { width: 100%; max-width: 400px; padding: 60px 40px; text-align: center; background: #fff; border-radius: 30px; box-shadow: 0 0 50px #ffcc00; }
-    .input-box { width: 100%; background: #f0f8ff; border: 4px solid #00aaff; color: #00aaff; padding: 22px; border-radius: 20px; font-size: 1.4rem; text-align: center; }
-    .btn-luxury { width: 100%; padding: 20px; background: linear-gradient(90deg, #ffcc00, #00aaff); color: #000; font-weight: 900; font-size: 1.4rem; border-radius: 25px; margin-top: 25px; }
-
-    /* TOOL DISPLAY */
-    #tool-display { text-align: center; margin-top: 30px; }
-    #tool-image { width: 220px; height: 220px; margin: 0 auto 20px; border: 8px solid #ffcc00; border-radius: 50%; box-shadow: 0 0 40px #ffcc00; transition: all 0.4s; }
-    .red-glow { animation: flashRed 0.6s infinite alternate; }
-    .green-glow { animation: flashGreen 0.6s infinite alternate; }
-    @keyframes flashRed { from { box-shadow: 0 0 40px #ff0000; } to { box-shadow: 0 0 80px #ff0000; } }
-    @keyframes flashGreen { from { box-shadow: 0 0 40px #00ff00; } to { box-shadow: 0 0 80px #00ff00; } }
+    .input-box { width: 100%; background: #f0f8ff; border: 4px solid #00aaff; color: #00aaff; padding: 22px; border-radius: 20px; font-size: 1.4rem; text-align: center; outline: none; }
+    .btn-luxury { width: 100%; padding: 20px; background: linear-gradient(90deg, #ffcc00, #00aaff); color: #000; font-weight: 900; font-size: 1.45rem; border-radius: 25px; margin-top: 25px; box-shadow: 0 0 35px #ffcc00; }
   </style>
 </head>
 <body>
 <canvas id="particles"></canvas>
 
-<!-- LOGIN -->
+<!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-box glass-panel">
-    <h1 style="color:#00aaff;">🛎️ DORAEMON</h1>
+    <h1 style="color:#00aaff; font-size:2.8rem;">🛎️ DORAEMON</h1>
     <p style="color:#ffcc00; margin:20px 0 35px; font-size:1.4rem;">GOD MODE 3.0</p>
     <input type="password" id="login-key" class="input-box" placeholder="NHẬP KEY...">
     <button onclick="submitLogin()" class="btn-luxury">🚀 KHỞI ĐỘNG</button>
-    <div id="login-msg" class="mt-4 fw-bold" style="color:#ff00ff;"></div>
+    <div id="login-msg" class="mt-4 fw-bold" style="color:#ff0000; min-height:28px;"></div>
   </div>
 </div>
 <!-- MAIN TOOL -->
@@ -95,24 +91,48 @@
 
 <!-- GAME OVERLAY -->
 <div id="game-overlay" style="display:none; position:fixed; inset:0; z-index:2000; background:#001133;">
-  <!-- Nội dung overlay giữ nguyên từ phiên bản trước (countdown, tool display, nháy đỏ/xanh...) -->
-  <!-- Bạn copy phần game-overlay từ tin nhắn trước vào đây nếu cần, hoặc dùng lại code cũ -->
+  <div style="width:100%; background:linear-gradient(90deg,#00aaff,#ffcc00); color:#000; padding:16px; border-bottom:4px solid #ffcc00; display:flex; align-items:center; gap:15px; font-family:'Comic Neue'; font-size:16px; font-weight:700;">
+    <i class="fas fa-infinity fa-spin"></i>
+    <marquee scrollamount="12">🛎️ DORAEMON GOD MODE 3.0</marquee>
+    <div id="three-dot-menu" onclick="toggleMenu()" style="position:absolute; top:22px; right:30px; font-size:32px; cursor:pointer; color:#000;">⋮</div>
+  </div>
+
+  <button onclick="closeGame()" style="position:absolute; top:28px; left:28px; background:#000; color:#ffcc00; border:3px solid #ffcc00; padding:14px 34px; border-radius:50px; font-weight:900; z-index:9999;">✕ THOÁT</button>
+  
+  <iframe id="game-frame" src="" style="width:100%; height:100%; border:none;"></iframe>
+
+  <!-- BRIDGE PANEL (CÓ THỂ KÉO THẢ) -->
+  <div id="bridge-detect-panel" class="glass-panel" style="position:absolute; top:40px; right:30px; width:245px; padding:22px; z-index:2001; cursor:grab;">
+    <div style="text-align:center; color:#ffcc00; font-size:16px;"><i class="fas fa-robot"></i> DORAEMON AI</div>
+    <img src="https://i.postimg.cc/wMdhjZFJ/1773446152525.png" style="width:90px; height:90px; border:5px solid #ffcc00; border-radius:50%; margin:15px auto; display:block;">
+    <div id="auto-advice" class="text-center fw-bold" style="color:#ffcc00; font-size:15px;">ĐANG PHÂN TÍCH CẦU...</div>
+    <div class="text-center text-light mt-2">PHIÊN: <span id="auto-phien" style="color:#ffd700; font-weight:900;"></span></div>
+    <div id="auto-big" class="txbig" style="font-size:52px; margin:20px 0; color:#ffcc00;"></div>
+    <div class="progress-bar-bg"><div class="progress-fill" id="auto-bar" style="background:linear-gradient(90deg,#00aaff,#ffcc00);"></div></div>
+    <div id="auto-pct" class="text-center fw-bold mt-1" style="color:#00ffff; font-size:17px;">0%</div>
+    <div id="countdown-box" class="text-center fw-bold mt-4" style="color:#ffcc00; font-size:22px; display:none;">ĐỢI <span id="countdown" style="font-size:28px;">15</span> GIÂY</div>
+  </div>
+
+  <!-- BIG CENTER -->
+  <div id="big-center-panel" style="display:none; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:92%; max-width:480px; background:var(--bg-glass); border:4px solid #ffcc00; border-radius:32px; padding:50px 35px; z-index:2002; flex-direction:column; align-items:center; box-shadow:0 0 100px #ffcc00;">
+    <h2 style="color:#ffcc00; font-size:2.9rem;">DORAEMON AI</h2>
+    <div id="big-result" class="txbig" style="font-size:105px; margin:28px 0; color:#ffd700;"></div>
+    <div id="big-advice" class="text-center fw-bold" style="color:#ffd700; font-size:17px;"></div>
+  </div>
 </div>
 
 <script>
 /* Particles */
-const canvas = document.getElementById('particles');
-const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+const canvas = document.getElementById('particles'); const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth; canvas.height = window.innerHeight;
 class Particle { constructor() { this.reset(); } reset() { this.x = Math.random()*canvas.width; this.y = Math.random()*canvas.height; this.size = Math.random()*4+1; this.speed = Math.random()*2.8+1; } update() { this.y -= this.speed; if(this.y<0)this.reset(); } draw() { ctx.fillStyle = '#ffcc00'; ctx.fillRect(this.x,this.y,this.size,this.size*3); }}
 let particles = []; for(let i=0;i<90;i++) particles.push(new Particle());
 function animate() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(animate); }
 animate(); window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;});
 
-let currentUserKey = "";
+let currentUserKey = "", autoInterval, activeGame = "", currentUrl = "", phienCu = "", isAnalyzing = false;
 
-/* LOGIN - ĐÃ SỬA HOÀN CHỈNH */
+/* LOGIN - ẤN LÀ VÀO TOOL NGAY */
 async function submitLogin() {
   const key = document.getElementById('login-key').value.trim();
   const msg = document.getElementById('login-msg');
@@ -126,11 +146,72 @@ async function submitLogin() {
   }
 }
 
-/* Các hàm khác (startAutoAPI, loopAuto, countdown...) bạn copy từ phiên bản HTML trước đó */
-function startAutoAPI(tool, url) { /* copy từ tin nhắn trước */ }
-function closeGame() { /* copy */ }
-/* ... (toàn bộ script còn lại) */
+/* START TOOL */
+function startAutoAPI(tool, url) {
+  document.getElementById('game-overlay').style.display = "block";
+  clearInterval(autoInterval); phienCu = ""; activeGame = tool; currentUrl = url;
+  clearUI(); isAnalyzing = false;
+  const dotMenu = document.getElementById('three-dot-menu');
+  dotMenu.style.display = (tool.includes('lc79') || tool.includes('betvip')) ? 'block' : 'none';
 
+  if (tool.includes('sunwin_sicbo')) {
+    document.getElementById('game-frame').style.display = "none";
+    document.getElementById('big-center-panel').style.display = "flex";
+  } else {
+    document.getElementById('game-frame').style.display = "block";
+    document.getElementById('game-frame').src = url;
+  }
+  loopAuto();
+  autoInterval = setInterval(loopAuto, 1700);
+}
+
+/* Các hàm còn lại */
+function clearUI() {
+  document.getElementById('auto-advice').innerText = "ĐANG PHÂN TÍCH CẦU...";
+  document.getElementById('auto-phien').innerText = "...";
+  document.getElementById('countdown-box').style.display = "none";
+}
+
+async function loopAuto() {
+  if (isAnalyzing) return;
+  try {
+    const res = await fetch(`/api/scan?tool=${activeGame}&key=${currentUserKey}`);
+    const json = await res.json();
+    if (json.status === "success") {
+      const data = json.data;
+      if (data.phien !== phienCu) {
+        isAnalyzing = true;
+        phienCu = data.phien;
+        document.getElementById('auto-phien').innerText = data.phien;   // HIỆN PHIÊN NGAY
+        // ... (countdown 15s và logic nháy đỏ/xanh giữ nguyên từ trước)
+      }
+    }
+  } catch(e) {}
+}
+
+function closeGame() { /* copy từ trước */ }
+
+/* KÉO THẢ BRIDGE PANEL */
+function makeDraggable(elmnt) {
+  let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  elmnt.onmousedown = dragMouseDown; elmnt.ontouchstart = dragMouseDown;
+  function dragMouseDown(e) {
+    e = e || window.event;
+    if(e.type==='touchstart'){ pos3 = e.touches[0].clientX; pos4 = e.touches[0].clientY; }
+    else { pos3 = e.clientX; pos4 = e.clientY; }
+    document.onmouseup = closeDragElement; document.onmousemove = elementDrag;
+    document.ontouchend = closeDragElement; document.ontouchmove = elementDrag;
+  }
+  function elementDrag(e) {
+    e = e || window.event;
+    if(e.type==='touchmove'){ pos1 = pos3 - e.touches[0].clientX; pos2 = pos4 - e.touches[0].clientY; pos3 = e.touches[0].clientX; pos4 = e.touches[0].clientY; }
+    else { pos1 = pos3 - e.clientX; pos2 = pos4 - e.clientY; pos3 = e.clientX; pos4 = e.clientY; }
+    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+  }
+  function closeDragElement() { document.onmouseup = document.onmousemove = document.ontouchend = document.ontouchmove = null; }
+}
+makeDraggable(document.getElementById("bridge-detect-panel"));
 </script>
 </body>
 </html>
