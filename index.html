@@ -89,7 +89,7 @@
   </div>
 </div>
 
-<!-- GAME OVERLAY - GIAO DIỆN MỚI THEO YÊU CẦU -->
+<!-- GAME OVERLAY - TOOL NHỎ Ở GIỮA -->
 <div id="game-overlay" style="display:none; position:fixed; inset:0; z-index:2000; background:#001133;">
   <div style="width:100%; background:linear-gradient(90deg,#00aaff,#ffcc00); color:#000; padding:16px; border-bottom:4px solid #ffcc00; display:flex; align-items:center; gap:15px; font-family:'Comic Neue'; font-size:16px; font-weight:700;">
     <i class="fas fa-infinity fa-spin"></i>
@@ -98,35 +98,35 @@
 
   <button onclick="closeGame()" style="position:absolute; top:28px; left:28px; background:#000; color:#ffcc00; border:3px solid #ffcc00; padding:14px 34px; border-radius:50px; font-weight:900; z-index:9999;">✕ THOÁT</button>
 
-  <iframe id="game-frame" src="" style="width:100%; height:100%; border:none; display:none;"></iframe>
+  <iframe id="game-frame" src="" style="width:100%; height:100%; border:none;"></iframe>
 
-  <!-- TOOL DISPLAY NHỎ Ở GIỮA -->
-  <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center; z-index:2005; width:100%; max-width:420px;">
-    <div style="display:flex; justify-content:center; align-items:center; gap:40px; margin-bottom:20px;">
-      <!-- Bên trái - ĐỎ = TÀI -->
-      <div style="width:70px; height:70px; background:#ff0000; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:26px; color:#fff; box-shadow:0 0 25px #ff0000;">T</div>
+  <!-- TOOL NHỎ Ở GIỮA -->
+  <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center; z-index:2005; width:100%; max-width:340px;">
+    <div style="display:flex; justify-content:center; align-items:center; gap:30px; margin-bottom:15px;">
+      <!-- Bên trái ĐỎ = TÀI -->
+      <div style="width:65px; height:65px; background:#ff0000; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:26px; color:#fff; box-shadow:0 0 25px #ff0000;">T</div>
       
       <!-- Ảnh tool nhỏ ở giữa -->
       <div id="tool-image-container">
-        <img id="tool-image" src="https://i.postimg.cc/wMdhjZFJ/1773446152525.png" style="width:160px; height:160px; border:6px solid #ffcc00; border-radius:50%; box-shadow:0 0 30px #ffcc00;">
+        <img id="tool-image" src="https://i.postimg.cc/wMdhjZFJ/1773446152525.png" style="width:140px; height:140px; border:6px solid #ffcc00; border-radius:50%; box-shadow:0 0 30px #ffcc00;">
       </div>
       
-      <!-- Bên phải - XANH = XỈU -->
-      <div style="width:70px; height:70px; background:#00ff00; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:26px; color:#fff; box-shadow:0 0 25px #00ff00;">X</div>
+      <!-- Bên phải XANH = XỈU -->
+      <div style="width:65px; height:65px; background:#00ff00; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:26px; color:#fff; box-shadow:0 0 25px #00ff00;">X</div>
     </div>
 
     <!-- Countdown -->
-    <div id="countdown-box" style="font-size:22px; color:#ffcc00; font-weight:700; margin-top:10px; display:none;">
-      ĐỢI <span id="countdown" style="font-size:32px;">15</span> GIÂY
+    <div id="countdown-box" style="font-size:20px; color:#ffcc00; font-weight:700; margin-top:8px; display:none;">
+      ĐỢI <span id="countdown" style="font-size:28px;">15</span> GIÂY
     </div>
 
     <!-- Mã phiên -->
-    <div style="position:absolute; bottom:20px; right:30px; background:#000; color:#ffcc00; padding:6px 18px; border-radius:20px; font-size:15px; font-weight:700;">
+    <div style="position:absolute; bottom:20px; right:20px; background:#000; color:#ffcc00; padding:6px 18px; border-radius:20px; font-size:14px; font-weight:700;">
       MÃ PHIÊN: <span id="auto-phien" style="color:#ffd700;"></span>
     </div>
 
-    <!-- Kết quả báo dưới -->
-    <div id="result-text" style="position:absolute; bottom:80px; left:30px; font-size:28px; font-weight:900; display:none;"></div>
+    <!-- Kết quả báo -->
+    <div id="result-text" style="position:absolute; bottom:80px; left:30px; font-size:26px; font-weight:900; display:none;"></div>
   </div>
 </div>
 
@@ -154,27 +154,24 @@ async function submitLogin() {
   }
 }
 
-/* START TOOL - HIỆN NGAY */
+/* START TOOL */
 function startAutoAPI(tool, url) {
   document.getElementById('game-overlay').style.display = "block";
   clearInterval(autoInterval); phienCu = ""; activeGame = tool; currentUrl = url;
   clearUI(); isAnalyzing = false;
 
-  if (tool.includes('sunwin_sicbo')) {
-    document.getElementById('game-frame').style.display = "none";
-  } else {
-    document.getElementById('game-frame').style.display = "block";
-    document.getElementById('game-frame').src = url;
-  }
+  document.getElementById('game-frame').src = url;
+  document.getElementById('game-frame').style.display = "block";
+
   loopAuto();
   autoInterval = setInterval(loopAuto, 1700);
 }
 
 function clearUI() {
-  document.getElementById('auto-advice').innerText = "ĐANG PHÂN TÍCH CẦU...";
   document.getElementById('auto-phien').innerText = "...";
   document.getElementById('countdown-box').style.display = "none";
   document.getElementById('result-text').style.display = "none";
+  document.getElementById('tool-image').classList.remove('red-glow', 'green-glow');
 }
 
 async function loopAuto() {
@@ -189,18 +186,17 @@ async function loopAuto() {
         phienCu = data.phien;
         document.getElementById('auto-phien').innerText = data.phien;
 
-        // Countdown 15 giây
-        document.getElementById('countdown-box').style.display = "block";
         let countdown = 15;
+        document.getElementById('countdown-box').style.display = "block";
         const timer = setInterval(() => {
           document.getElementById('countdown').innerText = countdown;
           countdown--;
           if (countdown < 0) {
             clearInterval(timer);
             document.getElementById('countdown-box').style.display = "none";
-            // Hiển thị kết quả dự đoán
+
             const resultText = document.getElementById('result-text');
-            if (data.du_doan.includes("TÀI")) {
+            if (data.du_doan.includes("TÀI") || data.du_doan === "T") {
               resultText.innerHTML = '🔴 <b>TÀI</b>';
               resultText.style.color = '#ff0000';
               document.getElementById('tool-image').classList.add('red-glow');
@@ -224,28 +220,6 @@ function closeGame() {
   document.getElementById('game-overlay').style.display = 'none';
   document.getElementById('game-frame').src = '';
 }
-
-/* KÉO THẢ BRIDGE PANEL */
-function makeDraggable(elmnt) {
-  let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-  elmnt.onmousedown = dragMouseDown; elmnt.ontouchstart = dragMouseDown;
-  function dragMouseDown(e) {
-    e = e || window.event;
-    if(e.type==='touchstart'){ pos3 = e.touches[0].clientX; pos4 = e.touches[0].clientY; }
-    else { pos3 = e.clientX; pos4 = e.clientY; }
-    document.onmouseup = closeDragElement; document.onmousemove = elementDrag;
-    document.ontouchend = closeDragElement; document.ontouchmove = elementDrag;
-  }
-  function elementDrag(e) {
-    e = e || window.event;
-    if(e.type==='touchmove'){ pos1 = pos3 - e.touches[0].clientX; pos2 = pos4 - e.touches[0].clientY; pos3 = e.touches[0].clientX; pos4 = e.touches[0].clientY; }
-    else { pos1 = pos3 - e.clientX; pos2 = pos4 - e.clientY; pos3 = e.clientX; pos4 = e.clientY; }
-    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
-  }
-  function closeDragElement() { document.onmouseup = document.onmousemove = document.ontouchend = document.ontouchmove = null; }
-}
-makeDraggable(document.getElementById("bridge-detect-panel"));
 </script>
 </body>
 </html>
