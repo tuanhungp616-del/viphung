@@ -1,131 +1,227 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hưng Admin Tool</title>
-    <style>
-        :root { --red-neon: #ff0000; --bg-dark: #0a0a0a; }
-        body { margin: 0; background: #000; font-family: sans-serif; overflow: hidden; }
-        
-        /* Giao diện chính */
-        #game-container { width: 100vw; height: 100vh; position: relative; }
-        iframe { width: 100%; height: 100%; border: none; }
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>DORAEMON AI - HƯNG ĐẸP TRAI</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family: 'Quicksand', sans-serif; }
+    body { background: #e0f2fe; color: #333; min-height: 100vh; overflow-x: hidden; position: relative; user-select: none; }
+    
+    /* Doraemon Theme Colors */
+    :root { --dora-blue: #00a6ed; --dora-white: #ffffff; --dora-red: #e60000; --dora-yellow: #fceb00; --shadow: rgba(0, 166, 237, 0.2); }
+    
+    .container { max-width: 560px; margin: 0 auto; padding: 20px 16px; position: relative; z-index: 2; }
+    .glass-panel { background: var(--dora-white); border: 3px solid var(--dora-blue); box-shadow: 0 8px 25px var(--shadow); border-radius: 25px; }
+    
+    .header { text-align: center; padding: 20px 15px; margin-bottom: 20px; background: var(--dora-blue); border: none; border-bottom: 5px solid #0081b8;}
+    .header h1 { font-size: 2rem; font-weight: 900; color: var(--dora-white); text-shadow: 2px 2px 0px #000; letter-spacing: 1px; margin-bottom: 5px;}
+    .badge { display: inline-block; background: var(--dora-yellow); border: 2px solid #000; padding: 5px 15px; border-radius: 20px; font-size: 0.85rem; font-weight: 800; color: #000; box-shadow: 2px 2px 0px #000;}
+    
+    .vip-menu { display: flex; background: #cceeff; border-radius: 20px; padding: 8px; margin-bottom: 20px; border: 2px solid var(--dora-blue); }
+    .menu-item { flex: 1; text-align: center; padding: 12px; border-radius: 15px; cursor: pointer; font-weight: 800; font-size: 0.95rem; transition: 0.3s; color: var(--dora-blue); }
+    .menu-item.active { background: var(--dora-blue); color: var(--dora-white); box-shadow: 0 4px 10px var(--shadow); }
 
-        /* Nút 3 chấm góc phải */
-        #menu-btn {
-            position: absolute; top: 15px; right: 15px;
-            width: 40px; height: 40px; background: rgba(0,0,0,0.7);
-            border: 1px solid var(--red-neon); border-radius: 50%;
-            color: white; font-size: 24px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; z-index: 100;
-        }
+    .card { background: var(--dora-white); border-radius: 20px; padding: 20px; margin-bottom: 20px; border: 2px solid var(--dora-blue); position: relative; overflow: hidden;}
+    .card::before { content: ''; position: absolute; top: -10px; right: -10px; width: 40px; height: 40px; background: var(--dora-red); border-radius: 50%; border: 2px solid #000; box-shadow: inset -5px -5px 0 rgba(0,0,0,0.2); }
+    
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .input-box { width: 100%; background: #f0f8ff; border: 2px solid var(--dora-blue); padding: 15px; border-radius: 15px; color: #333; font-size: 1rem; text-align: center; outline: none; transition: 0.3s; margin-bottom: 15px; font-weight: 700; }
+    .input-box:focus { border-color: var(--dora-red); background: #fff; }
+    
+    .btn-dora { width: 100%; padding: 14px; border: 2px solid #000; border-radius: 15px; background: var(--dora-yellow); color: #000; font-size: 1.05rem; font-weight: 900; cursor: pointer; box-shadow: 3px 3px 0px #000; transition: 0.1s; text-transform: uppercase; margin-bottom: 8px;}
+    .btn-dora:active { transform: translate(3px, 3px); box-shadow: 0px 0px 0px #000; }
+    .btn-blue { background: var(--dora-blue); color: #fff; }
+    .btn-red { background: var(--dora-red); color: #fff; }
 
-        /* Danh sách Tool bên trái (Menu ẩn) */
-        #tool-list {
-            position: absolute; top: 60px; right: 15px;
-            background: rgba(10,10,10,0.9); border: 1px solid var(--red-neon);
-            border-radius: 8px; display: none; flex-direction: column; z-index: 100;
-        }
-        .tool-item { padding: 12px 20px; color: white; cursor: pointer; border-bottom: 1px solid #333; }
-        .tool-item:hover { background: var(--red-neon); }
-
-        /* Widget Dự đoán */
-        #predict-widget {
-            position: absolute; bottom: 20%; left: 50%; transform: translateX(-50%);
-            background: rgba(0,0,0,0.85); border: 2px solid #333;
-            border-radius: 50px; padding: 10px 25px; display: flex;
-            align-items: center; gap: 20px; box-shadow: 0 0 15px rgba(255,0,0,0.3);
-            cursor: move; z-index: 99;
-        }
-        .box { font-weight: bold; font-size: 1.2rem; color: #444; transition: 0.3s; }
-        .phien-text { color: var(--red-neon); font-family: monospace; font-weight: bold; position: absolute; bottom: -25px; left: 10px; }
-
-        /* Hiệu ứng nháy */
-        .active-tai { color: #ffae00 !important; text-shadow: 0 0 10px #ffae00; animation: blink 0.5s infinite; }
-        .active-xiu { color: #00ff00 !important; text-shadow: 0 0 10px #00ff00; animation: blink 0.5s infinite; }
-        @keyframes blink { 50% { opacity: 0.3; } }
-    </style>
+    .result-item { background: #f4faff; border-radius: 15px; padding: 15px; margin-bottom: 15px; border: 2px solid var(--dora-blue); }
+    .big-percent { font-size: 2.2rem; font-weight: 900; color: var(--dora-blue); margin-top: 5px;}
+    .progress-bar-bg { height: 16px; background: #e0e0e0; border-radius: 10px; overflow: hidden; margin: 10px 0; border: 1px solid #ccc;}
+    .progress-fill { height: 100%; transition: width 1s ease-out; }
+    .final-vip { font-size: 1.4rem; font-weight: 900; text-align: center; padding: 15px; background: var(--dora-white); border-radius: 15px; border: 3px dashed var(--dora-red); margin: 15px 0; color: var(--dora-red); }
+    
+    /* OVERLAY GAME */
+    #game-overlay { display: none; position: fixed; inset: 0; z-index: 2000; background: #fff; animation: popIn 0.3s; }
+    @keyframes popIn { 0% { opacity: 0; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1); } }
+    #game-frame { width: 100%; height: 100%; border: none; }
+    .close-game-btn { position: absolute; top: 40px; left: 15px; background: var(--dora-red); color: #fff; border: 2px solid #000; padding: 8px 16px; border-radius: 12px; font-weight: 900; z-index: 2005; cursor:pointer; box-shadow: 2px 2px 0 #000; font-size: 18px;}
+    
+    /* DORAEMON WIDGET ĐẾM NGƯỢC */
+    #robotContainer {
+      position: fixed; top: 45px; right: 15px; display: flex; align-items: center; z-index: 2001; cursor: grab;
+      background: var(--dora-white); border: 3px solid var(--dora-blue); border-radius: 25px; 
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2); padding: 8px 15px 8px 8px; width: max-content;
+    }
+    #robotContainer:active { cursor: grabbing; }
+    .robotIconWrapper { width: 55px; height: 55px; margin-right: 12px; position: relative; flex-shrink: 0; background: #e0f2fe; border-radius: 50%; border: 2px solid var(--dora-blue);}
+    #robotIcon { width: 100%; height: 100%; animation: bay 2s ease-in-out infinite; border-radius: 50%; object-fit: cover;}
+    @keyframes bay { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+    #robotText { display: flex; flex-direction: column; justify-content: center; }
+    #line1 { font-size: 16px; font-weight: 900; color: var(--dora-red); margin-bottom: 2px;}
+    #line2 { font-size: 13px; color: #555; font-weight: 700; }
+    
+    .menu-content-panel { display: none; }
+    .menu-content-panel.active-panel { display: block; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from {opacity:0; transform:translateY(10px);} to {opacity:1; transform:translateY(0);} }
+  </style>
 </head>
 <body>
-
-<div id="game-container">
-    <div id="menu-btn">⋮</div>
-    <div id="tool-list">
-        <div class="tool-item" onclick="changeGame('lc79', 'https://lc79.bet')">LC79.BET</div>
-        <div class="tool-item" onclick="changeGame('md5', 'https://lc79.bet')">TOOL MD5</div>
-        <div class="tool-item" onclick="changeGame('betvip', 'https://betvip.fit')">BETVIP</div>
-        <div class="tool-item" onclick="changeGame('sunwin', 'none')">SICBO SUNWIN</div>
+    <div id="game-overlay">
+  <div style="width: 100%; background: var(--dora-blue); color: #fff; font-size: 12px; padding: 6px; font-weight:bold; border-bottom: 2px solid #000; display: flex;"><marquee scrollamount="5">TÚI THẦN KỲ DORAEMON AI | DỰ ĐOÁN SIÊU TỐC | HƯNG ĐẸP TRAI</marquee></div>
+  <button class="close-game-btn" onclick="closeGame()"><i class="fas fa-times"></i> Đóng</button>
+  <iframe id="game-frame" src=""></iframe>
+  
+  <div id="robotContainer" style="display:none;">
+    <div class="robotIconWrapper">
+      <img id="robotIcon" src="https://i.imgur.com/rN5hK0k.png" alt="Doraemon" draggable="false" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1043/1043431.png'">
     </div>
-
-    <iframe id="game-frame" src="https://lc79.bet"></iframe>
-
-    <div id="predict-widget">
-        <div id="res-tai" class="box">TÀI</div>
-        <div style="color: white; font-size: 0.8rem;">VS</div>
-        <div id="res-xiu" class="box">XỈU</div>
-        <div id="current-phien" class="phien-text">#000000</div>
+    <div id="robotText">
+      <div id="line1">LẤY BẢO BỐI...</div>
+      <div id="line2">Chờ xíu nhé</div>
     </div>
+  </div>
 </div>
 
+<div class="container" id="main-tool">
+  <div class="header glass-panel">
+    <h1>HƯNG ĐẸP TRAI</h1>
+    <div style="color:var(--dora-yellow); font-size:1.1rem; font-weight:900; letter-spacing: 2px; text-shadow: 1px 1px 0 #000; margin-bottom: 10px;">DORAEMON AI TOOL</div>
+    <div class="badge"><i class="fas fa-bell"></i> BẢO BỐI VÔ CỰC</div>
+  </div>
+
+  <div class="vip-menu glass-panel">
+    <div class="menu-item active" data-menu="manual"><i class="fas fa-keyboard"></i> NHẬP MD5</div>
+    <div class="menu-item" data-menu="auto"><i class="fas fa-robot"></i> AUTO GAME</div>
+  </div>
+
+  <div id="menu-manual-panel" class="menu-content-panel active-panel">
+    <div class="card glass-panel">
+      <h3 style="color:var(--dora-blue); text-align:center; margin-bottom: 15px; font-weight: 800;"><i class="fas fa-search"></i> KÍNH LÚP TÌM CẦU</h3>
+      <input type="text" id="md5-input" class="input-box" placeholder="Dán mã MD5 vào đây..." maxlength="32">
+      <button id="predict-btn" class="btn-dora btn-blue"><i class="fas fa-magic"></i> KIỂM TRA BẢO BỐI</button>
+    </div>
+    <div id="results-section" style="display:none;">
+      <div id="loading-card" class="card glass-panel" style="display:none; text-align:center; padding:30px;">
+        <i class="fas fa-spinner fa-spin" style="font-size: 40px; color: var(--dora-blue); margin-bottom: 10px;"></i>
+        <p style="color:#555; font-weight:800;">Đang lật túi thần kỳ...</p>
+      </div>
+      <div id="results-content" style="display:none;">
+        <div class="result-item"><div style="font-size:1.1rem;font-weight:900;color:var(--dora-red);">📈 TÀI (OVER)</div><div class="big-percent" id="tai-value">50.0%</div><div class="progress-bar-bg"><div class="progress-fill" id="tai-bar" style="width:50%; background: var(--dora-red);"></div></div></div>
+        <div class="result-item"><div style="font-size:1.1rem;font-weight:900;color:var(--dora-blue);">📉 XỈU (UNDER)</div><div class="big-percent" id="xiu-value">50.0%</div><div class="progress-bar-bg"><div class="progress-fill" id="xiu-bar" style="width:50%; background: var(--dora-blue);"></div></div></div>
+        <div class="final-vip" id="final-result">🔮 ĐANG CHỜ...</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="menu-auto-panel" class="menu-content-panel">
+    
+    <div class="card glass-panel" style="border-color: #ff9900;">
+      <div style="color:#ff6600; font-weight:900; margin-bottom:12px; font-size:1.1rem; text-align:center;"><i class="fas fa-dice"></i> HỆ THỐNG SUN.WIN SICBO</div>
+      <button class="btn-dora" style="background:#ff9900; color:#fff;" onclick="startAutoAPI('sunwin_sicbo', 'https://web.sunwin.games/')">BẬT TOOL SICBO SUN.WIN</button>
+    </div>
+
+    <div class="card glass-panel">
+      <div style="color:var(--dora-blue); font-weight:900; margin-bottom:12px; font-size:1.1rem; text-align:center;"><i class="fas fa-gamepad"></i> HỆ THỐNG BETVIP</div>
+      <div class="grid-2">
+        <button class="btn-dora" style="background:#e0f2fe; color:var(--dora-blue); border:2px solid var(--dora-blue); box-shadow:none;" onclick="startAutoAPI('betvip_tx', 'https://play.betvip.fit/')">TX THƯỜNG</button>
+        <button class="btn-dora btn-blue" onclick="startAutoAPI('betvip_md5', 'https://play.betvip.fit/')">TX MD5</button>
+      </div>
+    </div>
+    
+    <div class="card glass-panel">
+      <div style="color:var(--dora-red); font-weight:900; margin-bottom:12px; font-size:1.1rem; text-align:center;"><i class="fas fa-globe"></i> HỆ THỐNG LC79.BET</div>
+      <div class="grid-2">
+        <button class="btn-dora" style="background:#ffe6e6; color:var(--dora-red); border:2px solid var(--dora-red); box-shadow:none;" onclick="startAutoAPI('lc79_tx', 'https://lc79.bet')">TX THƯỜNG</button>
+        <button class="btn-dora btn-red" onclick="startAutoAPI('lc79_md5', 'https://lc79.bet')">TX MD5</button>
+      </div>
+      <button class="btn-dora" style="background:#333; color:#fff; margin-top:8px;" onclick="startAutoAPI('lc79_xd', 'https://lc79.bet')">XÓC ĐĨA LC79</button>
+    </div>
+
+  </div>
+</div>
 <script>
-    const menuBtn = document.getElementById('menu-btn');
-    const toolList = document.getElementById('tool-list');
-    const taiBox = document.getElementById('res-tai');
-    const xiuBox = document.getElementById('res-xiu');
-    const phienBox = document.getElementById('current-phien');
-    let currentTool = "lc79_tx";
-    let isWaiting = false;
+// KÉO THẢ DORAEMON
+const robot = document.getElementById("robotContainer");
+let drag = false, offsetX = 0, offsetY = 0;
+const startDrag = (clientX, clientY) => { drag = true; offsetX = clientX - robot.offsetLeft; offsetY = clientY - robot.offsetTop; robot.style.transition = 'none'; };
+const doDrag = (clientX, clientY) => { if(drag) { let l = clientX - offsetX, t = clientY - offsetY; l = Math.max(0, Math.min(l, window.innerWidth - robot.offsetWidth)); t = Math.max(0, Math.min(t, window.innerHeight - robot.offsetHeight)); robot.style.left = l + "px"; robot.style.top = t + "px"; } };
+const endDrag = () => { drag = false; };
 
-    // Hiện/Ẩn Menu
-    menuBtn.onclick = () => toolList.style.display = toolList.style.display === 'flex' ? 'none' : 'flex';
+robot.addEventListener("mousedown", e => startDrag(e.clientX, e.clientY)); document.addEventListener("mousemove", e => doDrag(e.clientX, e.clientY)); document.addEventListener("mouseup", endDrag);
+robot.addEventListener("touchstart", e => startDrag(e.touches[0].clientX, e.touches[0].clientY)); document.addEventListener("touchmove", e => doDrag(e.touches[0].clientX, e.touches[0].clientY)); document.addEventListener("touchend", endDrag);
 
-    function changeGame(type, url) {
-        if(url !== 'none') document.getElementById('game-frame').src = url;
-        currentTool = type;
-        toolList.style.display = 'none';
-        alert("Đã chuyển sang: " + type);
-    }
+// CHUYỂN TAB
+document.querySelectorAll('.menu-item').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active')); item.classList.add('active');
+    document.querySelectorAll('.menu-content-panel').forEach(p => p.classList.remove('active-panel'));
+    document.getElementById(`menu-${item.dataset.menu}-panel`).classList.add('active-panel');
+  });
+});
 
-    // Logic xử lý chính
-    async function updateTool() {
-        if(isWaiting) return;
+// NÚT NHẬP MD5
+document.getElementById('predict-btn').addEventListener('click', async () => {
+  let val = document.getElementById('md5-input').value.trim();
+  if(!/^[0-9a-f]{32}$/i.test(val)) return alert("Sai định dạng MD5 rồi nha!");
+  document.getElementById('results-section').style.display = 'block'; document.getElementById('loading-card').style.display = 'block'; document.getElementById('results-content').style.display = 'none';
+  try {
+      let res = await fetch('/api/manual_md5', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({md5: val}) });
+      let data = await res.json();
+      if(data.status === "success") {
+          setTimeout(() => {
+              document.getElementById('loading-card').style.display = 'none'; document.getElementById('results-content').style.display = 'block';
+              document.getElementById('tai-value').textContent = data.tai + '%'; document.getElementById('xiu-value').textContent = data.xiu + '%';
+              document.getElementById('tai-bar').style.width = data.tai + '%'; document.getElementById('xiu-bar').style.width = data.xiu + '%';
+              let isTai = data.suggestion.includes("TÀI");
+              let finalRes = document.getElementById('final-result'); finalRes.textContent = `[ BẢO BỐI CHỌN: ${data.suggestion} ]`; 
+              finalRes.style.color = isTai ? 'var(--dora-red)' : 'var(--dora-blue)'; finalRes.style.borderColor = isTai ? 'var(--dora-red)' : 'var(--dora-blue)';
+          }, 1000); 
+      }
+  } catch(e) { alert("Lỗi kết nối Server!"); }
+});
 
-        try {
-            const res = await fetch(`/api/scan?tool=${currentTool}&key=67`); // Thay key dynamic nếu cần
-            const data = await res.json();
+// LOGIC AUTO DỰ ĐOÁN
+let autoInterval, activeGame = "", phienCu = "", isAnalyzing = false;
 
-            if(data.status === "success") {
-                phienBox.innerText = data.phien;
-                
-                // Hiệu ứng đợi 10 giây
-                isWaiting = true;
-                taiBox.className = "box"; xiuBox.className = "box";
-                
-                setTimeout(() => {
-                    if(data.du_doan === "TÀI") taiBox.classList.add('active-tai');
-                    else xiuBox.classList.add('active-xiu');
-                    
-                    isWaiting = false; // Sau khi hiển thị xong mới cho phép quét tiếp
-                }, 10000); // Đợi 10 giây đúng yêu cầu
-            }
-        } catch (e) { console.log("Lỗi kết nối server"); }
-    }
+async function loopAuto() {
+    if (isAnalyzing) return; 
+    try {
+        let req = await fetch(`/api/scan?tool=${activeGame}`);
+        let json = await req.json();
+        let res = json.data;
+        if(res && res.phien !== phienCu) {
+            isAnalyzing = true; phienCu = res.phien;
+            let isTai = res.du_doan.includes("TÀI") || res.du_doan.includes("CHẴN"); 
+            let colorHex = isTai ? "var(--dora-red)" : "var(--dora-blue)"; 
+            
+            let countdown = 15; 
+            document.getElementById('line1').innerText = "ĐANG TÍNH TÓAN..."; document.getElementById('line1').style.color = "#000";
+            document.getElementById('line2').innerText = `Chờ ${countdown}s`;
 
-    // Kéo thả widget (Draggable đơn giản)
-    const widget = document.getElementById('predict-widget');
-    widget.onmousedown = (e) => {
-        let shiftX = e.clientX - widget.getBoundingClientRect().left;
-        let shiftY = e.clientY - widget.getBoundingClientRect().top;
-        document.onmousemove = (e) => {
-            widget.style.left = e.pageX - shiftX + 'px';
-            widget.style.top = e.pageY - shiftY + 'px';
-        };
-        document.onmouseup = () => document.onmousemove = null;
-    };
+            let timerInterval = setInterval(() => {
+                document.getElementById('line2').innerText = `Chờ ${countdown}s`;
+                countdown--;
+                if (countdown < 0) {
+                    clearInterval(timerInterval);
+                    document.getElementById('line1').innerText = `#${res.phien} · ${res.du_doan}`;
+                    document.getElementById('line1').style.color = colorHex;
+                    document.getElementById('line2').innerText = `Tỉ lệ: ${res.ti_le}%`;
+                    isAnalyzing = false;
+                }
+            }, 1000);
+        }
+    } catch(e) {}
+}
 
-    setInterval(updateTool, 3000); // Kiểm tra phiên mỗi 3 giây
+function startAutoAPI(tool, url) {
+    document.getElementById('game-overlay').style.display = "block"; clearInterval(autoInterval); phienCu = ""; activeGame = tool; isAnalyzing = false;
+    document.getElementById('line1').innerText = "TÚI THẦN KỲ..."; document.getElementById('line2').innerText = "Đang kết nối..."; document.getElementById('line1').style.color = "#000";
+    document.getElementById('game-frame').style.display = "block"; document.getElementById('game-frame').src = url;
+    document.getElementById('robotContainer').style.display = "flex"; 
+    loopAuto(); autoInterval = setInterval(loopAuto, 2000); 
+}
+function closeGame() { clearInterval(autoInterval); isAnalyzing = false; document.getElementById('game-overlay').style.display = 'none'; document.getElementById('game-frame').src = ''; document.getElementById('robotContainer').style.display = "none"; }
 </script>
-
 </body>
 </html>
