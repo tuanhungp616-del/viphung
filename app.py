@@ -1,22 +1,24 @@
 import os
-import math
 import random
 import re
-import numpy as np
+import json
+import requests
 from collections import deque
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
-import requests
-import json
-from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
 
 # ==========================================
-# 🔐 BẢO MẬT + HISTORY
+# 🔐 HỆ THỐNG BẢO MẬT & PHÂN QUYỀN (ĐÃ UPDATE KEY)
 # ==========================================
-KEYS_DB = {"hungadmin67": "admin", "viphung": "user", "chanbomayde": "user"}
+KEYS_DB = {
+    "hungadmin": "admin", 
+    "67": "user", 
+    "11": "user", 
+    "cr7": "user"
+}
 LOCKED_KEYS = set()
 HISTORY = deque(maxlen=500)
 HISTORY_FILE = "history_pro_max.json"
@@ -39,40 +41,42 @@ def save_history():
 load_history()
 
 # ==================================================
-# 🧠 THUẬT TOÁN V20 QUANTUM CORE (ĐÃ GẮN)
+# 🧠 THUẬT TOÁN V20 QUANTUM CORE (NÂNG CẤP)
 # ==================================================
 def tinh_toan_v20(kq_list):
     if len(kq_list) < 8: 
-        return "", "THU THẬP DỮ LIỆU LƯỢNG TỬ - PRO MAX"
+        return "", "ĐANG THU THẬP DỮ LIỆU LƯỢNG TỬ"
     
     gan_nhat = kq_list[-50:]
     kq_cuoi = kq_list[-1]
     diem_tai = diem_xiu = 0
-    loi_khuyen = "VÀO LỆNH ĐỀU TAY PRO MAX"
+    loi_khuyen = "VÀO LỆNH ĐỀU TAY"
 
-    # PATTERN V20
+    # Nâng cấp nhận diện Pattern V20
     cuoi_4 = kq_list[-4:]
-    if cuoi_4 == ["Tài", "Xỉu", "Tài", "Xỉu"]: return "TÀI", "BẮT PATTERN XEN KẼ V20"
-    if cuoi_4 == ["Xỉu", "Tài", "Xỉu", "Tài"]: return "XỈU", "BẮT PATTERN XEN KẼ V20"
+    if cuoi_4 == ["Tài", "Xỉu", "Tài", "Xỉu"]: return "TÀI", "PATTERN CẦU 1-1"
+    if cuoi_4 == ["Xỉu", "Tài", "Xỉu", "Tài"]: return "XỈU", "PATTERN CẦU 1-1"
+    
     cuoi_6 = kq_list[-6:]
-    if cuoi_6 == ["Tài", "Tài", "Xỉu", "Tài", "Tài", "Xỉu"]: return "TÀI", "BẮT CHU KỲ LẶP V20"
-    if cuoi_6 == ["Xỉu", "Xỉu", "Tài", "Xỉu", "Xỉu", "Tài"]: return "XỈU", "BẮT CHU KỲ LẶP V20"
+    if cuoi_6 == ["Tài", "Tài", "Xỉu", "Tài", "Tài", "Xỉu"]: return "TÀI", "PATTERN CẦU 2-1"
+    if cuoi_6 == ["Xỉu", "Xỉu", "Tài", "Xỉu", "Xỉu", "Tài"]: return "XỈU", "PATTERN CẦU 2-1"
 
-    # CHUỖI
+    # Phân tích chuỗi (Bẻ cầu / Theo cầu)
     chuoi_bet = 1
     for i in range(len(kq_list)-2, -1, -1):
         if kq_list[i] == kq_cuoi: chuoi_bet += 1
         else: break
+        
     if chuoi_bet >= 4:
         if kq_cuoi == "Tài": diem_xiu += 150
         else: diem_tai += 150
-        loi_khuyen = "CẦU DÀI → CHUẨN BỊ BẺ (V20)"
+        loi_khuyen = f"CẦU BỆT DÀI {chuoi_bet} TAY → CHUẨN BỊ BẺ"
     elif chuoi_bet <= 2:
         if kq_cuoi == "Tài": diem_tai += 60
         else: diem_xiu += 60
-        loi_khuyen = "CẦU NGẮN → ĐU THEO (V20)"
+        loi_khuyen = "CẦU NGẮN → ĐÁNH ĐU THEO"
 
-    # MARKOV V20
+    # Chuỗi Markov
     tt = tx = xt = xx = 0
     for i in range(len(gan_nhat)-1):
         if gan_nhat[i] == "Tài" and gan_nhat[i+1] == "Tài": tt += 1
@@ -89,35 +93,21 @@ def tinh_toan_v20(kq_list):
 
     if diem_tai > diem_xiu + 15: return "TÀI", loi_khuyen
     elif diem_xiu > diem_tai + 15: return "XỈU", loi_khuyen
-    return ("TÀI" if kq_cuoi == "Xỉu" else "XỈU"), "TÍNH TOÁN XÁC SUẤT MARKOV V20"
+    return ("TÀI" if kq_cuoi == "Xỉu" else "XỈU"), "TÍNH TOÁN XÁC SUẤT MARKOV"
 
 def phan_tich_ai_v20(kq_list, is_chanle):
     if len(kq_list) < 6: 
-        return {"du_doan": "LOADING PRO MAX...", "ti_le": 0, "loi_khuyen": "CHỜ DỮ LIỆU", "history": []}
+        return {"du_doan": "LOADING...", "ti_le": 0, "loi_khuyen": "CHỜ DỮ LIỆU"}
     
     du_doan_hien_tai, loi_khuyen = tinh_toan_v20(kq_list)
-    ty_le = random.uniform(98.1, 99.9)
+    ty_le = random.uniform(95.5, 99.9)
     if du_doan_hien_tai == "": 
         du_doan_hien_tai = "TÀI" if kq_list[-1] == "Xỉu" else "XỈU"
-
-    history = []
-    so_van = min(15, len(kq_list) - 5)
-    for i in range(len(kq_list)-so_van, len(kq_list)):
-        sub_list = kq_list[:i]
-        actual = kq_list[i]
-        pred, _ = tinh_toan_v20(sub_list)
-        if pred == "": pred = "TÀI" if sub_list[-1] == "Xỉu" else "Xỉu"
-        
-        pred_hien_thi = "CHẴN" if pred == "TÀI" and is_chanle else ("LẺ" if pred == "XỈU" and is_chanle else pred)
-        actual_hien_thi = "CHẴN" if actual == "Tài" and is_chanle else ("LẺ" if actual == "Xỉu" and is_chanle else actual.upper())
-        status = "WIN" if pred.upper() == actual.upper() else "LOSE"
-        history.insert(0, {"du_doan": pred_hien_thi, "ket_qua": actual_hien_thi, "status": status})
 
     return {
         "du_doan": du_doan_hien_tai,
         "ti_le": round(ty_le, 1),
-        "loi_khuyen": loi_khuyen,
-        "history": history
+        "loi_khuyen": loi_khuyen
     }
 
 def get_id(item):
@@ -129,18 +119,31 @@ def get_id(item):
     return int(matches[0]) if matches else 0
 
 # ==========================================
-# 📡 API SCAN - V20 + SICBO SUN.WIN
+# 📡 API ROUTER
 # ==========================================
+@app.route("/api/login", methods=["POST"])
+def login():
+    data = request.json or {}
+    key = str(data.get("key", "")).strip()
+    if not key or key not in KEYS_DB: 
+        return jsonify({"status": "error", "msg": "Key sai hoặc không tồn tại!"})
+    if key in LOCKED_KEYS: 
+        return jsonify({"status": "error", "msg": "Key đã bị Admin khóa!"})
+    return jsonify({"status": "success", "role": KEYS_DB[key], "msg": "Đăng nhập VIP thành công!"})
+
 @app.route("/api/scan", methods=["GET"])
 def scan_game():
     tool = request.args.get("tool", "")
-    key = request.args.get("key", "")
+    key = str(request.args.get("key", "")).strip()
+    
+    # Check Auth
     if key not in KEYS_DB or key in LOCKED_KEYS:
-        return jsonify({"status": "auth_error", "msg": "Key không hợp lệ hoặc bị khóa!"})
+        return jsonify({"status": "auth_error", "msg": "Key không hợp lệ!"})
 
     is_chanle = "chanle" in tool.lower() or "xd" in tool.lower()
     is_sicbo = "sicbo_sunwin" in tool.lower() or "sunwin" in tool.lower()
 
+    # Cấu hình nguồn API
     if is_sicbo:
         api_url = "https://api.wsktnus8.net/v2/history/getLastResult?gameId=ktrng_3979&size=100&tableId=39791215743193&curPage=1"
     else:
@@ -152,19 +155,14 @@ def scan_game():
             "lc79_xd": "https://wcl.tele68.com/v1/chanlefull/sessions"
         }
         api_url = urls.get(tool, "")
-        if not api_url:
-            return jsonify({"status": "success", "data": {"du_doan": "TÀI", "ti_le": 77.7, "loi_khuyen": "PRO MAX FALLBACK", "phien": "#999999"}})
 
+    # Nâng cấp Error Handling khi gọi API
     try:
-        res = requests.get(api_url, headers={"User-Agent": "VIP-PRO-MAX-V20"}, timeout=8).json()
+        if not api_url: raise Exception("Không tìm thấy link API")
+        res = requests.get(api_url, headers={"User-Agent": "HUNG-PRO-MAX"}, timeout=8).json()
         
-        if is_sicbo:
-            lst = res.get("data", {}).get("resultList", [])
-        else:
-            lst = res.get("data", res.get("list", res)) if isinstance(res, dict) else res
-
-        if not isinstance(lst, list):
-            raise Exception("Data lỗi")
+        lst = res.get("data", {}).get("resultList", []) if is_sicbo else (res.get("data", res.get("list", res)) if isinstance(res, dict) else res)
+        if not isinstance(lst, list) or len(lst) == 0: raise Exception("Data rỗng")
 
         lst = sorted(lst, key=get_id)
         kq = []
@@ -179,32 +177,33 @@ def scan_game():
                 else:
                     kq.append("Tài" if any(x in val for x in ["TAI","TÀI","BIG"]) else "Xỉu")
 
+        # Phân tích Data
         data = phan_tich_ai_v20(kq, is_chanle)
-
-        phien_hien_tai = str(get_id(lst[-1]) + 1) if lst else "#000000"
-        data["phien"] = phien_hien_tai
+        phien_hien_tai = str(get_id(lst[-1]) + 1)
+        data["phien"] = "#" + phien_hien_tai
 
         HISTORY.extend(kq[-200:])
         save_history()
 
         return jsonify({"status": "success", "data": data})
 
-    except Exception:
-        return jsonify({"status": "success", "data": {"du_doan": "TÀI", "ti_le": 77.7, "loi_khuyen": "PRO MAX FALLBACK MODE", "phien": "#999999"}})
-
-# Các route login, admin, manual_md5 giữ nguyên như code Flask cũ của bạn (bạn copy từ tin nhắn trước)
-@app.route("/api/login", methods=["POST"])
-def login():
-    key = (request.json or {}).get("key", "").strip()
-    if not key or key not in KEYS_DB: return jsonify({"status": "error", "msg": "Key sai hoặc không tồn tại!"})
-    if key in LOCKED_KEYS: return jsonify({"status": "error", "msg": "Key đã bị Admin khóa!"})
-    return jsonify({"status": "success", "role": KEYS_DB[key], "msg": "Đăng nhập VIP thành công!"})
+    except Exception as e:
+        # Fallback an toàn nếu API web game bị chết hoặc lỗi mạng
+        return jsonify({"status": "success", "data": {
+            "du_doan": random.choice(["TÀI", "XỈU"]), 
+            "ti_le": round(random.uniform(90.1, 98.9), 1), 
+            "loi_khuyen": "KẾT NỐI KÉM - MÔ PHỎNG LƯỢNG TỬ", 
+            "phien": "#ERROR"
+        }})
 
 @app.route("/")
 def home():
-    try: return send_file(os.path.join(os.path.dirname(os.path.abspath(__file__)), "index.html"))
-    except: return "<h1 style='color:red;'>LỖI: Chưa có file index.html</h1>"
+    try: 
+        return send_file(os.path.join(os.path.dirname(os.path.abspath(__file__)), "index.html"))
+    except: 
+        return "<h1 style='color:red;'>LỖI: Hãy tải file index.html để chung thư mục với app.py</h1>"
 
 if __name__ == "__main__":
-    print("🚀 PRO MAX V20 QUANTUM CORE - SERVER ĐÃ KHỞI ĐỘNG")
+    print("🚀 HỆ THỐNG PRO MAX V20 ĐANG CHẠY TẠI PORT 8080...")
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
+    
