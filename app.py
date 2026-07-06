@@ -26,6 +26,12 @@ GAME_HISTORIES = {
 GAME_STATS = {key: {"t":0, "x":0, "streak_t":0, "streak_x":0, "max_streak_t":0, "max_streak_x":0, "cycles":{}} 
               for key in GAME_HISTORIES}
 
+# MÃ KHÓA BẢO MẬT ĐỂ ĐĂNG NHẬP GIAO DIỆN
+SYSTEM_KEYS = {
+    "hungcaliadmin": {"role": "admin", "name": "Hưng Đẹp Trai", "status": "Active"},
+    "nhatchimbe": {"role": "guest", "name": "Khách VIP", "status": "Active"}
+}
+
 # ==========================================
 # 🛠️ CÔNG CỤ XỬ LÝ ID PHIÊN CHUẨN HÓA
 # ==========================================
@@ -38,7 +44,6 @@ def get_id(item):
     return int(matches[0]) if matches else 0
 
 def update_stats(game_key, result):
-    """Cập nhật thống kê chuỗi, chu kỳ cho từng game"""
     stats = GAME_STATS[game_key]
     stats["t"] += 1 if result == "T" else 0
     stats["x"] += 1 if result == "X" else 0
@@ -59,7 +64,6 @@ def update_stats(game_key, result):
             stats["cycles"][cycle] = stats["cycles"].get(cycle, 0) + 1
 
 def detect_cycle_pattern(history):
-    """Tìm quy luật tuần hoàn trong lịch sử dòng dữ liệu"""
     seq = list(history)
     if len(seq) < 12: return None, 0
     best_cycle = None
@@ -79,7 +83,6 @@ def detect_cycle_pattern(history):
     return best_cycle, best_score
 
 def trend_analysis(history):
-    """Phân tích xu hướng tăng/giảm bằng hồi quy tuyến tính (Dùng tối ưu polyfit của Numpy)"""
     seq = np.array([1 if x=="T" else 0 for x in history])
     if len(seq) < 15: return 0
     windows = [5, 10, 20]
@@ -89,7 +92,6 @@ def trend_analysis(history):
         if len(seq) >= w:
             y = seq[-w:]
             x = np.arange(w)
-            # Tính hệ số góc (slope) thuần bằng numpy polyfit thay thế scipy
             slope = np.polyfit(x, y, 1)[0]
             trends.append(slope)
             weights.append(w)
@@ -125,7 +127,6 @@ def md5_neural_predict(md5_str: str):
         else:
             xiu += x * weight * 0.8
     
-    # Phân tích phổ năng lượng FFT
     fft_all = np.fft.fft(hex_arr)
     mag = np.abs(fft_all)
     tai += np.mean(mag[2:9]) * 8 + np.std(mag[10:20]) * 4
@@ -223,6 +224,21 @@ def ultimate_hybrid_predict(is_chanle, history, md5_str=None):
 # ==========================================
 # 📡 KÊNH TRUYỀN TẢI DỮ LIỆU API (ĐỒNG BỘ FRONTEND)
 # ==========================================
+
+# KHÔI PHỤC CỔNG ĐĂNG NHẬP (HỖ TRỢ CẢ POST VÀ GET CHO AN TOÀN)
+@app.route("/api/login", methods=["GET", "POST"])
+def auth_gateway():
+    key = ""
+    if request.method == "POST":
+        req_data = request.json or {}
+        key = req_data.get("key", "").strip()
+    else:
+        key = request.args.get("key", "").strip()
+        
+    if key in SYSTEM_KEYS:
+        return jsonify({"status": "success", "data": SYSTEM_KEYS[key], "version": "2.0-ULTIMATE"})
+    return jsonify({"status": "error", "msg": "Mã khóa không chính xác!"})
+
 @app.route("/api/manual_md5", methods=["POST"])
 def manual_md5():
     req_data = request.json or {}
@@ -236,9 +252,15 @@ def manual_md5():
         "suggestion": f"{dd} ({lk})"
     })
 
-@app.route("/api/scan", methods=["GET"])
+# CỔNG QUÉT CHẤP NHẬN CẢ GET LẪN POST ĐỂ TRÁNH XUNG ĐỘT GIAO DIỆN
+@app.route("/api/scan", methods=["GET", "POST"])
 def scan_game():
-    tool = request.args.get("tool", "")
+    if request.method == "POST":
+        req_data = request.json or {}
+        tool = req_data.get("tool", "")
+    else:
+        tool = request.args.get("tool", "")
+        
     is_chanle = "chanle" in tool.lower() or "xd" in tool.lower()
     
     urls = {
@@ -306,4 +328,4 @@ def home():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)), debug=False)
-    
+            
