@@ -1,227 +1,320 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>DORAEMON AI - HƯNG ĐẸP TRAI</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>DORAEMON INTELLIGENCE AI v5.0</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&display=swap" rel="stylesheet">
   <style>
-    * { margin:0; padding:0; box-sizing:border-box; font-family: 'Quicksand', sans-serif; }
-    body { background: #e0f2fe; color: #333; min-height: 100vh; overflow-x: hidden; position: relative; user-select: none; }
+    * { margin:0; padding:0; box-sizing:border-box; font-family: 'Space Grotesk', sans-serif; }
+    body { background: radial-gradient(circle at center, #07162c 0%, #020710 100%); color: #fff; min-height: 100vh; overflow-x: hidden; display: flex; align-items: center; justify-content: center; padding: 15px; }
     
-    /* Doraemon Theme Colors */
-    :root { --dora-blue: #00a6ed; --dora-white: #ffffff; --dora-red: #e60000; --dora-yellow: #fceb00; --shadow: rgba(0, 166, 237, 0.2); }
+    :root { --neon-blue: #00d2ff; --neon-red: #ff3366; --neon-yellow: #ffe600; --glass-border: rgba(0, 210, 255, 0.25); }
     
-    .container { max-width: 560px; margin: 0 auto; padding: 20px 16px; position: relative; z-index: 2; }
-    .glass-panel { background: var(--dora-white); border: 3px solid var(--dora-blue); box-shadow: 0 8px 25px var(--shadow); border-radius: 25px; }
+    .glass-box { background: rgba(10, 25, 47, 0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 2px solid var(--glass-border); box-shadow: 0 0 35px rgba(0, 210, 255, 0.15); border-radius: 25px; width: 100%; max-width: 480px; padding: 25px; position: relative; }
     
-    .header { text-align: center; padding: 20px 15px; margin-bottom: 20px; background: var(--dora-blue); border: none; border-bottom: 5px solid #0081b8;}
-    .header h1 { font-size: 2rem; font-weight: 900; color: var(--dora-white); text-shadow: 2px 2px 0px #000; letter-spacing: 1px; margin-bottom: 5px;}
-    .badge { display: inline-block; background: var(--dora-yellow); border: 2px solid #000; padding: 5px 15px; border-radius: 20px; font-size: 0.85rem; font-weight: 800; color: #000; box-shadow: 2px 2px 0px #000;}
-    
-    .vip-menu { display: flex; background: #cceeff; border-radius: 20px; padding: 8px; margin-bottom: 20px; border: 2px solid var(--dora-blue); }
-    .menu-item { flex: 1; text-align: center; padding: 12px; border-radius: 15px; cursor: pointer; font-weight: 800; font-size: 0.95rem; transition: 0.3s; color: var(--dora-blue); }
-    .menu-item.active { background: var(--dora-blue); color: var(--dora-white); box-shadow: 0 4px 10px var(--shadow); }
+    .screen-panel { display: none; }
+    .screen-panel.active { display: block; animation: smoothEffect 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+    @keyframes smoothEffect { from { opacity: 0; transform: translateY(15px); filter: blur(4px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
 
-    .card { background: var(--dora-white); border-radius: 20px; padding: 20px; margin-bottom: 20px; border: 2px solid var(--dora-blue); position: relative; overflow: hidden;}
-    .card::before { content: ''; position: absolute; top: -10px; right: -10px; width: 40px; height: 40px; background: var(--dora-red); border-radius: 50%; border: 2px solid #000; box-shadow: inset -5px -5px 0 rgba(0,0,0,0.2); }
+    .header-branding { text-align: center; margin-bottom: 25px; }
+    .header-branding h1 { font-size: 2.2rem; font-weight: 900; background: linear-gradient(90deg, #fff, var(--neon-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; letter-spacing: 1px; }
+    .header-sub { font-size: 11px; color: var(--neon-yellow); font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-top: 4px; }
     
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .input-box { width: 100%; background: #f0f8ff; border: 2px solid var(--dora-blue); padding: 15px; border-radius: 15px; color: #333; font-size: 1rem; text-align: center; outline: none; transition: 0.3s; margin-bottom: 15px; font-weight: 700; }
-    .input-box:focus { border-color: var(--dora-red); background: #fff; }
+    .input-cyber { width: 100%; background: rgba(0, 0, 0, 0.5); border: 1.5px solid rgba(255,255,255,0.1); padding: 16px; border-radius: 15px; color: #fff; font-size: 1rem; text-align: center; outline: none; transition: 0.3s; font-weight: 700; margin-bottom: 15px; }
+    .input-cyber:focus { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0,210,255,0.3); }
     
-    .btn-dora { width: 100%; padding: 14px; border: 2px solid #000; border-radius: 15px; background: var(--dora-yellow); color: #000; font-size: 1.05rem; font-weight: 900; cursor: pointer; box-shadow: 3px 3px 0px #000; transition: 0.1s; text-transform: uppercase; margin-bottom: 8px;}
-    .btn-dora:active { transform: translate(3px, 3px); box-shadow: 0px 0px 0px #000; }
-    .btn-blue { background: var(--dora-blue); color: #fff; }
-    .btn-red { background: var(--dora-red); color: #fff; }
+    .btn-neon { width: 100%; padding: 15px; border-radius: 15px; border: none; background: linear-gradient(135deg, #0077ff 0%, #00d2ff 100%); color: #fff; font-size: 1rem; font-weight: 900; cursor: pointer; text-transform: uppercase; box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3); transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px; }
+    .btn-neon:hover { filter: brightness(1.15); box-shadow: 0 0 20px var(--neon-blue); }
+    .btn-neon:active { transform: scale(0.98); }
+    
+    .menu-bar { display: flex; background: rgba(0,0,0,0.3); border-radius: 15px; padding: 5px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05); }
+    .menu-btn { flex: 1; text-align: center; padding: 12px; border-radius: 11px; cursor: pointer; font-weight: 800; font-size: 0.9rem; color: #8a99ad; transition: 0.2s; }
+    .menu-btn.active { background: rgba(255, 255, 255, 0.08); color: var(--neon-blue); border: 1px solid rgba(0, 210, 255, 0.2); }
 
-    .result-item { background: #f4faff; border-radius: 15px; padding: 15px; margin-bottom: 15px; border: 2px solid var(--dora-blue); }
-    .big-percent { font-size: 2.2rem; font-weight: 900; color: var(--dora-blue); margin-top: 5px;}
-    .progress-bar-bg { height: 16px; background: #e0e0e0; border-radius: 10px; overflow: hidden; margin: 10px 0; border: 1px solid #ccc;}
-    .progress-fill { height: 100%; transition: width 1s ease-out; }
-    .final-vip { font-size: 1.4rem; font-weight: 900; text-align: center; padding: 15px; background: var(--dora-white); border-radius: 15px; border: 3px dashed var(--dora-red); margin: 15px 0; color: var(--dora-red); }
+    .card-panel { background: rgba(0,0,0,0.25); border-radius: 18px; padding: 18px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05); }
+    .grid-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     
-    /* OVERLAY GAME */
-    #game-overlay { display: none; position: fixed; inset: 0; z-index: 2000; background: #fff; animation: popIn 0.3s; }
-    @keyframes popIn { 0% { opacity: 0; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1); } }
+    .sub-btn { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 12px; border-radius: 12px; color: #fff; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
+    .sub-btn:hover { background: rgba(0, 210, 255, 0.1); border-color: var(--neon-blue); }
+    
+    .monitor-item { background: rgba(0,0,0,0.4); border-radius: 14px; padding: 14px; margin-bottom: 12px; border-left: 4px solid var(--neon-blue); }
+    .bar-bg { height: 12px; background: rgba(255,255,255,0.1); border-radius: 8px; overflow: hidden; margin-top: 8px; }
+    .bar-fill { height: 100%; width: 50%; transition: width 0.8s ease-in-out; }
+    
+    .verdict-box { font-size: 1.5rem; font-weight: 900; text-align: center; padding: 15px; border-radius: 14px; border: 2px dashed var(--neon-red); margin-top: 15px; color: var(--neon-red); background: rgba(255,51,102,0.05); }
+
+    /* OVERLAY KHUNG TRÒ CHƠI */
+    #game-overlay { display: none; position: fixed; inset: 0; z-index: 5000; background: #000; }
     #game-frame { width: 100%; height: 100%; border: none; }
-    .close-game-btn { position: absolute; top: 40px; left: 15px; background: var(--dora-red); color: #fff; border: 2px solid #000; padding: 8px 16px; border-radius: 12px; font-weight: 900; z-index: 2005; cursor:pointer; box-shadow: 2px 2px 0 #000; font-size: 18px;}
-    
-    /* DORAEMON WIDGET ĐẾM NGƯỢC */
+    .close-overlay-btn { position: absolute; top: 45px; left: 15px; background: var(--neon-red); color: #fff; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 900; z-index: 5500; cursor: pointer; box-shadow: 0 4px 15px rgba(255,51,102,0.4); }
+
+    /* LINH VẬT WIDGET ĐẾM NGƯỢC (ĐÃ ĐỔI ẢNH CYBER DORAEMON) */
     #robotContainer {
-      position: fixed; top: 45px; right: 15px; display: flex; align-items: center; z-index: 2001; cursor: grab;
-      background: var(--dora-white); border: 3px solid var(--dora-blue); border-radius: 25px; 
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2); padding: 8px 15px 8px 8px; width: max-content;
+      position: fixed; top: 50px; right: 15px; display: none; align-items: center; z-index: 5001;
+      background: rgba(10, 25, 47, 0.95); border: 2px solid var(--neon-blue); border-radius: 20px; 
+      box-shadow: 0 8px 25px rgba(0,210,255,0.25); padding: 10px 15px; width: max-content;
     }
-    #robotContainer:active { cursor: grabbing; }
-    .robotIconWrapper { width: 55px; height: 55px; margin-right: 12px; position: relative; flex-shrink: 0; background: #e0f2fe; border-radius: 50%; border: 2px solid var(--dora-blue);}
-    #robotIcon { width: 100%; height: 100%; animation: bay 2s ease-in-out infinite; border-radius: 50%; object-fit: cover;}
-    @keyframes bay { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-    #robotText { display: flex; flex-direction: column; justify-content: center; }
-    #line1 { font-size: 16px; font-weight: 900; color: var(--dora-red); margin-bottom: 2px;}
-    #line2 { font-size: 13px; color: #555; font-weight: 700; }
-    
-    .menu-content-panel { display: none; }
-    .menu-content-panel.active-panel { display: block; animation: fadeIn 0.3s ease; }
-    @keyframes fadeIn { from {opacity:0; transform:translateY(10px);} to {opacity:1; transform:translateY(0);} }
+    .avatar-wrapper { width: 50px; height: 50px; margin-right: 12px; border-radius: 50%; border: 2px solid var(--neon-blue); overflow: hidden; background: #000; }
+    .avatar-wrapper img { width: 100%; height: 100%; object-fit: cover; animation: microFloat 2s ease-in-out infinite; }
+    @keyframes microFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+    #line1 { font-size: 15px; font-weight: 900; color: var(--neon-red); }
+    #line2 { font-size: 12px; color: #a0aec0; font-weight: 700; }
   </style>
 </head>
 <body>
-    <div id="game-overlay">
-  <div style="width: 100%; background: var(--dora-blue); color: #fff; font-size: 12px; padding: 6px; font-weight:bold; border-bottom: 2px solid #000; display: flex;"><marquee scrollamount="5">TÚI THẦN KỲ DORAEMON AI | DỰ ĐOÁN SIÊU TỐC | HƯNG ĐẸP TRAI</marquee></div>
-  <button class="close-game-btn" onclick="closeGame()"><i class="fas fa-times"></i> Đóng</button>
+
+<div class="glass-box">
+  
+  <div id="panel-login" class="screen-panel active">
+    <div class="header-branding">
+      <h1>Hưng Đẹp Trai</h1>
+      <div class="header-sub">Doraemon Core System 5.0</div>
+    </div>
+    <input type="password" id="system-key-input" class="input-cyber" placeholder="NHẬP KEY TRUY CẬP ĐỂ MỞ TÚI...">
+    <button class="btn-neon" onclick="submitAuthentication()"><i class="fas fa-key-skeleton"></i> KÍCH HOẠT HỆ THỐNG</button>
+    <div id="login-error" style="text-align: center; color: var(--neon-red); font-weight: 700; font-size: 13px; margin-top: 10px;"></div>
+  </div>
+
+  <div id="panel-dashboard" class="screen-panel">
+    <div class="header-branding">
+      <h1 id="user-display">HƯNG ĐẸP TRAI</h1>
+      <div class="header-sub">BẢO BỐI KHÔNG GIAN v5.0</div>
+    </div>
+
+    <div class="menu-bar">
+      <div class="menu-btn active" id="tab-manual" onclick="toggleMenu('manual')"><i class="fas fa-terminal"></i> THỦ CÔNG MD5</div>
+      <div class="menu-btn" id="tab-auto" onclick="toggleMenu('auto')"><i class="fas fa-robot"></i> ĐỒNG BỘ AUTO</div>
+    </div>
+
+    <div id="view-manual" style="display: block;">
+      <div class="card-panel">
+        <input type="text" id="md5-input-field" class="input-cyber" placeholder="DÁN CHUỖI MD5 CẦN TRÍCH XUẤT..." maxlength="32">
+        <button class="btn-neon" onclick="runManualAnalysis()"><i class="fas fa-microchip"></i> PHÂN TÍCH MA TRẬN</button>
+      </div>
+
+      <div id="analysis-spinner" style="display:none; text-align:center; padding: 20px 0;">
+        <i class="fas fa-circle-notch fa-spin" style="font-size: 35px; color: var(--neon-blue);"></i>
+        <p style="margin-top: 10px; font-weight: 700; color: #a0aec0;">Đang bóc tách 10,000 tầng năng lượng...</p>
+      </div>
+
+      <div id="box-result-display" style="display: none;">
+        <div class="monitor-item">
+          <div style="display:flex; justify-content:space-between; font-weight:800; color:var(--neon-red);"><span>TÀI (OVER)</span><span id="txt-tai-val">50.0%</span></div>
+          <div class="bar-bg"><div id="fill-tai-bar" class="bar-fill" style="background:var(--neon-red);"></div></div>
+        </div>
+        <div class="monitor-item">
+          <div style="display:flex; justify-content:space-between; font-weight:800; color:var(--neon-blue);"><span>XỈU (UNDER)</span><span id="txt-xiu-val">50.0%</span></div>
+          <div class="bar-bg"><div id="fill-xiu-bar" class="bar-fill" style="background:var(--neon-blue);"></div></div>
+        </div>
+        <div class="verdict-box" id="lbl-final-decision">🔮 ĐANG ĐỢI CHUỖI...</div>
+      </div>
+    </div>
+
+    <div id="view-auto" style="display: none;">
+      <div class="card-panel" style="border-color: var(--neon-yellow);">
+        <div style="color:var(--neon-yellow); font-weight:900; margin-bottom:10px; text-align:center;"><i class="fas fa-dice"></i> HỆ THỐNG SUN.WIN</div>
+        <button class="btn-neon" style="background:linear-gradient(135deg, #ff9900, #ff5500); box-shadow:0 4px 15px rgba(255,102,0,0.3);" onclick="activateAutomation('sunwin_sicbo', 'https://web.sunwin.games/')">MỞ SICBO SUN.WIN</button>
+      </div>
+
+      <div class="card-panel">
+        <div style="color:var(--neon-blue); font-weight:900; margin-bottom:10px; text-align:center;"><i class="fas fa-gamepad"></i> NỀN TẢNG BETVIP</div>
+        <div class="grid-layout">
+          <button class="sub-btn" onclick="activateAutomation('betvip_tx', 'https://play.betvip.fit/')">TX THƯỜNG</button>
+          <button class="sub-btn" style="border-color:var(--neon-blue); color:var(--neon-blue);" onclick="activateAutomation('betvip_md5', 'https://play.betvip.fit/')">TX MD5</button>
+        </div>
+      </div>
+
+      <div class="card-panel" style="border-color: var(--neon-red);">
+        <div style="color:var(--neon-red); font-weight:900; margin-bottom:10px; text-align:center;"><i class="fas fa-shield"></i> NỀN TẢNG LC79.BET</div>
+        <div class="grid-layout">
+          <button class="sub-btn" onclick="activateAutomation('lc79_tx', 'https://lc79.bet')">TX THƯỜNG</button>
+          <button class="sub-btn" style="border-color:var(--neon-red); color:var(--neon-red);" onclick="activateAutomation('lc79_md5', 'https://lc79.bet')">TX MD5</button>
+        </div>
+        <button class="sub-btn" style="width:100%; margin-top:10px; background:#111;" onclick="activateAutomation('lc79_xd', 'https://lc79.bet')">XÓC ĐĨA LC79</button>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+      <span style="font-size:12px; color:#4a5568; font-weight:700; text-decoration:underline; cursor:pointer;" onclick="logOutSession()">Thoát cổng an toàn</span>
+    </div>
+
+  </div>
+</div>
+
+<div id="game-overlay">
+  <div style="width: 100%; background: #011125; color: var(--neon-blue); font-size: 12px; padding: 8px; font-weight:bold; border-bottom: 1px solid var(--neon-blue);"><marquee scrollamount="6">HỆ THỐNG COORD ENGINE ĐANG CHẠY NGẦM THỜI GIAN THỰC ĐỒNG BỘ ĐƯỜNG TRUYỀN DORAEMON v5.0</marquee></div>
+  <button class="close-overlay-btn" onclick="deactivateAutomation()"><i class="fas fa-times"></i> Đóng Tool</button>
   <iframe id="game-frame" src=""></iframe>
   
-  <div id="robotContainer" style="display:none;">
-    <div class="robotIconWrapper">
-      <img id="robotIcon" src="https://i.imgur.com/rN5hK0k.png" alt="Doraemon" draggable="false" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1043/1043431.png'">
+  <div id="robotContainer">
+    <div class="avatar-wrapper">
+      <img id="robotIcon" src="https://i.imgur.com/r38U60e.png" alt="Cyber Doraemon" onerror="this.src='https://cdn-icons-png.flaticon.com/512/616/616438.png'">
     </div>
     <div id="robotText">
-      <div id="line1">LẤY BẢO BỐI...</div>
-      <div id="line2">Chờ xíu nhé</div>
+      <div id="line1">KẾT NỐI...</div>
+      <div id="line2">Đang đợi luồng dữ liệu</div>
     </div>
   </div>
 </div>
 
-<div class="container" id="main-tool">
-  <div class="header glass-panel">
-    <h1>HƯNG ĐẸP TRAI</h1>
-    <div style="color:var(--dora-yellow); font-size:1.1rem; font-weight:900; letter-spacing: 2px; text-shadow: 1px 1px 0 #000; margin-bottom: 10px;">DORAEMON AI TOOL</div>
-    <div class="badge"><i class="fas fa-bell"></i> BẢO BỐI VÔ CỰC</div>
-  </div>
-
-  <div class="vip-menu glass-panel">
-    <div class="menu-item active" data-menu="manual"><i class="fas fa-keyboard"></i> NHẬP MD5</div>
-    <div class="menu-item" data-menu="auto"><i class="fas fa-robot"></i> AUTO GAME</div>
-  </div>
-
-  <div id="menu-manual-panel" class="menu-content-panel active-panel">
-    <div class="card glass-panel">
-      <h3 style="color:var(--dora-blue); text-align:center; margin-bottom: 15px; font-weight: 800;"><i class="fas fa-search"></i> KÍNH LÚP TÌM CẦU</h3>
-      <input type="text" id="md5-input" class="input-box" placeholder="Dán mã MD5 vào đây..." maxlength="32">
-      <button id="predict-btn" class="btn-dora btn-blue"><i class="fas fa-magic"></i> KIỂM TRA BẢO BỐI</button>
-    </div>
-    <div id="results-section" style="display:none;">
-      <div id="loading-card" class="card glass-panel" style="display:none; text-align:center; padding:30px;">
-        <i class="fas fa-spinner fa-spin" style="font-size: 40px; color: var(--dora-blue); margin-bottom: 10px;"></i>
-        <p style="color:#555; font-weight:800;">Đang lật túi thần kỳ...</p>
-      </div>
-      <div id="results-content" style="display:none;">
-        <div class="result-item"><div style="font-size:1.1rem;font-weight:900;color:var(--dora-red);">📈 TÀI (OVER)</div><div class="big-percent" id="tai-value">50.0%</div><div class="progress-bar-bg"><div class="progress-fill" id="tai-bar" style="width:50%; background: var(--dora-red);"></div></div></div>
-        <div class="result-item"><div style="font-size:1.1rem;font-weight:900;color:var(--dora-blue);">📉 XỈU (UNDER)</div><div class="big-percent" id="xiu-value">50.0%</div><div class="progress-bar-bg"><div class="progress-fill" id="xiu-bar" style="width:50%; background: var(--dora-blue);"></div></div></div>
-        <div class="final-vip" id="final-result">🔮 ĐANG CHỜ...</div>
-      </div>
-    </div>
-  </div>
-
-  <div id="menu-auto-panel" class="menu-content-panel">
-    
-    <div class="card glass-panel" style="border-color: #ff9900;">
-      <div style="color:#ff6600; font-weight:900; margin-bottom:12px; font-size:1.1rem; text-align:center;"><i class="fas fa-dice"></i> HỆ THỐNG SUN.WIN SICBO</div>
-      <button class="btn-dora" style="background:#ff9900; color:#fff;" onclick="startAutoAPI('sunwin_sicbo', 'https://web.sunwin.games/')">BẬT TOOL SICBO SUN.WIN</button>
-    </div>
-
-    <div class="card glass-panel">
-      <div style="color:var(--dora-blue); font-weight:900; margin-bottom:12px; font-size:1.1rem; text-align:center;"><i class="fas fa-gamepad"></i> HỆ THỐNG BETVIP</div>
-      <div class="grid-2">
-        <button class="btn-dora" style="background:#e0f2fe; color:var(--dora-blue); border:2px solid var(--dora-blue); box-shadow:none;" onclick="startAutoAPI('betvip_tx', 'https://play.betvip.fit/')">TX THƯỜNG</button>
-        <button class="btn-dora btn-blue" onclick="startAutoAPI('betvip_md5', 'https://play.betvip.fit/')">TX MD5</button>
-      </div>
-    </div>
-    
-    <div class="card glass-panel">
-      <div style="color:var(--dora-red); font-weight:900; margin-bottom:12px; font-size:1.1rem; text-align:center;"><i class="fas fa-globe"></i> HỆ THỐNG LC79.BET</div>
-      <div class="grid-2">
-        <button class="btn-dora" style="background:#ffe6e6; color:var(--dora-red); border:2px solid var(--dora-red); box-shadow:none;" onclick="startAutoAPI('lc79_tx', 'https://lc79.bet')">TX THƯỜNG</button>
-        <button class="btn-dora btn-red" onclick="startAutoAPI('lc79_md5', 'https://lc79.bet')">TX MD5</button>
-      </div>
-      <button class="btn-dora" style="background:#333; color:#fff; margin-top:8px;" onclick="startAutoAPI('lc79_xd', 'https://lc79.bet')">XÓC ĐĨA LC79</button>
-    </div>
-
-  </div>
-</div>
 <script>
-// KÉO THẢ DORAEMON
-const robot = document.getElementById("robotContainer");
-let drag = false, offsetX = 0, offsetY = 0;
-const startDrag = (clientX, clientY) => { drag = true; offsetX = clientX - robot.offsetLeft; offsetY = clientY - robot.offsetTop; robot.style.transition = 'none'; };
-const doDrag = (clientX, clientY) => { if(drag) { let l = clientX - offsetX, t = clientY - offsetY; l = Math.max(0, Math.min(l, window.innerWidth - robot.offsetWidth)); t = Math.max(0, Math.min(t, window.innerHeight - robot.offsetHeight)); robot.style.left = l + "px"; robot.style.top = t + "px"; } };
-const endDrag = () => { drag = false; };
+let savedToken = "";
+let currentSelectedGame = "";
+let referenceSession = "";
+let streamWorkerId = null;
+let lockState = false;
 
-robot.addEventListener("mousedown", e => startDrag(e.clientX, e.clientY)); document.addEventListener("mousemove", e => doDrag(e.clientX, e.clientY)); document.addEventListener("mouseup", endDrag);
-robot.addEventListener("touchstart", e => startDrag(e.touches[0].clientX, e.touches[0].clientY)); document.addEventListener("touchmove", e => doDrag(e.touches[0].clientX, e.touches[0].clientY)); document.addEventListener("touchend", endDrag);
+// ĐĂNG NHẬP CHIA KHÓA HỆ THỐNG
+async function submitAuthentication() {
+    const inputVal = document.getElementById("system-key-input").value.trim();
+    const errBox = document.getElementById("login-error");
+    if(!inputVal) return;
+    errBox.innerText = "Đang kiểm tra chứng chỉ định danh...";
 
-// CHUYỂN TAB
-document.querySelectorAll('.menu-item').forEach(item => {
-  item.addEventListener('click', () => {
-    document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active')); item.classList.add('active');
-    document.querySelectorAll('.menu-content-panel').forEach(p => p.classList.remove('active-panel'));
-    document.getElementById(`menu-${item.dataset.menu}-panel`).classList.add('active-panel');
-  });
-});
-
-// NÚT NHẬP MD5
-document.getElementById('predict-btn').addEventListener('click', async () => {
-  let val = document.getElementById('md5-input').value.trim();
-  if(!/^[0-9a-f]{32}$/i.test(val)) return alert("Sai định dạng MD5 rồi nha!");
-  document.getElementById('results-section').style.display = 'block'; document.getElementById('loading-card').style.display = 'block'; document.getElementById('results-content').style.display = 'none';
-  try {
-      let res = await fetch('/api/manual_md5', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({md5: val}) });
-      let data = await res.json();
-      if(data.status === "success") {
-          setTimeout(() => {
-              document.getElementById('loading-card').style.display = 'none'; document.getElementById('results-content').style.display = 'block';
-              document.getElementById('tai-value').textContent = data.tai + '%'; document.getElementById('xiu-value').textContent = data.xiu + '%';
-              document.getElementById('tai-bar').style.width = data.tai + '%'; document.getElementById('xiu-bar').style.width = data.xiu + '%';
-              let isTai = data.suggestion.includes("TÀI");
-              let finalRes = document.getElementById('final-result'); finalRes.textContent = `[ BẢO BỐI CHỌN: ${data.suggestion} ]`; 
-              finalRes.style.color = isTai ? 'var(--dora-red)' : 'var(--dora-blue)'; finalRes.style.borderColor = isTai ? 'var(--dora-red)' : 'var(--dora-blue)';
-          }, 1000); 
-      }
-  } catch(e) { alert("Lỗi kết nối Server!"); }
-});
-
-// LOGIC AUTO DỰ ĐOÁN
-let autoInterval, activeGame = "", phienCu = "", isAnalyzing = false;
-
-async function loopAuto() {
-    if (isAnalyzing) return; 
     try {
-        let req = await fetch(`/api/scan?tool=${activeGame}`);
+        let res = await fetch("/api/login", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ key: inputVal })
+        });
+        let json = await res.json();
+        if(json.status === "success") {
+            savedToken = inputVal;
+            document.getElementById("user-display").innerText = json.data.name.toUpperCase();
+            document.getElementById("panel-login").classList.remove("active");
+            document.getElementById("panel-dashboard").classList.add("active");
+            errBox.innerText = "";
+        } else {
+            errBox.innerText = json.msg;
+        }
+    } catch(e) {
+        errBox.innerText = "Lỗi kết nối đến máy chủ Render!";
+    }
+}
+
+function toggleMenu(menuType) {
+    document.querySelectorAll(".menu-btn").forEach(b => b.classList.remove("active"));
+    document.getElementById(`tab-${menuType}`).classList.add("active");
+    if(menuType === "manual") {
+        document.getElementById("view-manual").style.display = "block";
+        document.getElementById("view-auto").style.display = "none";
+    } else {
+        document.getElementById("view-manual").style.display = "none";
+        document.getElementById("view-auto").style.display = "block";
+    }
+}
+
+// KHAI THÁC CHUỖI MD5 THỦ CÔNG
+async function runManualAnalysis() {
+    let rawStr = document.getElementById("md5-input-field").value.trim();
+    if(!/^[0-9a-f]{32}$/i.test(rawStr)) return alert("Chuỗi nhập vào không phải cấu trúc MD5!");
+    
+    document.getElementById("analysis-spinner").style.display = "block";
+    document.getElementById("box-result-display").style.display = "none";
+    
+    try {
+        let res = await fetch("/api/manual_md5", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ key: savedToken, md5: rawStr })
+        });
+        let data = await res.json();
+        document.getElementById("analysis-spinner").style.display = "none";
+        if(data.status === "success") {
+            document.getElementById("txt-tai-val").innerText = data.tai + "%";
+            document.getElementById("txt-xiu-val").innerText = data.xiu + "%";
+            document.getElementById("fill-tai-bar").style.width = data.tai + "%";
+            document.getElementById("fill-xiu-bar").style.width = data.xiu + "%";
+            
+            let isOver = data.suggestion.includes("TÀI") || data.suggestion.includes("CHẴN");
+            let targetBox = document.getElementById("lbl-final-decision");
+            targetBox.innerText = `⚡ BẢO BỐI CHỌN: ${data.suggestion} ⚡`;
+            targetBox.style.color = isOver ? "var(--neon-red)" : "var(--neon-blue)";
+            targetBox.style.borderColor = isOver ? "var(--neon-red)" : "var(--neon-blue)";
+            targetBox.style.background = isOver ? "rgba(255,51,102,0.05)" : "rgba(0,210,255,0.05)";
+            
+            document.getElementById("box-result-display").style.display = "block";
+        } else {
+            alert(data.msg);
+        }
+    } catch(e) {
+        document.getElementById("analysis-spinner").style.display = "none";
+        alert("Đường truyền không ổn định.");
+    }
+}
+
+// ENGINE QUÉT ĐỒNG BỘ AUTO
+async function executeAutoLoop() {
+    if(lockState) return;
+    try {
+        let req = await fetch("/api/scan", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ key: savedToken, tool: currentSelectedGame })
+        });
         let json = await req.json();
         let res = json.data;
-        if(res && res.phien !== phienCu) {
-            isAnalyzing = true; phienCu = res.phien;
-            let isTai = res.du_doan.includes("TÀI") || res.du_doan.includes("CHẴN"); 
-            let colorHex = isTai ? "var(--dora-red)" : "var(--dora-blue)"; 
+        if(res && res.phien !== referenceSession) {
+            lockState = true; 
+            referenceSession = res.phien;
+            let isOver = res.du_doan.includes("TÀI") || res.du_doan.includes("CHẴN");
+            let hexColor = isOver ? "var(--neon-red)" : "var(--neon-blue)";
             
-            let countdown = 15; 
-            document.getElementById('line1').innerText = "ĐANG TÍNH TÓAN..."; document.getElementById('line1').style.color = "#000";
-            document.getElementById('line2').innerText = `Chờ ${countdown}s`;
-
-            let timerInterval = setInterval(() => {
-                document.getElementById('line2').innerText = `Chờ ${countdown}s`;
-                countdown--;
-                if (countdown < 0) {
-                    clearInterval(timerInterval);
-                    document.getElementById('line1').innerText = `#${res.phien} · ${res.du_doan}`;
-                    document.getElementById('line1').style.color = colorHex;
-                    document.getElementById('line2').innerText = `Tỉ lệ: ${res.ti_le}%`;
-                    isAnalyzing = false;
+            let timer = 12;
+            document.getElementById("line1").innerText = "TÍNH TOÁN CẦU...";
+            document.getElementById("line1").style.color = "#fff";
+            document.getElementById("line2").innerText = `Đợi quét: ${timer}s`;
+            
+            let countdownClock = setInterval(() => {
+                timer--;
+                document.getElementById("line2").innerText = `Đợi quét: ${timer}s`;
+                if(timer < 0) {
+                    clearInterval(countdownClock);
+                    document.getElementById("line1").innerText = `#${res.phien} ➔ ${res.du_doan}`;
+                    document.getElementById("line1").style.color = hexColor;
+                    document.getElementById("line2").innerText = `Độ chính xác: ${res.ti_le}%`;
+                    lockState = false;
                 }
             }, 1000);
         }
     } catch(e) {}
 }
 
-function startAutoAPI(tool, url) {
-    document.getElementById('game-overlay').style.display = "block"; clearInterval(autoInterval); phienCu = ""; activeGame = tool; isAnalyzing = false;
-    document.getElementById('line1').innerText = "TÚI THẦN KỲ..."; document.getElementById('line2').innerText = "Đang kết nối..."; document.getElementById('line1').style.color = "#000";
-    document.getElementById('game-frame').style.display = "block"; document.getElementById('game-frame').src = url;
-    document.getElementById('robotContainer').style.display = "flex"; 
-    loopAuto(); autoInterval = setInterval(loopAuto, 2000); 
+function activateAutomation(gameType, directUrl) {
+    document.getElementById("game-overlay").style.display = "block";
+    document.getElementById("robotContainer").style.display = "flex";
+    document.getElementById("game-frame").src = directUrl;
+    
+    clearInterval(streamWorkerId);
+    currentSelectedGame = gameType;
+    referenceSession = "";
+    lockState = false;
+    
+    document.getElementById("line1").innerText = "KẾT NỐI AI...";
+    document.getElementById("line2").innerText = "Đang giải mã...";
+    document.getElementById("line1").style.color = "#fff";
+    
+    executeAutoLoop();
+    streamWorkerId = setInterval(executeAutoLoop, 2000);
 }
-function closeGame() { clearInterval(autoInterval); isAnalyzing = false; document.getElementById('game-overlay').style.display = 'none'; document.getElementById('game-frame').src = ''; document.getElementById('robotContainer').style.display = "none"; }
+
+function deactivateAutomation() {
+    clearInterval(streamWorkerId);
+    lockState = false;
+    document.getElementById("game-overlay").style.display = "none";
+    document.getElementById("robotContainer").style.display = "none";
+    document.getElementById("game-frame").src = "";
+}
+
+function logOutSession() {
+    deactivateAutomation();
+    savedToken = "";
+    document.getElementById("system-key-input").value = "";
+    document.getElementById("panel-dashboard").classList.remove("active");
+    document.getElementById("panel-login").classList.add("active");
+}
 </script>
 </body>
 </html>
