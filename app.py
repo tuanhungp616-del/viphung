@@ -13,7 +13,7 @@ app = Flask(__name__)
 CORS(app)
 
 # ==========================================
-# 💾 NÂNG CẤP BỘ NHỚ: LƯU THÊM THỐNG KÊ & CHU KỲ
+# 💾 BỘ NHỚ LƯU TRỮ LỊCH SỬ & CHU KỲ
 # ==========================================
 GAME_HISTORIES = {
     "betvip_tx": deque(maxlen=350),
@@ -28,7 +28,7 @@ GAME_STATS = {key: {"t":0, "x":0, "streak_t":0, "streak_x":0, "max_streak_t":0, 
               for key in GAME_HISTORIES}
 
 # ==========================================
-# 🛠️ CÔNG CỤ HỖ TRỢ NÂNG CAO
+# 🛠️ CÔNG CỤ XỬ LÝ ID PHIÊN CHUẨN HÓA
 # ==========================================
 def get_id(item):
     if isinstance(item, dict):
@@ -53,7 +53,6 @@ def update_stats(game_key, result):
         stats["streak_t"] = 0
         stats["max_streak_x"] = max(stats["max_streak_x"], stats["streak_x"])
     
-    # Phát hiện chu kỳ lặp
     seq = list(GAME_HISTORIES[game_key])
     for cycle_len in range(2, 15):
         if len(seq) >= cycle_len * 3:
@@ -61,7 +60,7 @@ def update_stats(game_key, result):
             stats["cycles"][cycle] = stats["cycles"].get(cycle, 0) + 1
 
 def detect_cycle_pattern(history):
-    """Tìm quy luật lặp trong lịch sử"""
+    """Tìm quy luật tuần hoàn trong lịch sử dòng dữ liệu"""
     seq = list(history)
     if len(seq) < 12: return None, 0
     best_cycle = None
@@ -96,7 +95,7 @@ def trend_analysis(history):
     return np.average(trends, weights=weights)
 
 # ==========================================
-# 🧠 NÂNG CẤP AI MD5: ĐA LỚP + PHÂN TÍCH PHỔ
+# 🧠 GIẢI MÃ CƠ HỌC PHI TUYẾN MD5 NEURAL V2.0
 # ==========================================
 def md5_neural_predict(md5_str: str):
     if not re.match(r"^[0-9a-f]{32}$", md5_str.lower()): 
@@ -105,7 +104,6 @@ def md5_neural_predict(md5_str: str):
     hex_arr = np.array([int(ch, 16) for ch in md5_str.lower()], dtype=np.float64)
     total_energy = hex_arr.sum()
     
-    # Hệ thống động học phi tuyến nâng cấp
     x = (total_energy % 1000) / 1000.0
     r_base = 3.9 + (total_energy % 1500) / 2000
     layers = 12000
@@ -126,13 +124,12 @@ def md5_neural_predict(md5_str: str):
         else:
             xiu += x * weight * 0.8
     
-    # Phân tích phổ tần số bằng FFT
+    # Phân tích phổ năng lượng FFT
     fft_all = np.fft.fft(hex_arr)
     mag = np.abs(fft_all)
     tai += np.mean(mag[2:9]) * 8 + np.std(mag[10:20]) * 4
     xiu += np.mean(mag[12:22]) * 8 + np.std(mag[22:31]) * 4
     
-    # Tính toán phân phối xác suất đầu ra
     diff = tai - xiu
     sigmoid = 1 / (1 + math.exp(-diff / 22.0))
     tai_p = sigmoid * 100 + random.uniform(-0.8, 0.8)
@@ -145,13 +142,12 @@ def md5_neural_predict(md5_str: str):
     return ("TÀI", "MD5 NEURAL V2.0", tai_p) if tai_p > xiu_p else ("XỈU", "MD5 NEURAL V2.0", xiu_p)
 
 # ==========================================
-# 🧠 NÂNG CẤP MARKOV BẬC CAO + MÔ PHỎNG
+# 🧠 CHUỖI MARKOV ĐA TẦNG + MÔ PHỎNG MONTE CARLO
 # ==========================================
 def markov_advanced_predict(is_chanle, history):
     if len(history) < 12: return "TÀI", 56.2, "Đang phân tích dữ liệu..."
     
     seq = [1 if s=="T" else 0 for s in history]
-    # Tích hợp chuỗi Markov bậc 1, bậc 2 và bậc 3 hỗn hợp
     order_weights = {1:0.45, 2:0.35, 3:0.20}
     total_prob = 0.0
     
@@ -171,7 +167,6 @@ def markov_advanced_predict(is_chanle, history):
             p = dt["t"]/(dt["t"]+dt["x"]) if (dt["t"]+dt["x"])>0 else 0.5
             total_prob += p * weight
     
-    # Phối hợp phân tích quy luật dòng chảy chu kỳ & xu hướng ngắn hạn
     cycle, cycle_conf = detect_cycle_pattern(history)
     trend = trend_analysis(history)
     if cycle and len(cycle) >= 2:
@@ -179,7 +174,7 @@ def markov_advanced_predict(is_chanle, history):
         total_prob += (0.15 if next_cycle=="T" else -0.15) * cycle_conf
     total_prob += trend * 0.25
     
-    # Chạy mô phỏng phân tán Monte Carlo với 60.000 vòng lặp ngẫu nhiên
+    # Chạy giả lập ngẫu nhiên 60,000 lần giải mã xác suất ổn định
     sims = 60000
     count_t = 0
     base_p = max(0.15, min(0.85, total_prob))
@@ -195,7 +190,7 @@ def markov_advanced_predict(is_chanle, history):
     return res, round(final_p, 1), "MARKOV HIỆP ĐIỀU V2.0"
 
 # ==========================================
-# 🧠 HỆ THỐNG KẾT HỢP THÔNG MINH (ULTIMATE HYBRID)
+# 🧠 ĐỒNG BỘ ĐA THUẬT TOÁN (ULTIMATE HYBRID)
 # ==========================================
 def ultimate_hybrid_predict(is_chanle, history, md5_str=None):
     md5_res = ("TÀI", "KHÔNG MD5", 54.0)
@@ -226,7 +221,7 @@ def ultimate_hybrid_predict(is_chanle, history, md5_str=None):
     return final_pred, max(52.5, conf), method
 
 # ==========================================
-# 📡 ĐỒNG BỘ API THEO CHUẨN FRONTEND INDEX.HTML
+# 📡 KÊNH TRUYỀN TẢI DỮ LIỆU API (ĐỒNG BỘ FRONTEND)
 # ==========================================
 @app.route("/api/manual_md5", methods=["POST"])
 def manual_md5():
@@ -261,7 +256,7 @@ def scan_game():
     try:
         res = requests.get(urls[tool], headers={"User-Agent": "Doraemon-AI-Bot-V2.0"}, timeout=6).json()
         lst = res.get("data", res.get("list", res)) if isinstance(res, dict) else res
-        if not isinstance(lst, list): raise Exception("Cấu trúc dữ liệu đích bị thay đổi")
+        if not isinstance(lst, list): raise Exception("Cấu trúc API nguồn thay đổi")
         
         lst = sorted(lst, key=lambda x: get_id(x))
         arr = []
