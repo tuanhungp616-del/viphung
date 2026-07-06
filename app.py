@@ -3,7 +3,7 @@ import math
 import random
 import re
 import numpy as np
-from collections import deque, Counter
+from collections import deque
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import requests
@@ -12,9 +12,9 @@ from scipy.stats import linregress
 app = Flask(__name__)
 CORS(app)
 
-# ================================
+# ==========================================
 # 💾 NÂNG CẤP BỘ NHỚ: LƯU THÊM THỐNG KÊ & CHU KỲ
-# ================================
+# ==========================================
 GAME_HISTORIES = {
     "betvip_tx": deque(maxlen=350),
     "betvip_md5": deque(maxlen=350),
@@ -27,14 +27,9 @@ GAME_HISTORIES = {
 GAME_STATS = {key: {"t":0, "x":0, "streak_t":0, "streak_x":0, "max_streak_t":0, "max_streak_x":0, "cycles":{}} 
               for key in GAME_HISTORIES}
 
-SYSTEM_KEYS = {
-    "hungcaliadmin": {"role": "admin", "name": "Hưng Đẹp Trai", "status": "Active"},
-    "nhatchimbe": {"role": "guest", "name": "Khách VIP", "status": "Active"}
-}
-
-# ================================
+# ==========================================
 # 🛠️ CÔNG CỤ HỖ TRỢ NÂNG CAO
-# ================================
+# ==========================================
 def get_id(item):
     if isinstance(item, dict):
         for k in ['id', 'phien', 'sessionId', 'sid', 'referenceId', 'matchId', 'phien_hien_tai', 'turnNum']:
@@ -50,11 +45,11 @@ def update_stats(game_key, result):
     stats["x"] += 1 if result == "X" else 0
     
     if result == "T":
-        stats["streak_t"] +=1
+        stats["streak_t"] += 1
         stats["streak_x"] = 0
         stats["max_streak_t"] = max(stats["max_streak_t"], stats["streak_t"])
     else:
-        stats["streak_x"] +=1
+        stats["streak_x"] += 1
         stats["streak_t"] = 0
         stats["max_streak_x"] = max(stats["max_streak_x"], stats["streak_x"])
     
@@ -76,9 +71,9 @@ def detect_cycle_pattern(history):
         total = 0
         for i in range(len(seq)-length*2):
             if seq[i:i+length] == seq[i+length:i+length*2]:
-                matches +=1
-            total +=1
-        if total >0:
+                matches += 1
+            total += 1
+        if total > 0:
             score = matches / total
             if score > best_score and score > 0.4:
                 best_score = score
@@ -86,7 +81,7 @@ def detect_cycle_pattern(history):
     return best_cycle, best_score
 
 def trend_analysis(history):
-    """Phân tích xu hướng tăng/giảm tỷ lệ T"""
+    """Phân tích xu hướng tăng/giảm bằng hồi quy tuyến tính"""
     seq = np.array([1 if x=="T" else 0 for x in history])
     if len(seq) < 15: return 0
     windows = [5, 10, 20]
@@ -100,16 +95,15 @@ def trend_analysis(history):
             weights.append(w)
     return np.average(trends, weights=weights)
 
-# ================================
+# ==========================================
 # 🧠 NÂNG CẤP AI MD5: ĐA LỚP + PHÂN TÍCH PHỔ
-# ================================
+# ==========================================
 def md5_neural_predict(md5_str: str):
     if not re.match(r"^[0-9a-f]{32}$", md5_str.lower()): 
         return "LỖI", "MD5 KHÔNG HỢP LỆ", 0.0
     
     hex_arr = np.array([int(ch, 16) for ch in md5_str.lower()], dtype=np.float64)
     total_energy = hex_arr.sum()
-    entropy = -sum((v/16)*math.log2(v/16 + 1e-9) for v in np.bincount(hex_arr.astype(int), minlength=16))
     
     # Hệ thống động học phi tuyến nâng cấp
     x = (total_energy % 1000) / 1000.0
@@ -125,40 +119,39 @@ def md5_neural_predict(md5_str: str):
         mod = i % 5
         if mod in (0,2):
             tai += x * weight * (1 + math.sin(i/70) * 0.3)
-        elif mod ==1:
+        elif mod == 1:
             tai += x * weight * 0.8
-        elif mod ==3:
-            xiu += x * weight * (1 + math.cos(i/70) *0.3)
+        elif mod == 3:
+            xiu += x * weight * (1 + math.cos(i/70) * 0.3)
         else:
             xiu += x * weight * 0.8
     
-    # Phân tích phổ tần số nâng cấp
+    # Phân tích phổ tần số bằng FFT
     fft_all = np.fft.fft(hex_arr)
     mag = np.abs(fft_all)
     tai += np.mean(mag[2:9]) * 8 + np.std(mag[10:20]) * 4
     xiu += np.mean(mag[12:22]) * 8 + np.std(mag[22:31]) * 4
     
-    # Tính điểm cuối cùng
+    # Tính toán phân phối xác suất đầu ra
     diff = tai - xiu
     sigmoid = 1 / (1 + math.exp(-diff / 22.0))
     tai_p = sigmoid * 100 + random.uniform(-0.8, 0.8)
-    xiu_p = (1 - sigmoid) *100 + random.uniform(-0.8, 0.8)
+    xiu_p = (1 - sigmoid) * 100 + random.uniform(-0.8, 0.8)
     
-    # Chuẩn hóa an toàn
     total = tai_p + xiu_p
-    tai_p = round(max(52.0, min(99.2, (tai_p/total)*100)),1)
-    xiu_p = round(100 - tai_p,1)
+    tai_p = round(max(52.0, min(99.2, (tai_p/total)*100)), 1)
+    xiu_p = round(100 - tai_p, 1)
     
     return ("TÀI", "MD5 NEURAL V2.0", tai_p) if tai_p > xiu_p else ("XỈU", "MD5 NEURAL V2.0", xiu_p)
 
-# ================================
+# ==========================================
 # 🧠 NÂNG CẤP MARKOV BẬC CAO + MÔ PHỎNG
-# ================================
+# ==========================================
 def markov_advanced_predict(is_chanle, history):
     if len(history) < 12: return "TÀI", 56.2, "Đang phân tích dữ liệu..."
     
     seq = [1 if s=="T" else 0 for s in history]
-    # Dùng Markov bậc 1, 2, 3 kết hợp
+    # Tích hợp chuỗi Markov bậc 1, bậc 2 và bậc 3 hỗn hợp
     order_weights = {1:0.45, 2:0.35, 3:0.20}
     total_prob = 0.0
     
@@ -169,8 +162,8 @@ def markov_advanced_predict(is_chanle, history):
             state = tuple(seq[i-order:i])
             if state not in trans:
                 trans[state] = {"t":0, "x":0}
-            if seq[i] ==1: trans[state]["t"] +=1
-            else: trans[state]["x"] +=1
+            if seq[i] == 1: trans[state]["t"] += 1
+            else: trans[state]["x"] += 1
         
         current_state = tuple(seq[-order:])
         if current_state in trans:
@@ -178,32 +171,32 @@ def markov_advanced_predict(is_chanle, history):
             p = dt["t"]/(dt["t"]+dt["x"]) if (dt["t"]+dt["x"])>0 else 0.5
             total_prob += p * weight
     
-    # Thêm phân tích chu kỳ và xu hướng
+    # Phối hợp phân tích quy luật dòng chảy chu kỳ & xu hướng ngắn hạn
     cycle, cycle_conf = detect_cycle_pattern(history)
     trend = trend_analysis(history)
-    if cycle and len(cycle)>=2:
+    if cycle and len(cycle) >= 2:
         next_cycle = cycle[0]
         total_prob += (0.15 if next_cycle=="T" else -0.15) * cycle_conf
     total_prob += trend * 0.25
     
-    # Mô phỏng Monte Carlo nâng cấp
+    # Chạy mô phỏng phân tán Monte Carlo với 60.000 vòng lặp ngẫu nhiên
     sims = 60000
     count_t = 0
     base_p = max(0.15, min(0.85, total_prob))
     for _ in range(sims):
         p_var = base_p + random.uniform(-0.07, 0.07)
-        if random.random() < p_var: count_t +=1
+        if random.random() < p_var: count_t += 1
     
     final_p = (count_t/sims)*100
-    pred = "T" if final_p >50 else "X"
+    pred = "T" if final_p > 50 else "X"
     final_p = max(53.0, min(99.0, final_p if pred=="T" else 100-final_p))
     
     res = ("CHẴN" if pred=="T" else "LẺ") if is_chanle else ("TÀI" if pred=="T" else "XỈU")
-    return res, round(final_p,1), "MARKOV HIỆP ĐIỀU V2.0"
+    return res, round(final_p, 1), "MARKOV HIỆP ĐIỀU V2.0"
 
-# ================================
-# 🧠 HỆ THỐNG KẾT HỢP THÔNG MINH
-# ================================
+# ==========================================
+# 🧠 HỆ THỐNG KẾT HỢP THÔNG MINH (ULTIMATE HYBRID)
+# ==========================================
 def ultimate_hybrid_predict(is_chanle, history, md5_str=None):
     md5_res = ("TÀI", "KHÔNG MD5", 54.0)
     if md5_str and re.match(r"^[0-9a-f]{32}$", md5_str.lower()):
@@ -211,63 +204,46 @@ def ultimate_hybrid_predict(is_chanle, history, md5_str=None):
     
     markov_res = markov_advanced_predict(is_chanle, history)
     
-    # Trọng số thông minh theo độ tin cậy
     md5_conf = md5_res[2]
     markov_conf = markov_res[1]
     
-    # Nếu khác biệt quá lớn, ưu tiên cái có độ tin cậy cao hơn nhiều
     if md5_res[0] != markov_res[0]:
         if abs(md5_conf - markov_conf) > 15:
             chosen = md5_res if md5_conf > markov_conf else markov_res
             final_pred, method, conf = chosen
         else:
-            # Nếu gần bằng nhau, kết hợp xác suất
             w_md5 = 0.5 if md5_str else 0
             w_mk = 0.5
             total = md5_conf * w_md5 + markov_conf * w_mk
             final_pred = md5_res[0] if md5_conf > markov_conf else markov_res[0]
-            conf = round(total,1)
+            conf = round(total, 1)
             method = "HYBRID THÔNG MINH V2.0"
     else:
-        # Cùng kết quả -> cộng độ tin cậy
         final_pred = md5_res[0]
-        conf = round(min(99.5, (md5_conf + markov_conf)/2 + 3),1)
+        conf = round(min(99.5, (md5_conf + markov_conf)/2 + 3), 1)
         method = "ĐỒNG BỘ MD5+MARKOV V2.0"
     
     return final_pred, max(52.5, conf), method
 
-# ================================
-# 📡 API HỆ THỐNG
-# ================================
-@app.route("/api/login", methods=["POST"])
-def auth_gateway():
-    key = (request.json or {}).get("key", "").strip()
-    if key in SYSTEM_KEYS:
-        return jsonify({"status": "success", "data": SYSTEM_KEYS[key], "version": "2.0-ULTIMATE"})
-    return jsonify({"status": "error", "msg": "Mã khóa không chính xác!"})
-
+# ==========================================
+# 📡 ĐỒNG BỘ API THEO CHUẨN FRONTEND INDEX.HTML
+# ==========================================
 @app.route("/api/manual_md5", methods=["POST"])
 def manual_md5():
     req_data = request.json or {}
-    key = req_data.get("key", "").strip()
-    if key not in SYSTEM_KEYS:
-        return jsonify({"status": "error", "msg": "Yêu cầu xác thực khóa"})
-        
     md5_str = req_data.get("md5", "")
     dd, lk, tl = md5_neural_predict(md5_str)
     if dd == "LỖI": return jsonify({"status": "error", "msg": "MD5 không hợp lệ"})
-    return jsonify({"status": "success", "tai": tl if dd == "TÀI" else round(100 - tl, 1), 
-                    "xiu": tl if dd == "XỈU" else round(100 - tl, 1), "suggestion": f"{dd}", "method": lk})
+    return jsonify({
+        "status": "success", 
+        "tai": tl if dd == "TÀI" else round(100 - tl, 1), 
+        "xiu": tl if dd == "XỈU" else round(100 - tl, 1), 
+        "suggestion": f"{dd} ({lk})"
+    })
 
-@app.route("/api/scan", methods=["POST"])
+@app.route("/api/scan", methods=["GET"])
 def scan_game():
-    req_data = request.json or {}
-    key = req_data.get("key", "").strip()
-    tool = req_data.get("tool", "")
-    
-    if key not in SYSTEM_KEYS:
-        return jsonify({"status": "error", "msg": "Yêu cầu xác thực khóa"})
-        
+    tool = request.args.get("tool", "")
     is_chanle = "chanle" in tool.lower() or "xd" in tool.lower()
     
     urls = {
@@ -279,10 +255,13 @@ def scan_game():
         "sunwin_sicbo": "https://api.wsktnus8.net/v2/history/getLastResult?gameId=ktrng_3979&size=100&tableId=39791215743193&curPage=1"
     }
     
+    if not tool or tool not in urls:
+        return jsonify({"status": "error", "msg": "Thiếu thông số cấu hình công cụ quét"})
+        
     try:
-        res = requests.get(urls.get(tool, ""), headers={"User-Agent": "Doraemon-AI-Bot-V2.0"}, timeout=6).json()
+        res = requests.get(urls[tool], headers={"User-Agent": "Doraemon-AI-Bot-V2.0"}, timeout=6).json()
         lst = res.get("data", res.get("list", res)) if isinstance(res, dict) else res
-        if not isinstance(lst, list): raise Exception("Data lỗi")
+        if not isinstance(lst, list): raise Exception("Cấu trúc dữ liệu đích bị thay đổi")
         
         lst = sorted(lst, key=lambda x: get_id(x))
         arr = []
@@ -292,7 +271,6 @@ def scan_game():
                 arr.append("T")
             else: arr.append("X")
         
-        # Cập nhật lịch sử và thống kê
         for r in arr:
             GAME_HISTORIES[tool].append(r)
             update_stats(tool, r)
@@ -303,14 +281,28 @@ def scan_game():
         dd, tl, lk = ultimate_hybrid_predict(is_chanle, list(GAME_HISTORIES[tool]), 
                                              m.group(0) if m and "md5" in tool.lower() else None)
         
-        return jsonify({"status": "success", "data": {"du_doan": dd, "ti_le": tl, "loi_khuyen": lk, 
-                                                       "phien": phien_hien_tai, "version": "2.0-ULTIMATE"}})
+        return jsonify({
+            "status": "success", 
+            "data": {
+                "du_doan": dd, 
+                "ti_le": tl, 
+                "loi_khuyen": lk, 
+                "phien": phien_hien_tai, 
+                "version": "2.0-ULTIMATE"
+            }
+        })
     
     except Exception as e:
         phien_fake = "#" + str(random.randint(100000, 999999))
-        return jsonify({"status": "success", "data": {"du_doan": "TÀI" if random.random()>0.45 else "XỈU", 
-                                                       "ti_le": round(random.uniform(72,88),1), 
-                                                       "loi_khuyen": "HỆ THỐNG DỰ PHÒNG V2.0", "phien": phien_fake}})
+        return jsonify({
+            "status": "success", 
+            "data": {
+                "du_doan": "TÀI" if random.random() > 0.45 else "XỈU", 
+                "ti_le": round(random.uniform(72, 88), 1), 
+                "loi_khuyen": "HỆ THỐNG DỰ PHÒNG V2.0", 
+                "phien": phien_fake
+            }
+        })
 
 @app.route("/")
 def home():
@@ -319,4 +311,4 @@ def home():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)), debug=False)
-    
+            
