@@ -7,7 +7,6 @@ from collections import deque
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import requests
-from scipy.stats import linregress
 
 app = Flask(__name__)
 CORS(app)
@@ -80,7 +79,7 @@ def detect_cycle_pattern(history):
     return best_cycle, best_score
 
 def trend_analysis(history):
-    """Phân tích xu hướng tăng/giảm bằng hồi quy tuyến tính"""
+    """Phân tích xu hướng tăng/giảm bằng hồi quy tuyến tính (Dùng tối ưu polyfit của Numpy)"""
     seq = np.array([1 if x=="T" else 0 for x in history])
     if len(seq) < 15: return 0
     windows = [5, 10, 20]
@@ -89,7 +88,9 @@ def trend_analysis(history):
     for w in windows:
         if len(seq) >= w:
             y = seq[-w:]
-            slope, _, _, _, _ = linregress(range(w), y)
+            x = np.arange(w)
+            # Tính hệ số góc (slope) thuần bằng numpy polyfit thay thế scipy
+            slope = np.polyfit(x, y, 1)[0]
             trends.append(slope)
             weights.append(w)
     return np.average(trends, weights=weights)
@@ -174,7 +175,6 @@ def markov_advanced_predict(is_chanle, history):
         total_prob += (0.15 if next_cycle=="T" else -0.15) * cycle_conf
     total_prob += trend * 0.25
     
-    # Chạy giả lập ngẫu nhiên 60,000 lần giải mã xác suất ổn định
     sims = 60000
     count_t = 0
     base_p = max(0.15, min(0.85, total_prob))
@@ -306,4 +306,4 @@ def home():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)), debug=False)
-            
+    
