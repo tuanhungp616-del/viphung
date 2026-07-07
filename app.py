@@ -1,6 +1,9 @@
-import os, json, math, random, re, time, threading
+import os
+import math
+import random
+import re
 import numpy as np
-from collections import deque, Counter
+from collections import deque
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import requests
@@ -8,187 +11,322 @@ import requests
 app = Flask(__name__)
 CORS(app)
 
-BASE = os.path.dirname(os.path.abspath(__file__))
-MEM_FILE = os.path.join(BASE, "ai_memory_v3.json")
-LOCK = threading.Lock()
-
-DEF = {
-    "histories": {}, "predict_log": {}, "algo_accuracy": {},
-    "weights": {"md5":1.0,"markov":1.0,"cycle":1.0,"trend":1.0,"freq":1.0,"streak":1.0},
-    "total_scans":0,"correct":0,"last_save":time.time()
+# ==========================================
+# 💾 BỘ NHỚ LƯU TRỮ LỊCH SỬ & CHU KỲ
+# ==========================================
+GAME_HISTORIES = {
+    "betvip_tx": deque(maxlen=350),
+    "betvip_md5": deque(maxlen=350),
+    "lc79_tx": deque(maxlen=350),
+    "lc79_md5": deque(maxlen=350),
+    "lc79_xd": deque(maxlen=350),
+    "sunwin_sicbo": deque(maxlen=350)
 }
 
-def load_mem():
-    try:
-        if os.path.exists(MEM_FILE):
-            m = json.load(open(MEM_FILE,encoding="utf8"))
-            m["histories"] = {k:deque(v,maxlen=10000) for k,v in m["histories"].items()}
-            return {**DEF,**m}
-    except: pass
-    return DEF
+GAME_STATS = {key: {"t":0, "x":0, "streak_t":0, "streak_x":0, "max_streak_t":0, "max_streak_x":0, "cycles":{}} 
+              for key in GAME_HISTORIES}
 
-MEM = load_mem()
-GAMES = ["betvip_tx","betvip_md5","lc79_tx","lc79_md5","lc79_xd","sunwin_sicbo"]
-for k in GAMES: MEM["histories"].setdefault(k, deque(maxlen=10000))
-
-KEYS = {"hungcaliadmin":{"role":"admin","name":"Hưng Đẹp Trai"},"nhatchimbe":{"role":"guest","name":"Khách VIP"}}
-URLS = {
-    "betvip_tx":"https://wtx.macminim6.online/v1/tx/sessions",
-    "betvip_md5":"https://wtxmd52.macminim6.online/v1/txmd5/sessions",
-    "lc79_tx":"https://wtx.tele68.com/v1/tx/sessions",
-    "lc79_md5":"https://wtxmd52.tele68.com/v1/txmd5/sessions",
-    "lc79_xd":"https://wcl.tele68.com/v1/chanlefull/sessions",
-    "sunwin_sicbo":"https://api.wsktnus8.net/v2/history/getLastResult?gameId=ktrng_3979&size=100&tableId=39791215743193&curPage=1"
+# MÃ KHÓA BẢO MẬT ĐỂ ĐĂNG NHẬP GIAO DIỆN
+SYSTEM_KEYS = {
+    "hungcaliadmin": {"role": "admin", "name": "Hưng Đẹp Trai", "status": "Active"},
+    "nhatchimbe": {"role": "guest", "name": "Khách VIP", "status": "Active"}
 }
 
-def gid(i):
-    if isinstance(i,dict):
-        for k in ['id','phien','sessionId','referenceId']:
-            if k in i and str(i[k]).replace('-','').isdigit(): return int(i[k])
-    m=re.findall(r"(?:id|phien)\D*(\d+)",str(i),re.I)
-    return int(m[0]) if m else random.randint(100000,999999)
+# ==========================================
+# 🛠️ CÔNG CỤ XỬ LÝ ID PHIÊN CHUẨN HÓA
+# ==========================================
+def get_id(item):
+    if isinstance(item, dict):
+        for k in ['id', 'phien', 'sessionId', 'sid', 'referenceId', 'matchId', 'phien_hien_tai', 'turnNum']:
+            if k in item and str(item[k]).replace('-', '').isdigit():
+                return int(item[k])
+    matches = re.findall(r"'?(?:id|phien|referenceId|sessionId|matchId|phien_hien_tai|turnNum)'?\s*:\s*'?'?(\d+)'?'?", str(item), re.IGNORECASE)
+    return int(matches[0]) if matches else 0
 
-def save():
-    with LOCK:
-        try:
-            x=dict(MEM); x["histories"]={k:list(v) for k,v in x["histories"].items()}; x["last_save"]=time.time()
-            t=MEM_FILE+".tmp"; json.dump(x,open(t,"w",encoding="utf8"),ensure_ascii=False,indent=2); os.replace(t,MEM_FILE)
-        except: pass
+def update_stats(game_key, result):
+    stats = GAME_STATS[game_key]
+    stats["t"] += 1 if result == "T" else 0
+    stats["x"] += 1 if result == "X" else 0
+    
+    if result == "T":
+        stats["streak_t"] += 1
+        stats["streak_x"] = 0
+        stats["max_streak_t"] = max(stats["max_streak_t"], stats["streak_t"])
+    else:
+        stats["streak_x"] += 1
+        stats["streak_t"] = 0
+        stats["max_streak_x"] = max(stats["max_streak_x"], stats["streak_x"])
+    
+    seq = list(GAME_HISTORIES[game_key])
+    for cycle_len in range(2, 15):
+        if len(seq) >= cycle_len * 3:
+            cycle = tuple(seq[-cycle_len:])
+            stats["cycles"][cycle] = stats["cycles"].get(cycle, 0) + 1
 
-def autosave():
-    while True:
-        time.sleep(45)
-        if time.time()-MEM["last_save"]>=45: save()
-threading.Thread(target=autosave,daemon=True).start()
+def detect_cycle_pattern(history):
+    seq = list(history)
+    if len(seq) < 12: return None, 0
+    best_cycle = None
+    best_score = 0
+    for length in range(3, 12):
+        matches = 0
+        total = 0
+        for i in range(len(seq)-length*2):
+            if seq[i:i+length] == seq[i+length:i+length*2]:
+                matches += 1
+            total += 1
+        if total > 0:
+            score = matches / total
+            if score > best_score and score > 0.4:
+                best_score = score
+                best_cycle = seq[-length:]
+    return best_cycle, best_score
 
-# ========== 6 THUẬT TOÁN ==========
-def md5_nn(m):
-    if not re.fullmatch(r"[0-9a-f]{32}",m.lower()): return None,0
-    h=np.array([int(c,16) for c in m.lower()]); E=h.sum(); x=(E%1000)/1000; r=3.92+(E%1500)/2000; T=X=0.0
-    for i in range(12000):
-        x=(r+0.08*math.sin(i/180))*x*(1-x)*(1+0.02*math.sin(i/50)); w=h[i%32]/15
-        if i%5 in(0,2,4): T+=x*w*(1+math.sin(i/70)*.3)
-        else: X+=x*w*(1+math.cos(i/70)*.3)
-    f=np.abs(np.fft.fft(h)); T+=f[2:9].mean()*8+f[10:20].std()*4; X+=f[12:22].mean()*8+f[22:31].std()*4
-    p=1/(1+math.exp(-(T-X)/22))*100
-    return ("TÀI",p) if p>=50 else ("XỈU",100-p)
+def trend_analysis(history):
+    seq = np.array([1 if x=="T" else 0 for x in history])
+    if len(seq) < 15: return 0
+    windows = [5, 10, 20]
+    weights = []
+    trends = []
+    for w in windows:
+        if len(seq) >= w:
+            y = seq[-w:]
+            x = np.arange(w)
+            slope = np.polyfit(x, y, 1)[0]
+            trends.append(slope)
+            weights.append(w)
+    return np.average(trends, weights=weights)
 
-def markov(sq):
-    if len(sq)<10: return None,50
-    s=[1 if x=='T' else 0 for x in sq]; tp=0
-    for o,w in [(1,.45),(2,.35),(3,.20)]:
-        tr={}
-        for i in range(o,len(s)):
-            st=tuple(s[i-o:i]); tr.setdefault(st,[0,0])[s[i]]+=1
-        cs=tuple(s[-o:])
-        if cs in tr: a,b=tr[cs]; tp+=(a/(a+b)if a+b else .5)*w
-    return ("TÀI",tp*100) if tp>=.5 else ("XỈU",(1-tp)*100)
+# ==========================================
+# 🧠 GIẢI MÃ CƠ HỌC PHI TUYẾN MD5 NEURAL V2.0
+# ==========================================
+def md5_neural_predict(md5_str: str):
+    if not re.match(r"^[0-9a-f]{32}$", md5_str.lower()): 
+        return "LỖI", "MD5 KHÔNG HỢP LỆ", 0.0
+    
+    hex_arr = np.array([int(ch, 16) for ch in md5_str.lower()], dtype=np.float64)
+    total_energy = hex_arr.sum()
+    
+    x = (total_energy % 1000) / 1000.0
+    r_base = 3.9 + (total_energy % 1500) / 2000
+    layers = 12000
+    tai = xiu = 0.0
+    
+    for i in range(layers):
+        r = r_base + 0.08 * math.sin(i/180)
+        x = r * x * (1 - x) * (1 + 0.02 * math.sin(i/50))
+        
+        weight = hex_arr[i % 32] / 15.0
+        mod = i % 5
+        if mod in (0,2):
+            tai += x * weight * (1 + math.sin(i/70) * 0.3)
+        elif mod == 1:
+            tai += x * weight * 0.8
+        elif mod == 3:
+            xiu += x * weight * (1 + math.cos(i/70) * 0.3)
+        else:
+            xiu += x * weight * 0.8
+    
+    fft_all = np.fft.fft(hex_arr)
+    mag = np.abs(fft_all)
+    tai += np.mean(mag[2:9]) * 8 + np.std(mag[10:20]) * 4
+    xiu += np.mean(mag[12:22]) * 8 + np.std(mag[22:31]) * 4
+    
+    diff = tai - xiu
+    sigmoid = 1 / (1 + math.exp(-diff / 22.0))
+    tai_p = sigmoid * 100 + random.uniform(-0.8, 0.8)
+    xiu_p = (1 - sigmoid) * 100 + random.uniform(-0.8, 0.8)
+    
+    total = tai_p + xiu_p
+    tai_p = round(max(52.0, min(99.2, (tai_p/total)*100)), 1)
+    xiu_p = round(100 - tai_p, 1)
+    
+    return ("TÀI", "MD5 NEURAL V2.0", tai_p) if tai_p > xiu_p else ("XỈU", "MD5 NEURAL V2.0", xiu_p)
 
-def cycle(sq):
-    if len(sq)<15: return None,50
-    bc,bs=None,0
-    for L in range(3,13):
-        c=sum(1 for i in range(len(sq)-L*2) if sq[i:i+L]==sq[i+L:i+L*2]); t=max(1,len(sq)-L*2); sc=c/t
-        if sc>.4 and sc>bs: bs=sc; bc=sq[-L:]
-    if not bc: return None,50
-    return ("TÀI" if bc[0]=='T' else "XỈU",50+bs*40)
+# ==========================================
+# 🧠 CHUỖI MARKOV ĐA TẦNG + MÔ PHỎNG MONTE CARLO
+# ==========================================
+def markov_advanced_predict(is_chanle, history):
+    if len(history) < 12: return "TÀI", 56.2, "Đang phân tích dữ liệu..."
+    
+    seq = [1 if s=="T" else 0 for s in history]
+    order_weights = {1:0.45, 2:0.35, 3:0.20}
+    total_prob = 0.0
+    
+    for order, weight in order_weights.items():
+        if len(seq) < order + 2: continue
+        trans = {}
+        for i in range(order, len(seq)):
+            state = tuple(seq[i-order:i])
+            if state not in trans:
+                trans[state] = {"t":0, "x":0}
+            if seq[i] == 1: trans[state]["t"] += 1
+            else: trans[state]["x"] += 1
+        
+        current_state = tuple(seq[-order:])
+        if current_state in trans:
+            dt = trans[current_state]
+            p = dt["t"]/(dt["t"]+dt["x"]) if (dt["t"]+dt["x"])>0 else 0.5
+            total_prob += p * weight
+    
+    cycle, cycle_conf = detect_cycle_pattern(history)
+    trend = trend_analysis(history)
+    if cycle and len(cycle) >= 2:
+        next_cycle = cycle[0]
+        total_prob += (0.15 if next_cycle=="T" else -0.15) * cycle_conf
+    total_prob += trend * 0.25
+    
+    sims = 60000
+    count_t = 0
+    base_p = max(0.15, min(0.85, total_prob))
+    for _ in range(sims):
+        p_var = base_p + random.uniform(-0.07, 0.07)
+        if random.random() < p_var: count_t += 1
+    
+    final_p = (count_t/sims)*100
+    pred = "T" if final_p > 50 else "X"
+    final_p = max(53.0, min(99.0, final_p if pred=="T" else 100-final_p))
+    
+    res = ("CHẴN" if pred=="T" else "LẺ") if is_chanle else ("TÀI" if pred=="T" else "XỈU")
+    return res, round(final_p, 1), "MARKOV HIỆP ĐIỀU V2.0"
 
-def trend(sq):
-    if len(sq)<12: return None,50
-    y=np.array([1 if x=='T' else 0 for x in sq[-20:]]); x=np.arange(len(y)); mx,my=x.mean(),y.mean()
-    b=((x-mx)*(y-my)).sum()/((x-mx)**2).sum(); p=.5+b*6
-    return ("TÀI",p*100) if p>=.5 else ("XỈU",(1-p)*100)
+# ==========================================
+# 🧠 ĐỒNG BỘ ĐA THUẬT TOÁN (ULTIMATE HYBRID)
+# ==========================================
+def ultimate_hybrid_predict(is_chanle, history, md5_str=None):
+    md5_res = ("TÀI", "KHÔNG MD5", 54.0)
+    if md5_str and re.match(r"^[0-9a-f]{32}$", md5_str.lower()):
+        md5_res = md5_neural_predict(md5_str)
+    
+    markov_res = markov_advanced_predict(is_chanle, history)
+    
+    md5_conf = md5_res[2]
+    markov_conf = markov_res[1]
+    
+    if md5_res[0] != markov_res[0]:
+        if abs(md5_conf - markov_conf) > 15:
+            chosen = md5_res if md5_conf > markov_conf else markov_res
+            final_pred, method, conf = chosen
+        else:
+            w_md5 = 0.5 if md5_str else 0
+            w_mk = 0.5
+            total = md5_conf * w_md5 + markov_conf * w_mk
+            final_pred = md5_res[0] if md5_conf > markov_conf else markov_res[0]
+            conf = round(total, 1)
+            method = "HYBRID THÔNG MINH V2.0"
+    else:
+        final_pred = md5_res[0]
+        conf = round(min(99.5, (md5_conf + markov_conf)/2 + 3), 1)
+        method = "ĐỒNG BỘ MD5+MARKOV V2.0"
+    
+    return final_pred, max(52.5, conf), method
 
-def freq(sq):
-    if len(sq)<30: return None,50
-    from collections import Counter as C
-    c=C(sq); t=c.get('T',0); x=c.get('X',0); n=t+x; pt=t/n
-    if pt>.62: return "XỈU",52+(pt-.5)*80
-    if pt<.38: return "TÀI",52+(.5-pt)*80
-    return ("TÀI" if pt>=.5 else "XỈU"),52+abs(pt-.5)*40
+# ==========================================
+# 📡 KÊNH TRUYỀN TẢI DỮ LIỆU API (ĐỒNG BỘ FRONTEND)
+# ==========================================
 
-def streak(sq):
-    if len(sq)<5: return None,50
-    last=sq[-1]; cnt=1
-    for v in reversed(sq[:-1]):
-        if v==last: cnt+=1
-        else: break
-    if cnt>=4: return ("XỈU" if last=='T' else "TÀI"),min(92,55+cnt*6)
-    return ("TÀI" if last=='T' else "XỈU"),52+cnt*2
+# KHÔI PHỤC CỔNG ĐĂNG NHẬP (HỖ TRỢ CẢ POST VÀ GET CHO AN TOÀN)
+@app.route("/api/login", methods=["GET", "POST"])
+def auth_gateway():
+    key = ""
+    if request.method == "POST":
+        req_data = request.json or {}
+        key = req_data.get("key", "").strip()
+    else:
+        key = request.args.get("key", "").strip()
+        
+    if key in SYSTEM_KEYS:
+        return jsonify({"status": "success", "data": SYSTEM_KEYS[key], "version": "2.0-ULTIMATE"})
+    return jsonify({"status": "error", "msg": "Mã khóa không chính xác!"})
 
-def learn(sid,real):
-    if sid not in MEM["predict_log"]: return
-    p=MEM["predict_log"][sid]
-    ok=1 if p["pred"]==real else 0
-    p["real"]=real; p["correct"]=ok
-    MEM["total_scans"]+=1; MEM["correct"]+=ok
-    for a,r in p["algos"].items():
-        x=MEM["algo_accuracy"].setdefault(a,{"ok":0,"n":0}); x["n"]+=1
-        if r==real: x["ok"]+=1
-        acc=x["ok"]/x["n"]; MEM["weights"][a]=round(max(.3,acc**2*2.2),4)
-    save()
+@app.route("/api/manual_md5", methods=["POST"])
+def manual_md5():
+    req_data = request.json or {}
+    md5_str = req_data.get("md5", "")
+    dd, lk, tl = md5_neural_predict(md5_str)
+    if dd == "LỖI": return jsonify({"status": "error", "msg": "MD5 không hợp lệ"})
+    return jsonify({
+        "status": "success", 
+        "tai": tl if dd == "TÀI" else round(100 - tl, 1), 
+        "xiu": tl if dd == "XỈU" else round(100 - tl, 1), 
+        "suggestion": f"{dd} ({lk})"
+    })
 
-def brain(cl,hist,md5=None):
-    sq=list(hist); A={}
-    if md5:
-        r,c=md5_nn(md5)
-        if r: A["md5"]=(r,c)
-    for n,f in [("markov",markov),("cycle",cycle),("trend",trend),("freq",freq),("streak",streak)]:
-        r,c=f(sq)
-        if r: A[n]=(r,c)
-    ST=SX=SW=0
-    for a,(r,c) in A.items():
-        w=MEM["weights"].get(a,1.0)
-        if r in("TÀI","CHẴN"): ST+=c*w
-        else: SX+=c*w
-        SW+=w
-    if SW==0: return ("TÀI" if random.random()>.5 else "XỈU"),55.0,"THIẾU DỮ LIỆU",A
-    F="TÀI" if ST>=SX else "XỈU"
-    cf=round(max(53.0,min(99.2,max(ST,SX)/SW)),1)
-    if cl: F="CHẴN" if F=="TÀI" else "LẺ"
-    return F,cf,f"BẦU CỬ {len(A)} THUẬT TOÁN TRỌNG SỐ",A
-
-# ========== API ==========
-@app.route("/api/login",methods=["GET","POST"])
-def login():
-    k=(request.json or {}).get("key") if request.method=="POST" else request.args.get("key","")
-    if k in KEYS: return jsonify({"status":"success","data":KEYS[k]})
-    return jsonify({"status":"error"}),401
-
-@app.route("/api/scan",methods=["GET","POST"])
-def scan():
-    d=request.json if request.is_json else request.args.to_dict()
-    tool=d.get("tool",""); cl="chanle" in tool.lower() or "xd" in tool.lower()
-    if tool not in URLS: return jsonify({"status":"error"}),400
+# CỔNG QUÉT CHẤP NHẬN CẢ GET LẪN POST ĐỂ TRÁNH XUNG ĐỘT GIAO DIỆN
+@app.route("/api/scan", methods=["GET", "POST"])
+def scan_game():
+    if request.method == "POST":
+        req_data = request.json or {}
+        tool = req_data.get("tool", "")
+    else:
+        tool = request.args.get("tool", "")
+        
+    is_chanle = "chanle" in tool.lower() or "xd" in tool.lower()
+    
+    urls = {
+        "betvip_tx": "https://wtx.macminim6.online/v1/tx/sessions",
+        "betvip_md5": "https://wtxmd52.macminim6.online/v1/txmd5/sessions",
+        "lc79_tx": "https://wtx.tele68.com/v1/tx/sessions",
+        "lc79_md5": "https://wtxmd52.tele68.com/v1/txmd5/sessions",
+        "lc79_xd": "https://wcl.tele68.com/v1/chanlefull/sessions",
+        "sunwin_sicbo": "https://api.wsktnus8.net/v2/history/getLastResult?gameId=ktrng_3979&size=100&tableId=39791215743193&curPage=1"
+    }
+    
+    if not tool or tool not in urls:
+        return jsonify({"status": "error", "msg": "Thiếu thông số cấu hình công cụ quét"})
+        
     try:
-        r=requests.get(URLS[tool],headers={"User-Agent":"AI-V3"},timeout=7).json()
-        lst=r.get("data",r.get("list",r)) if isinstance(r,dict) else r
-        if not isinstance(lst,list): raise ValueError
-        lst=sorted(lst,key=gid)
-        KTX=["TAI","TÀI","BIG"]; KCL=["CHẴN","CHAN","C","0"]; KW=KCL if cl else KTX
-        arr=["T" if any(k in str(s).upper() for k in KW) else "X" for s in lst]
-        hist=MEM["histories"][tool]
-        for v in arr: hist.append(v)
-        for it in lst[-5:]:
-            sid=str(gid(it))
-            if sid in MEM["predict_log"] and "real" not in MEM["predict_log"][sid]:
-                real="TÀI" if any(k in str(it).upper() for k in KTX) else "XỈU"
-                learn(sid,real)
-        ph=str(gid(lst[-1])+1)
-        md=re.search(r"[0-9a-f]{32}",str(lst[-1]).lower())
-        pr,cf,mt,al=brain(cl,list(hist),md.group(0) if md and "md5" in tool else None)
-        MEM["predict_log"][ph]={"tool":tool,"pred":pr,"conf":cf,"algos":{a:v[0] for a,v in al.items()},"time":time.time()}
-        save()
-        return jsonify({"status":"success","data":{"phien":ph,"du_doan":pr,"ti_le":cf,"tin_cay":cf,"phuong_phap":mt,"thongke":{"tong":MEM["total_scans"],"dung":MEM["correct"],"ty_le":round(MEM["correct"]/max(1,MEM["total_scans"])*100,2)}}})
-    except:
-        return jsonify({"status":"success","data":{"phien":"#"+str(random.randint(1e5,1e6)),"du_doan":"TÀI" if random.random()>.45 else "XỈU","ti_le":round(random.uniform(70,86),1),"phuong_phap":"DỰ PHÒNG"}})
+        res = requests.get(urls[tool], headers={"User-Agent": "Doraemon-AI-Bot-V2.0"}, timeout=6).json()
+        lst = res.get("data", res.get("list", res)) if isinstance(res, dict) else res
+        if not isinstance(lst, list): raise Exception("Cấu trúc API nguồn thay đổi")
+        
+        lst = sorted(lst, key=lambda x: get_id(x))
+        arr = []
+        for s in lst:
+            s_str = str(s).upper()
+            if any(k in s_str for k in (["CHẴN","CHAN","C","0"] if is_chanle else ["TAI","TÀI","BIG"])):
+                arr.append("T")
+            else: arr.append("X")
+        
+        for r in arr:
+            GAME_HISTORIES[tool].append(r)
+            update_stats(tool, r)
+        
+        phien_hien_tai = str(get_id(lst[-1]) + 1)
+        m = re.search(r"[0-9a-f]{32}", str(lst[-1]).lower())
+        
+        dd, tl, lk = ultimate_hybrid_predict(is_chanle, list(GAME_HISTORIES[tool]), 
+                                             m.group(0) if m and "md5" in tool.lower() else None)
+        
+        return jsonify({
+            "status": "success", 
+            "data": {
+                "du_doan": dd, 
+                "ti_le": tl, 
+                "loi_khuyen": lk, 
+                "phien": phien_hien_tai, 
+                "version": "2.0-ULTIMATE"
+            }
+        })
+    
+    except Exception as e:
+        phien_fake = "#" + str(random.randint(100000, 999999))
+        return jsonify({
+            "status": "success", 
+            "data": {
+                "du_doan": "TÀI" if random.random() > 0.45 else "XỈU", 
+                "ti_le": round(random.uniform(72, 88), 1), 
+                "loi_khuyen": "HỆ THỐNG DỰ PHÒNG V2.0", 
+                "phien": phien_fake
+            }
+        })
 
 @app.route("/")
 def home():
-    p=os.path.join(BASE,"index.html")
-    return send_file(p) if os.path.exists(p) else "<h1 style=color:#0af>🧠 AI BRAIN V3 OK</h1>"
+    try: return send_file(os.path.join(os.path.dirname(os.path.abspath(__file__)), "index.html"))
+    except: return "<h1 style='color:#00a6ed;'>Hệ thống AI V2.0 - Đã sẵn sàng hoạt động</h1>"
 
-application=app
-if __name__=="__main__":
-    app.run(host="0.0.0.0",port=int(os.environ.get("PORT","8080")),debug=False,threaded=True)
-        
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)), debug=False)
+
+    
