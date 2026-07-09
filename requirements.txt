@@ -1,8 +1,4 @@
-pip==24.0
-setuptools==68.2.2
-wheel==0.41.2
-flask==2.3.3
+flask==3.0.0
 flask-cors==4.0.0
-numpy==1.26.0
 requests==2.31.0
 gunicorn==21.2.0
